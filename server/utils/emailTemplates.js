@@ -82,9 +82,6 @@ function donationReceiptHtml({ donorName, amount, currency, donationType, isEmer
           <td style="padding: 12px 0 8px 0; color: #059669; font-size: 18px; font-weight: 700; text-align: right;">${amountText} ${currencyUpper}</td>
         </tr>
       </table>
-      <p style="color: #6b7280; font-size: 12px; line-height: 1.5; margin: 16px 0 0 0; font-style: italic;">
-        This receipt serves as confirmation of your donation. HALT Shelter is a registered 501(c)(3) nonprofit organization. Please consult your tax advisor for deductibility information.
-      </p>
     </div>
     
     ${donationType === 'monthly' ? `
@@ -166,8 +163,6 @@ Receipt Number: ${receiptId}
 Date: ${date}
 Donation Type: ${donationTypeText}
 Amount: ${amountText} ${currencyUpper}
-
-This receipt serves as confirmation of your donation. HALT Shelter is a registered 501(c)(3) nonprofit organization. Please consult your tax advisor for deductibility information.
 ${monthlyText}${emergencyText}
 YOUR IMPACT
 ===========
