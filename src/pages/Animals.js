@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PetCompatibilityQuiz from '../components/PetCompatibilityQuiz';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { navigateTo } from '../utils/navigationUtils';
 
 // Lightweight count-up hook for animating stat changes
 function useCountUp(target, duration = 600) {
@@ -55,24 +56,24 @@ const StickyActionButton = () => (
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">Frequently Asked Questions</h2>
             <div className="space-y-6">
               <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold text-blue-800 mb-2">How do I adopt an animal?</h3>
-                <p className="text-gray-700">Browse available animals, click "I'm Interested" on a pet, and fill out the adoption inquiry form. Our team will contact you to guide you through the next steps.</p>
+                <h3 className="text-lg font-semibold text-red-700 mb-2">💕 How do I adopt an animal?</h3>
+                <p className="text-gray-700">Browse our available animals, click "I'm Interested" on a pet who captures your heart, and fill out the adoption inquiry form. Our compassionate team will contact you to begin your journey toward giving a deserving animal their forever home.</p>
               </div>
               <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold text-blue-800 mb-2">What is the adoption process like?</h3>
-                <p className="text-gray-700">After submitting your inquiry, we review your application, schedule a call or visit, and help you find the best match. We provide support and resources for a smooth transition.</p>
+                <h3 className="text-lg font-semibold text-red-700 mb-2">🏡 What is the adoption process like?</h3>
+                <p className="text-gray-700">After submitting your inquiry, we carefully review your application, schedule a personal call or visit, and help you find the perfect match. We provide ongoing support, resources, and guidance to ensure a smooth, joyful transition for both you and your new companion.</p>
               </div>
               <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold text-blue-800 mb-2">Can I foster or volunteer?</h3>
-                <p className="text-gray-700">Absolutely! Visit our Foster or Volunteer pages to learn more and sign up. Fosters and volunteers are vital to our mission and receive training and support.</p>
+                <h3 className="text-lg font-semibold text-red-700 mb-2">🤝 Can I foster or volunteer?</h3>
+                <p className="text-gray-700">Absolutely! Fosters and volunteers are the heartbeat of our mission. Visit our Foster or Volunteer pages to learn more and sign up. You'll receive comprehensive training, ongoing support, and the profound reward of transforming lives.</p>
               </div>
               <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold text-blue-800 mb-2">How can I donate or help?</h3>
-                <p className="text-gray-700">You can donate online, become a monthly supporter, or help by sharing our mission. Every contribution makes a difference for the animals in our care.</p>
+                <h3 className="text-lg font-semibold text-red-700 mb-2">❤️ How can I donate or help?</h3>
+                <p className="text-gray-700">You can donate online, become a monthly hero, share our mission on social media, or sponsor a specific animal's care. Every contribution—no matter the size—creates miracles for the animals who depend on us.</p>
               </div>
               <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold text-blue-800 mb-2">Where can I get more information?</h3>
-                <p className="text-gray-700">If you have more questions, please contact us through our website or email. We're here to help you every step of the way!</p>
+                <h3 className="text-lg font-semibold text-red-700 mb-2">📞 Where can I get more information?</h3>
+                <p className="text-gray-700">If you have more questions, please contact us through our website or email. We're here to help you every step of the way—because helping animals live and thrive is what we do together.</p>
               </div>
             </div>
           </div>
@@ -658,10 +659,12 @@ const Animals = () => {
         <div className="bg-gradient-to-br from-blue-600 to-blue-800 text-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="text-center">
-              <h1 className="text-5xl font-bold mb-6">Adopt a Pet. Change a Life.</h1>
+              <div className="flex justify-center mb-4">
+                <img src="/haltfav.png" alt="" className="w-20 h-20 animate-pulse" />
+              </div>
+              <h1 className="text-5xl font-bold mb-6">💕 Adopt a Pet. Transform Two Lives.</h1>
               <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
-                Before you adopt, make sure you're ready for the commitment. 
-                Our animals are looking for loving forever homes where they can thrive.
+                Each animal here has a story, a dream, and endless love to give. When you adopt, you don't just change their world—you change yours. Are you ready for the commitment? Our animals are waiting for loving forever homes where they can truly thrive.
               </p>
 
       {/* Animal of the Week Feature */}
@@ -907,9 +910,13 @@ const Animals = () => {
                 <p className="text-green-700 mb-4">
                   Get ready for your new pet with our comprehensive preparation guide and checklist.
                 </p>
-                <button className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                <a 
+                  href="#" 
+                  onClick={(e) => { e.preventDefault(); navigateTo('/blog', { category: 'adoption-tips' }); }}
+                  className="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded cursor-pointer transition-colors"
+                >
                   View Checklist
-                </button>
+                </a>
               </div>
               
               {/* Consultation Card */}
@@ -919,9 +926,12 @@ const Animals = () => {
                 <p className="text-purple-700 mb-4">
                   Speak with our adoption specialists to discuss your needs and learn about our animals.
                 </p>
-                <button className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+                <a 
+                  href="mailto:contact@haltshelter.org?subject=Adoption%20Consultation%20Request"
+                  className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition-colors"
+                >
                   Book Consultation
-                </button>
+                </a>
               </div>
             </div>
           </div>
@@ -1225,7 +1235,7 @@ const Animals = () => {
               Get new arrivals, adoption stories, and ways to help delivered to your inbox.
             </p>
             <form
-              action="https://your-newsletter-service.com/subscribe" // TODO: Replace with real endpoint
+              action="/api/newsletter/subscribe"
               method="POST"
               className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
             >

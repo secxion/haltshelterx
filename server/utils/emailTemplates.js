@@ -212,9 +212,6 @@ function newsletterConfirmationHtml(email, token, firstName = 'Supporter') {
       <a href="${confirmationUrl}" style="display: inline-block; background-color: #dc2626; color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
         ✅ Confirm Subscription
       </a>
-      <p style="color: #9ca3af; font-size: 12px; margin: 20px 0 0 0;">
-        Or copy this link: <code style="color: #6b7280; word-break: break-all;">${confirmationUrl}</code>
-      </p>
     </div>
     
     <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin: 0 0 16px 0;">

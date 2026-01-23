@@ -14,12 +14,11 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center">
-              <HeartIcon className="h-8 w-8 text-red-600 animate-pulse" />
-              <span className="ml-2 text-xl font-bold tracking-wide">HALTSHELTER</span>
+              <img src="/halt.png" alt="HALT Shelter" className="h-24 w-auto" />
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
-              Dedicated to rescuing, rehabilitating, and rehoming animals in need. 
-              Every donation saves a life.
+              <span className="font-semibold text-yellow-300">Helping Animals Live & Thrive.</span>
+              <span className="block mt-2">From rescue to forever homes, we transform lives through compassion. Every donation, every adoption, every act of kindness creates miracles.</span>
             </p>
             <div className="flex space-x-4">
               {/* Facebook only - update the href to your page's actual slug if different */}

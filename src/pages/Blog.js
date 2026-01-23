@@ -230,12 +230,14 @@ export default function Blog() {
       <section className="bg-gradient-to-r from-primary-600 to-primary-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
+            <div className="flex justify-center mb-4">
+              <img src="/haltfav.png" alt="" className="w-16 h-16 animate-pulse" />
+            </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              HALT Shelter Blog
+              Knowledge That Saves Lives
             </h1>
             <p className="text-xl text-primary-100 max-w-3xl mx-auto">
-              Stories, tips, and insights from our animal rescue community. 
-              Learn about pet care, adoption, and how you can make a difference.
+              Discover stories of transformation, expert care guidance, and compassionate insights. Every article brings you closer to understanding how love changes everything for animals in need.
             </p>
           </div>
         </div>

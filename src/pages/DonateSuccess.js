@@ -118,9 +118,12 @@ const DonateSuccess = () => {
             <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto shadow-2xl animate-bounce-slow">
               <CheckCircleIcon className="w-16 h-16 text-white" />
             </div>
-            {/* Sparkle Effects */}
-            <SparklesIcon className="w-8 h-8 text-yellow-400 absolute -top-2 -right-2 animate-pulse" />
-            <SparklesIcon className="w-6 h-6 text-yellow-300 absolute -bottom-1 -left-1 animate-pulse delay-100" />
+            {/* Heart Icon with Pets */}
+            <img 
+              src="/haltfav.png" 
+              alt="HALT Heart" 
+              className="w-24 h-24 absolute -top-8 -right-8 animate-heartBeat"
+            />
           </div>
           
           <h1 className="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-4 animate-fade-in">

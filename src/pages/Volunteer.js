@@ -154,8 +154,12 @@ export default function Volunteer() {
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircleIcon className="w-10 h-10 text-green-600" />
+            <div className="relative w-24 h-24 mx-auto mb-6">
+              <img 
+                src="/haltfav.png" 
+                alt="HALT Heart" 
+                className="w-full h-full animate-heartBeat"
+              />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
               Thank You for Your Interest! 🎉
@@ -212,10 +216,10 @@ export default function Volunteer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              🤝 Join Our Volunteer Family
+              🤝 Transform Lives Together
             </h1>
             <p className="text-xl md:text-2xl text-red-100 max-w-3xl mx-auto">
-              Make a direct impact in the lives of animals who need it most. Every hour you volunteer helps save lives and create forever families.
+              Your time, compassion, and dedication create miracles. Join a community of changemakers who believe every animal deserves a second chance, a loving touch, and hope for tomorrow.
             </p>
           </div>
         </div>
@@ -224,9 +228,10 @@ export default function Volunteer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Volunteer Opportunities */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-            Ways to Make a Difference
+          <h2 className="text-3xl font-bold text-gray-900 text-center mb-3">
+            💝 Ways to Make Miracles
           </h2>
+          <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">Choose the volunteer path that resonates with your heart—each one creates lasting change for animals in need.</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {volunteerOpportunities.map((opportunity) => {
               const Icon = opportunity.icon;

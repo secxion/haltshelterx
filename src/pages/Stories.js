@@ -27,8 +27,6 @@ export default function Stories() {
         setLoading(true);
         // Always request all stories (set a high limit)
         const response = await apiService.stories.getAll({ limit: 100 });
-        console.log('API Response:', response.data); // Debug log
-        console.log('Stories data:', response.data.data); // Debug log
         setStories(response.data.data || []);
       } catch (err) {
         console.error('Error fetching stories:', err);
@@ -150,14 +148,20 @@ export default function Stories() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-red-600 text-white">
+      <div className="bg-red-600 text-white relative overflow-hidden">
+        <img 
+          src="/haltfav.png" 
+          alt="" 
+          className="absolute top-10 right-10 w-16 h-16 opacity-10 animate-pulse hidden lg:block"
+        />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              📚 Stories of Hope & Healing
+              📚 Tales of Resilience & Redemption
             </h1>
             <p className="text-xl md:text-2xl text-red-100 max-w-3xl mx-auto">
-              Every rescue tells a story of transformation. Discover how your support creates miracles and changes lives forever.
+              <span className="block mb-2">From despair to joy, from abandonment to belonging...</span>
+              <span className="text-yellow-200 font-semibold">These are the stories of courage, compassion, and the transformative power of love.</span>
             </p>
           </div>
         </div>

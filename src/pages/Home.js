@@ -6,17 +6,6 @@ import { apiService, handleApiError } from '../services/api';
 import { navigateTo } from '../utils/navigationUtils';
 import NewsletterModal from '../components/Newsletter/NewsletterModal';
 
-      <div className="fixed bottom-6 right-6 z-50">
-        <Link
-          to="/donate"
-          className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full shadow-lg text-lg transition-colors focus:outline-none focus:ring-4 focus:ring-red-300 animate-bounce"
-          aria-label="Take Action Now - Urgent Needs"
-        >
-          <span role="img" aria-label="alert">🚨</span> Take Action Now
-        </Link>
-      </div>
-
-
 const Home = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [newsletterModalOpen, setNewsletterModalOpen] = useState(false);
@@ -43,10 +32,8 @@ const Home = () => {
       // Remove query parameter
       setSearchParams({});
     } else if (newsletter === 'confirmed') {
-      // Show confirmation message
+      // Newsletter subscription confirmed
       setNewsletterModalOpen(false);
-      // You could show a toast notification here
-      console.log('✅ Newsletter subscription confirmed!');
     }
   }, [searchParams, setSearchParams]);
 
@@ -54,19 +41,9 @@ const Home = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        console.log('📊 Fetching stats for homepage...');
         const response = await apiService.stats.getDashboard();
-        console.log('📊 Raw stats response:', JSON.stringify(response.data, null, 2));
         const payload = response.data || {};
         const s = payload.stats || payload;
-        console.log('📊 Processed stats data:', JSON.stringify(s, null, 2));
-        
-        // Log individual values for debugging
-        console.log('🔍 Stats values check:');
-        console.log('- Animals Rescued:', s.animalsRescued);
-        console.log('- Adoptions This Month:', s.adoptionsThisMonth);
-        console.log('- Active Volunteers:', s.activeVolunteers);
-        console.log('- Lives Transformed:', s.livesTransformed);
 
         // Use server-provided values or fallback to initial values
         setStats([
@@ -178,6 +155,19 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-red-600 to-red-800 text-white overflow-hidden">
         <div className="absolute inset-0 bg-black opacity-20"></div>
+        
+        {/* Decorative Heart Icons */}
+        <img 
+          src="/haltfav.png" 
+          alt="" 
+          className="absolute top-10 right-10 w-16 h-16 opacity-20 animate-pulse hidden lg:block"
+        />
+        <img 
+          src="/haltfav.png" 
+          alt="" 
+          className="absolute bottom-10 left-10 w-20 h-20 opacity-20 animate-pulse delay-300 hidden lg:block"
+        />
+        
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center">
             {/* HALT Brand Identity */}
@@ -213,12 +203,12 @@ const Home = () => {
             </div>
             
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-6">
-              Every Animal Deserves a
-              <span className="block text-yellow-300">Second Chance at Life</span>
+              Every Animal Deserves
+              <span className="block text-yellow-300">Love, Care & A Forever Home</span>
             </h2>
             <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 max-w-4xl mx-auto leading-relaxed">
-              We rescue, rehabilitate, and rehome animals in need across our community. 
-              Your support saves lives and creates forever families where animals can truly thrive.
+              From rescue to rehabilitation, from healing to happiness - we're here for animals who need us most. 
+              <span className="block mt-2 text-yellow-200">Together, we transform lives and create loving families where every animal can truly thrive.</span>
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-lg mx-auto">
@@ -252,7 +242,7 @@ const Home = () => {
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center bg-white p-4 sm:p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+              <div key={index} className="text-center bg-white p-4 sm:p-6 rounded-xl shadow-md hover-lift">
                 <div className="mx-auto w-12 h-12 sm:w-16 sm:h-16 bg-red-100 rounded-full flex items-center justify-center mb-3 sm:mb-4">
                   <stat.icon className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" />
                 </div>
@@ -318,7 +308,7 @@ const Home = () => {
             {!loading && (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 {featuredStories.map((story) => (
-                  <div key={story._id || story.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow" tabIndex={0} aria-label={`Rescue story: ${story.title}`}>
+                  <div key={story._id || story.id} className="bg-white rounded-lg shadow-md overflow-hidden hover-lift" tabIndex={0} aria-label={`Rescue story: ${story.title}`}>
                     <img 
                       src={story.featuredImage?.url || story.featuredImage || story.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlJlc2N1ZSBTdG9yeTwvdGV4dD48L3N2Zz4='}
                       alt={story.title}

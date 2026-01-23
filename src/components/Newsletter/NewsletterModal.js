@@ -57,9 +57,14 @@ const NewsletterModal = ({ isOpen, onClose }) => {
 
         <div className="newsletter-modal-content">
           <div className="newsletter-modal-header">
-            <h2 className="newsletter-modal-title">🐾 Join HALT Newsletter</h2>
+            <img 
+              src="/haltfav.png" 
+              alt="HALT Heart" 
+              className="w-20 h-20 mx-auto mb-4 animate-pulse"
+            />
+            <h2 className="newsletter-modal-title">� Join Our Community of Hope</h2>
             <p className="newsletter-modal-subtitle">
-              Stay connected with rescue stories, adoption updates, and ways to help
+              Stay connected with transformational rescue stories, adoption joy, and ways you can help animals live and thrive
             </p>
           </div>
 

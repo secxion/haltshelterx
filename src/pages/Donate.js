@@ -74,20 +74,20 @@ const Donate = () => {
   }, []);
 
   const donationAmounts = [
-    { amount: 25, impact: 'Feeds 5 animals for a day' },
-    { amount: 50, impact: 'Provides basic veterinary care' },
-    { amount: 100, impact: 'Sponsors an animal\'s shelter stay' },
-    { amount: 250, impact: 'Covers emergency medical treatment' },
-    { amount: 500, impact: 'Funds a complete rescue operation' },
-    { amount: 1000, impact: 'Supports shelter operations for a week' }
+    { amount: 25, impact: '🍽️ Feeds 5 rescued animals nutritious meals for a day' },
+    { amount: 50, impact: '💊 Provides essential veterinary care and vaccinations' },
+    { amount: 100, impact: '🏠 Sponsors an animal\'s safe shelter stay & rehabilitation' },
+    { amount: 250, impact: '❤️‍🩹 Covers life-saving emergency medical treatment' },
+    { amount: 500, impact: '🚑 Funds a complete rescue operation from street to safety' },
+    { amount: 1000, impact: '⭐ Supports shelter operations & transforms multiple lives' }
   ];
 
   const emergencyAmounts = [
-    { amount: 50, impact: 'Emergency medication for 1 animal' },
-    { amount: 150, impact: 'Emergency surgery supplies' },
-    { amount: 300, impact: 'Complete emergency veterinary care' },
-    { amount: 750, impact: 'Multiple animal emergency response' },
-    { amount: 1500, impact: 'Mobile emergency unit deployment' }
+    { amount: 50, impact: '💉 Critical emergency medication - saves a life today' },
+    { amount: 150, impact: '🏥 Emergency surgery supplies for immediate intervention' },
+    { amount: 300, impact: '🩺 Complete emergency veterinary care & recovery' },
+    { amount: 750, impact: '🚨 Multi-animal emergency response & critical care' },
+    { amount: 1500, impact: '🚑 Mobile emergency unit - reaching animals in crisis' }
   ];
 
   const currentAmounts = isEmergency ? emergencyAmounts : donationAmounts;
@@ -120,19 +120,9 @@ const Donate = () => {
     // IMPORTANT: Store amount in CENTS to preserve accuracy
     // DonateSuccess.js will convert to dollars for display
     
-    console.log('[DONATE] Raw donationData received:', donationData);
-    
     const amountInCents = donationData.amount 
       ? donationData.amount
       : ((parseFloat(selectedAmount) || parseFloat(customAmount) || 0) * 100);
-    
-    console.log('[DONATE] Payment Success - Amount data:', {
-      received: donationData.amount,
-      storingInCents: amountInCents,
-      willDisplayAsDollars: amountInCents / 100,
-      selected: selectedAmount,
-      custom: customAmount
-    });
     
     const donationDetails = {
       amount: amountInCents.toString(), // Store in cents as string
@@ -140,15 +130,8 @@ const Donate = () => {
       emergency: isEmergency
     };
     
-    console.log('[DONATE] Storing donation details:', donationDetails);
-    
     // Store in sessionStorage
-    const key = '_donate_success_data';
-    sessionStorage.setItem(key, JSON.stringify(donationDetails));
-    
-    // Verify it was stored
-    const verify = sessionStorage.getItem(key);
-    console.log('[DONATE] Verification - stored in sessionStorage:', verify);
+    sessionStorage.setItem('_donate_success_data', JSON.stringify(donationDetails));
     
     // Use React Router navigate instead of window.location.href to preserve sessionStorage
     navigate('/donate/success');
@@ -213,16 +196,18 @@ const Donate = () => {
                   Help Save a Life Today
                 </h1>
                 <p className="text-xl md:text-2xl text-red-100 max-w-3xl mx-auto">
-                  Critical cases need immediate medical attention. Your emergency donation provides life-saving care when every second counts.
+                  <span className="block mb-2">When an animal arrives in critical condition, every moment matters.</span>
+                  <span className="text-yellow-200 font-semibold">Your emergency donation provides immediate life-saving care and hope for recovery.</span>
                 </p>
               </>
             ) : (
               <>
                 <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                  Make a Difference Today
+                  Transform Lives Through Compassion
                 </h1>
                 <p className="text-xl md:text-2xl text-red-100 max-w-3xl mx-auto">
-                  Your donation rescues, rehabilitates, and rehomes animals in need. Every contribution saves lives and creates forever families.
+                  <span className="block mb-2">From frightened and alone to loved and thriving...</span>
+                  <span className="text-yellow-200 font-semibold">Your generosity gives animals the second chance they deserve and helps them discover what it truly means to be loved.</span>
                 </p>
               </>
             )}
@@ -475,9 +460,9 @@ const Donate = () => {
                 <Link to="/volunteer" className="block text-blue-600 hover:text-blue-800 font-semibold">
                   → Volunteer your time
                 </Link>
-                <button className="block text-blue-600 hover:text-blue-800 font-semibold text-left">
+                <a href="mailto:contact@haltshelter.org?subject=Corporate%20Sponsorship%20Inquiry" className="block text-blue-600 hover:text-blue-800 font-semibold">
                   → Corporate sponsorship opportunities
-                </button>
+                </a>
               </div>
             </div>
           </div>

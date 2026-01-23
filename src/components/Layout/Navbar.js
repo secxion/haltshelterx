@@ -23,8 +23,7 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <HeartIcon className="h-8 w-8 text-red-600" />
-              <span className="ml-2 text-xl font-bold text-gray-900">HALTSHELTER</span>
+              <img src="/halt.png" alt="HALT Shelter" className="h-32 w-auto" />
             </Link>
           </div>
 

@@ -100,8 +100,14 @@ function MonthlyForm() {
 export default function Monthly() {
   return (
     <main className="max-w-3xl mx-auto px-4 py-16">
-  <h1 className="text-3xl font-bold mb-4">Monthly Giving</h1>
-  <p className="text-gray-600 mb-4">Join our monthly giving community to power sustained rescue operations. Monthly donors receive exclusive updates and early access to special items.</p>
+      <div className="flex justify-center mb-6">
+        <img src="/haltfav.png" alt="" className="w-20 h-20 animate-pulse" />
+      </div>
+  <h1 className="text-3xl font-bold mb-4 text-center">💝 Become a Monthly Hero</h1>
+  <p className="text-gray-700 mb-4 text-center text-lg leading-relaxed">Your recurring gift creates lasting change—consistent care, reliable shelter, and unwavering hope for animals who need us most. Join a compassionate community transforming lives every single month.</p>
+      <div className="bg-red-50 border-l-4 border-red-600 p-4 mb-6 rounded-r-lg">
+        <p className="text-gray-800"><strong>Monthly donors receive:</strong> Exclusive rescue updates, early access to adoption opportunities, and the profound satisfaction of knowing you're making miracles happen consistently.</p>
+      </div>
       <Elements stripe={stripePromise}>
         <MonthlyForm />
       </Elements>
