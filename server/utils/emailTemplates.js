@@ -45,6 +45,9 @@ function emailWrapper(content, { preheader = '' } = {}) {
 // Donation Receipt Email
 function donationReceiptHtml({ donorName, amount, currency, donationType, isEmergency, transactionId, timestamp }) {
   // SIMPLIFIED: No transaction details - focus on appreciation and impact
+  const donationTypeText = donationType === 'monthly' ? 'monthly' : donationType === 'quarterly' ? 'quarterly' : donationType === 'annual' ? 'annual' : 'one-time';
+  const amountText = amount ? `$${amount.toFixed(2)}` : '';
+  
   const content = `
     <h2 style="color: #111827; margin: 0 0 16px 0; font-size: 24px;">Thank You for Making a Difference! 🐾</h2>
     
@@ -53,14 +56,14 @@ function donationReceiptHtml({ donorName, amount, currency, donationType, isEmer
     </p>
     
     <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
-      Your generous support has been received and is already making an impact! Every contribution helps us continue our mission to rescue, rehabilitate, and rehome animals in need.
+      Your generous ${donationTypeText} gift${amountText ? ` of <strong style="color: #059669;">${amountText}</strong>` : ''} has been received and is already making an impact! Every contribution helps us continue our mission to rescue, rehabilitate, and rehome animals in need.
     </p>
     
     ${donationType === 'monthly' ? `
     <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 20px; margin: 0 0 24px 0;">
       <h3 style="color: #1e40af; margin: 0 0 12px 0; font-size: 18px;">💝 You're a Monthly Hero!</h3>
       <p style="color: #1e40af; margin: 0; font-size: 14px; line-height: 1.6;">
-        As a monthly supporter, you're providing consistent care that animals can count on. Your recurring donation means we can plan ahead and help even more animals find their forever homes.
+        As a monthly supporter, you're providing consistent care that animals can count on. Your recurring gift means we can plan ahead and help even more animals find their forever homes. Thank you for your ongoing commitment!
       </p>
     </div>
     ` : ''}
@@ -69,7 +72,7 @@ function donationReceiptHtml({ donorName, amount, currency, donationType, isEmer
     <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 20px; margin: 0 0 24px 0;">
       <h3 style="color: #991b1b; margin: 0 0 12px 0; font-size: 18px;">🚨 Emergency Response</h3>
       <p style="color: #991b1b; margin: 0; font-size: 14px; line-height: 1.6;">
-        Your emergency donation will be used immediately for critical cases requiring urgent medical attention. Thank you for responding so quickly to help animals in crisis!
+        Your emergency contribution will be used immediately for critical cases requiring urgent medical attention. Thank you for responding so quickly to help animals in crisis!
       </p>
     </div>
     ` : ''}
@@ -77,7 +80,7 @@ function donationReceiptHtml({ donorName, amount, currency, donationType, isEmer
     <!-- Impact Section -->
     <div style="background-color: #ffffff; border-radius: 8px; padding: 24px; margin: 0 0 24px 0; border-left: 4px solid #dc2626;">
       <h3 style="color: #111827; margin: 0 0 16px 0; font-size: 18px;">🌟 Your Impact</h3>
-      <p style="color: #374151; font-size: 15px; line-height: 1.6; margin: 0 0 16px 0;">
+      <p style="color: #374151; font-size: 15px; line-height: 1.6; margin: 0 0 16px 0;">${donationType === 'monthly' ? 'Your monthly support helps provide:' : 'Every dollar you contribute goes directly to:'}</p>
         Every dollar you contribute goes directly to:
       </p>
       <ul style="color: #4b5563; font-size: 14px; line-height: 1.8; margin: 0; padding-left: 20px;">
@@ -109,12 +112,15 @@ function donationReceiptHtml({ donorName, amount, currency, donationType, isEmer
 
 function donationReceiptText({ donorName, amount, currency, donationType, isEmergency, transactionId, timestamp }) {
   // SIMPLIFIED: No transaction details - focus on appreciation
+  const donationTypeText = donationType === 'monthly' ? 'monthly' : donationType === 'quarterly' ? 'quarterly' : donationType === 'annual' ? 'annual' : 'one-time';
+  const amountText = amount ? `$${amount.toFixed(2)}` : '';
+  
   const monthlyText = donationType === 'monthly' 
-    ? '\n\nYOU\'RE A MONTHLY HERO!\nAs a monthly supporter, you\'re providing consistent care that animals can count on. Your recurring donation means we can plan ahead and help even more animals.\n' 
+    ? '\n\nYOU\'RE A MONTHLY HERO!\nAs a monthly supporter, you\'re providing consistent care that animals can count on. Your recurring gift means we can plan ahead and help even more animals. Thank you for your ongoing commitment!\n' 
     : '';
     
   const emergencyText = isEmergency 
-    ? '\n\nEMERGENCY RESPONSE\nYour emergency donation will be used immediately for critical cases requiring urgent medical attention. Thank you for responding so quickly!\n' 
+    ? '\n\nEMERGENCY RESPONSE\nYour emergency contribution will be used immediately for critical cases requiring urgent medical attention. Thank you for responding so quickly!\n' 
     : '';
   
   return `
@@ -122,11 +128,11 @@ HALT SHELTER - Thank You for Making a Difference!
 
 Dear ${donorName},
 
-Your generous support has been received and is already making an impact! Every contribution helps us continue our mission to rescue, rehabilitate, and rehome animals in need.
+Your generous ${donationTypeText} gift${amountText ? ` of ${amountText}` : ''} has been received and is already making an impact! Every contribution helps us continue our mission to rescue, rehabilitate, and rehome animals in need.
 ${monthlyText}${emergencyText}
 YOUR IMPACT
 ===========
-Every dollar you contribute goes directly to:
+${donationType === 'monthly' ? 'Your monthly support helps provide:' : 'Every dollar you contribute goes directly to:'}
 - Emergency veterinary care and life-saving surgeries
 - Daily food, shelter, and compassionate rehabilitation
 - Finding loving forever homes for rescued animals

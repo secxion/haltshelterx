@@ -46,7 +46,6 @@
   "scripts": {
     "start": "cross-env PORT=3001 react-scripts start",
     "clean": "taskkill /F /IM node.exe /T & taskkill /F /IM stripe.exe /T & exit 0",
-    "predev": "npm run clean",
     "server": "node server/app.js",
     "stripe": "stripe listen --forward-to http://localhost:5000/api/donations/webhook",
     "webhook": "stripe listen --forward-to http://localhost:5000/api/donations/webhook",

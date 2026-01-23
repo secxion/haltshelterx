@@ -124,6 +124,8 @@ debug-*.html
 paths-to-remove.txt
 tracked_files.txt
 server/app.js.txt*
+start-stripe.bat
+start-stripe.sh
 
 # ------------------------
 # Logs & Database Files  
