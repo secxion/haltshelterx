@@ -44,9 +44,11 @@ function emailWrapper(content, { preheader = '' } = {}) {
 
 // Donation Receipt Email
 function donationReceiptHtml({ donorName, amount, currency, donationType, isEmergency, transactionId, timestamp }) {
-  // SIMPLIFIED: No transaction details - focus on appreciation and impact
-  const donationTypeText = donationType === 'monthly' ? 'monthly' : donationType === 'quarterly' ? 'quarterly' : donationType === 'annual' ? 'annual' : 'one-time';
+  const donationTypeText = donationType === 'monthly' ? 'Monthly' : donationType === 'quarterly' ? 'Quarterly' : donationType === 'annual' ? 'Annual' : 'One-Time';
   const amountText = amount ? `$${amount.toFixed(2)}` : '';
+  const currencyUpper = currency ? currency.toUpperCase() : 'USD';
+  const date = timestamp ? new Date(timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const receiptId = transactionId || 'Pending';
   
   const content = `
     <h2 style="color: #111827; margin: 0 0 16px 0; font-size: 24px;">Thank You for Making a Difference! 🐾</h2>
@@ -56,8 +58,34 @@ function donationReceiptHtml({ donorName, amount, currency, donationType, isEmer
     </p>
     
     <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
-      Your generous ${donationTypeText} gift${amountText ? ` of <strong style="color: #059669;">${amountText}</strong>` : ''} has been received and is already making an impact! Every contribution helps us continue our mission to rescue, rehabilitate, and rehome animals in need.
+      Your generous ${donationTypeText.toLowerCase()} gift${amountText ? ` of <strong style="color: #059669;">${amountText}</strong>` : ''} has been received and is already making an impact! Every contribution helps us continue our mission to rescue, rehabilitate, and rehome animals in need.
     </p>
+    
+    <!-- Receipt Details -->
+    <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 0 0 24px 0;">
+      <h3 style="color: #111827; margin: 0 0 16px 0; font-size: 18px;">📋 Receipt Details</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Receipt Number:</td>
+          <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 600; text-align: right;">${receiptId}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Date:</td>
+          <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 600; text-align: right;">${date}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Donation Type:</td>
+          <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 600; text-align: right;">${donationTypeText}</td>
+        </tr>
+        <tr style="border-top: 2px solid #e5e7eb;">
+          <td style="padding: 12px 0 8px 0; color: #111827; font-size: 16px; font-weight: 700;">Amount:</td>
+          <td style="padding: 12px 0 8px 0; color: #059669; font-size: 18px; font-weight: 700; text-align: right;">${amountText} ${currencyUpper}</td>
+        </tr>
+      </table>
+      <p style="color: #6b7280; font-size: 12px; line-height: 1.5; margin: 16px 0 0 0; font-style: italic;">
+        This receipt serves as confirmation of your donation. HALT Shelter is a registered 501(c)(3) nonprofit organization. Please consult your tax advisor for deductibility information.
+      </p>
+    </div>
     
     ${donationType === 'monthly' ? `
     <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 20px; margin: 0 0 24px 0;">
@@ -96,24 +124,26 @@ function donationReceiptHtml({ donorName, amount, currency, donationType, isEmer
       Follow our journey and see the animals you're helping on our social media, or visit our website to read success stories and updates.
     </p>
     
-    <p style="color: #6b7280; font-size: 13px; line-height: 1.6; margin: 0 0 24px 0; font-style: italic;">
-      Your donation is 100% secure and has been processed through Stripe. A detailed receipt has been sent separately for your records.
+    <p style="color: #6b7280; font-size: 13px; line-height: 1.6; margin: 0 0 24px 0;">
+      <strong>Questions?</strong> Contact us anytime at <a href="mailto:contact@haltshelter.org" style="color: #dc2626; text-decoration: none;">contact@haltshelter.org</a>
     </p>
     
     <p style="color: #374151; font-size: 15px; line-height: 1.6; margin: 0;">
       With heartfelt gratitude,<br/>
       <strong>The HALT Team</strong> 🐾<br/>
-      <span style="color: #6b7280; font-size: 13px;">haltshelter.org</span>
+      <span style="color: #6b7280; font-size: 13px;">Help Animals Live & Thrive<br/>haltshelter.org</span>
     </p>
   `;
 
-  return emailWrapper(content, { preheader: `Thank you for your compassion and support!` });
+  return emailWrapper(content, { preheader: `Receipt for your ${amountText} donation - Thank you!` });
 }
 
 function donationReceiptText({ donorName, amount, currency, donationType, isEmergency, transactionId, timestamp }) {
-  // SIMPLIFIED: No transaction details - focus on appreciation
-  const donationTypeText = donationType === 'monthly' ? 'monthly' : donationType === 'quarterly' ? 'quarterly' : donationType === 'annual' ? 'annual' : 'one-time';
+  const donationTypeText = donationType === 'monthly' ? 'Monthly' : donationType === 'quarterly' ? 'Quarterly' : donationType === 'annual' ? 'Annual' : 'One-Time';
   const amountText = amount ? `$${amount.toFixed(2)}` : '';
+  const currencyUpper = currency ? currency.toUpperCase() : 'USD';
+  const date = timestamp ? new Date(timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const receiptId = transactionId || 'Pending';
   
   const monthlyText = donationType === 'monthly' 
     ? '\n\nYOU\'RE A MONTHLY HERO!\nAs a monthly supporter, you\'re providing consistent care that animals can count on. Your recurring gift means we can plan ahead and help even more animals. Thank you for your ongoing commitment!\n' 
@@ -128,7 +158,16 @@ HALT SHELTER - Thank You for Making a Difference!
 
 Dear ${donorName},
 
-Your generous ${donationTypeText} gift${amountText ? ` of ${amountText}` : ''} has been received and is already making an impact! Every contribution helps us continue our mission to rescue, rehabilitate, and rehome animals in need.
+Your generous ${donationTypeText.toLowerCase()} gift${amountText ? ` of ${amountText}` : ''} has been received and is already making an impact! Every contribution helps us continue our mission to rescue, rehabilitate, and rehome animals in need.
+
+RECEIPT DETAILS
+===============
+Receipt Number: ${receiptId}
+Date: ${date}
+Donation Type: ${donationTypeText}
+Amount: ${amountText} ${currencyUpper}
+
+This receipt serves as confirmation of your donation. HALT Shelter is a registered 501(c)(3) nonprofit organization. Please consult your tax advisor for deductibility information.
 ${monthlyText}${emergencyText}
 YOUR IMPACT
 ===========
@@ -142,12 +181,13 @@ STAY CONNECTED
 ==============
 Follow our journey and see the animals you're helping on our social media, or visit our website to read success stories and updates.
 
-Your donation is 100% secure and has been processed through Stripe. A detailed receipt has been sent separately for your records.
+Questions? Contact us anytime at contact@haltshelter.org
 
 With heartfelt gratitude,
 The HALT Team 🐾
+Help Animals Live & Thrive
 
-haltshelter.org | contact@haltshelter.org
+haltshelter.org
   `.trim();
 }
 
