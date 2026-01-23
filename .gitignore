@@ -1,0 +1,148 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# ------------------------
+# Dependencies
+# ------------------------
+node_modules/
+**/node_modules/
+admin/node_modules/
+.pnp
+.pnp.js
+
+# ------------------------
+# Environment & Secrets
+# ------------------------
+.env
+.env.*
+.env.local
+.env.development
+.env.production
+.env.example
+admin/.env.example
+
+# ------------------------
+# Build & Production
+# ------------------------
+/build
+admin/build
+dist/
+.cache/
+out/
+.next/
+.tmp/
+
+# ------------------------
+# Testing & Coverage
+# ------------------------
+/coverage
+*.lcov
+
+# ------------------------
+# Logs & Debug
+# ------------------------
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ------------------------
+# IDE / System Files
+# ------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ------------------------
+# Misc / Other
+# ------------------------
+*.zip
+*.tar
+*.tgz
+*.bak
+*.old
+*.orig
+
+# ------------------------
+# Local development
+# ------------------------
+/admin/.cache/
+/admin/.parcel-cache/
+/admin/.next/
+/admin/dist/
+/admin/temp/
+/admin/tmp/
+
+# local env and large files
+.env
+stripe-cli.zip
+admin/node_modules/
+
+# ------------------------
+# Security - Documentation
+# ------------------------
+*.md
+!README.md
+README/
+ADMIN_KEY_README.md
+DONATION_AMOUNT_FIX.md
+HIGH_PRIORITY_TODO.md
+HOSTINGER_SMTP_SETUP.md
+INTEGRATION_COMPLETE.md
+LOCAL_EMAIL_TESTING.md
+NEWSLETTER_*.md
+RENDER_ENVIRONMENT_SETUP.md
+SENDGRID_SETUP.md
+SESSION_SUMMARY.md
+STRIPE_*.md
+URL_MASKING_IMPLEMENTATION.md
+
+# ------------------------
+# Security - Test Scripts
+# ------------------------
+test-*.js
+simple-test.js
+simple-webhook-test.js
+server/tests/
+server/test-*.js
+**/test-*.js
+add-*.js
+check-*.js
+fix-*.js
+diverse-animals-data.js
+
+# ------------------------
+# Security - Sensitive Files
+# ------------------------
+server/admin-key.json
+debug-*.html
+*.txt
+!package.json
+paths-to-remove.txt
+tracked_files.txt
+server/app.js.txt*
+
+# ------------------------
+# Logs & Database Files  
+# ------------------------
+*.log
+*.err
+server/logs/
+server/data.sqlite
+server/*.log
+
+# ------------------------
+# Stripe CLI (large binary)
+# ------------------------
+stripe-cli/
+*.exe
+
+# ------------------------
+# Simulation/Debug Utils
+# ------------------------
+server/utils/simulate-*.js
+server/utils/run-test-*.js
+scripts/
