@@ -99,7 +99,7 @@ const Animals = () => {
     longTerm: false,
     urgent: false,
   });
-  // const [quizRecommendations, setQuizRecommendations] = useState(null);
+  const [quizRecommendedSpecies, setQuizRecommendedSpecies] = useState([]);
 
   // Get urgent animals for spotlight
   const urgentAnimals = animals.filter(animal => animal.isUrgent || animal.urgentStory);
@@ -108,6 +108,10 @@ const Animals = () => {
   const animalOfWeek = animals.find(animal => animal.isAnimalOfWeek) || animals[0];
 
   useEffect(() => {
+    // Force scroll to top immediately when component mounts
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    
     fetchAvailableAnimals();
     fetchAnimalStatsBreakdown();
     
@@ -196,8 +200,14 @@ const Animals = () => {
   };
 
   const filteredAnimals = animals.filter(animal => {
-    // Filter by species
-    const speciesMatch = selectedSpecies === 'All' || animal.species === selectedSpecies;
+    // Filter by species (or quiz recommendations)
+    let speciesMatch;
+    if (quizRecommendedSpecies.length > 0 && selectedSpecies === 'Quiz Results') {
+      // Show all species recommended by quiz
+      speciesMatch = quizRecommendedSpecies.includes(animal.species);
+    } else {
+      speciesMatch = selectedSpecies === 'All' || animal.species === selectedSpecies;
+    }
     // Filter by search term
     const searchMatch = searchTerm === '' || 
       animal.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -214,18 +224,40 @@ const Animals = () => {
   };
 
   const handleQuizComplete = (recommendations, answers) => {
-  // setQuizRecommendations(recommendations);
-    // Filter animals based on quiz recommendations
+    // Store quiz recommendations for filtering
     const recommendedSpecies = recommendations.flatMap(rec => 
       Array.isArray(rec.species) ? rec.species : [rec.species]
     );
     
-    // Auto-filter to show recommended animals
-    if (recommendedSpecies.length > 0) {
-      setSelectedSpecies(recommendedSpecies[0]);
-    }
+    console.log('Quiz completed:', { recommendations, recommendedSpecies, answers });
+    console.log('Total animals in database:', animals.length);
+    console.log('Animals by species:', animals.reduce((acc, a) => {
+      acc[a.species] = (acc[a.species] || 0) + 1;
+      return acc;
+    }, {}));
     
-    console.log('Quiz completed:', { recommendations, answers });
+    // Store recommended species and set filter to show quiz results
+    setQuizRecommendedSpecies(recommendedSpecies);
+    setSelectedSpecies('Quiz Results');
+    
+    console.log('Showing all recommended species:', recommendedSpecies);
+    
+    // Scroll to animals filter section with proper timing
+    setTimeout(() => {
+      const animalsFilter = document.getElementById('animals-filter');
+      console.log('Scrolling to animals filter:', animalsFilter);
+      if (animalsFilter) {
+        // Get the position and scroll with offset for header
+        const headerOffset = 100;
+        const elementPosition = animalsFilter.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }, 500);
   };
 
   // Format the last updated time
@@ -1037,7 +1069,7 @@ const Animals = () => {
               />
             </div>
             {/* Species Filter */}
-            <div className="flex flex-wrap justify-center gap-2 mb-2">
+            <div id="animals-filter" className="flex flex-wrap justify-center gap-2 mb-2">
               {getSpeciesList().map(species => (
                 <button
                   key={species}

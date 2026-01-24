@@ -114,23 +114,46 @@ const PetCompatibilityQuiz = ({ onQuizComplete, onClose }) => {
       cats: 0,
       small: 0, // rabbits, guinea pigs, ferrets
       birds: 0,
-      farm: 0 // goats
+      farm: 0, // goats
+      intermediate: 0,
+      beginner: 0,
+      advanced: 0
     };
 
+    console.log('=== QUIZ DEBUG ===');
+    console.log('Answers:', answers);
+    
     // Calculate weighted scores
     Object.entries(answers).forEach(([questionId, answer]) => {
+      console.log(`Processing question: ${questionId}, answer: ${answer}`);
       const question = questions.find(q => q.id === questionId);
-      const option = question.options.find(opt => opt.value === answer);
+      console.log('Found question:', question?.question);
+      const option = question?.options.find(opt => opt.value === answer);
+      console.log('Found option:', option?.label, 'weight:', option?.weight);
       
       if (option && option.weight) {
         Object.entries(option.weight).forEach(([category, weight]) => {
-          scores[category] += weight;
+          if (scores.hasOwnProperty(category)) {
+            scores[category] += weight;
+            console.log(`Added ${weight} to ${category}, new score: ${scores[category]}`);
+          }
         });
       }
     });
+    
+    console.log('Final scores:', scores);
 
-    // Determine top recommendations
-    const sortedScores = Object.entries(scores)
+    // Only use pet type categories for recommendations (not experience levels)
+    const petScores = {
+      dogs: scores.dogs,
+      cats: scores.cats,
+      small: scores.small,
+      birds: scores.birds,
+      farm: scores.farm
+    };
+
+    // Determine top recommendations (only from pet types, not experience levels)
+    const sortedScores = Object.entries(petScores)
       .sort(([,a], [,b]) => b - a)
       .slice(0, 3);
 
@@ -173,10 +196,11 @@ const PetCompatibilityQuiz = ({ onQuizComplete, onClose }) => {
         }
       };
 
+      const maxScore = Math.max(...Object.values(petScores));
       return {
         ...categoryInfo[category],
         score,
-        percentage: Math.round((score / Math.max(...Object.values(scores))) * 100)
+        percentage: maxScore > 0 ? Math.round((score / maxScore) * 100) : 0
       };
     });
 
@@ -243,13 +267,8 @@ const PetCompatibilityQuiz = ({ onQuizComplete, onClose }) => {
             <div className="flex gap-3">
               <button
                 onClick={() => {
-                  if (onQuizComplete) {
-                    const mockRecommendations = [
-                      { name: 'Dogs', species: 'Dog', percentage: 85, commitment: 'High', icon: '🐕' },
-                      { name: 'Cats', species: 'Cat', percentage: 70, commitment: 'Medium', icon: '🐱' },
-                      { name: 'Small Pets', species: ['Rabbit', 'Guinea Pig'], percentage: 60, commitment: 'Medium', icon: '🐰' }
-                    ];
-                    onQuizComplete(mockRecommendations, answers);
+                  if (onQuizComplete && quizResults) {
+                    onQuizComplete(quizResults.recommendations, answers);
                   }
                   onClose();
                 }}
