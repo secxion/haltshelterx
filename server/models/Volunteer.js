@@ -126,7 +126,7 @@ const volunteerSchema = new mongoose.Schema({
   // Application Status
   applicationStatus: {
     type: String,
-    enum: ['pending', 'under-review', 'approved', 'rejected', 'inactive'],
+    enum: ['pending', 'under-review', 'approved', 'rejected', 'contacted', 'inactive'],
     default: 'pending'
   },
   applicationDate: {
