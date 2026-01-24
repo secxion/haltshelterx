@@ -20,11 +20,9 @@ router.get('/count', authenticate, authorize('admin', 'staff'), async (req, res)
 router.get('/foster-eligible', async (req, res) => {
   try {
     const query = { isFosterEligible: true, status: { $in: ['Available', 'Foster'] } };
-    console.log('Foster-eligible query:', query);
     const animals = await Animal.find(query)
-      .select('-medicalNotes -behavioralNotes')
+      .select('-medicalNotes -behaviorNotes')
       .sort({ createdAt: -1 });
-    console.log('Foster-eligible result:', animals);
     res.json(animals);
   } catch (error) {
     console.error('Get foster-eligible animals error:', error);
@@ -49,7 +47,7 @@ router.get('/', async (req, res) => {
     }
 
     const animals = await Animal.find(filter)
-      .select('-medicalNotes -behavioralNotes') // Hide sensitive info from public
+      .select('-medicalNotes -behaviorNotes') // Hide sensitive info from public
       .sort({ createdAt: -1 });
 
     console.log(`🐾 Public animals request: ${animals.length} available or recently adopted animals`);

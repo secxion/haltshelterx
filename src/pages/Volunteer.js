@@ -11,6 +11,9 @@ export default function Volunteer() {
     age: '',
     interests: [],
     availability: [],
+    availabilityDays: [],
+    availabilityTimes: [],
+    hoursPerWeek: '',
     experience: '',
     message: ''
   });
@@ -143,6 +146,9 @@ export default function Volunteer() {
         age: '',
         interests: [],
         availability: [],
+        availabilityDays: [],
+        availabilityTimes: [],
+        hoursPerWeek: '',
         experience: '',
         message: ''
       });
@@ -384,6 +390,91 @@ export default function Volunteer() {
                 ))}
               </div>
               {errors.availability && <p className="text-red-500 text-sm mt-1">{errors.availability}</p>}
+            </div>
+
+            {/* Available Days */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                Available Days (Optional)
+              </label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
+                  <label key={day} className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.availabilityDays.includes(day)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setFormData(prev => ({
+                            ...prev,
+                            availabilityDays: [...prev.availabilityDays, day]
+                          }));
+                        } else {
+                          setFormData(prev => ({
+                            ...prev,
+                            availabilityDays: prev.availabilityDays.filter(d => d !== day)
+                          }));
+                        }
+                      }}
+                      className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                    />
+                    <span className="text-sm text-gray-700">{day}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Available Times */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                Preferred Times (Optional)
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {['Morning (6am-12pm)', 'Afternoon (12pm-6pm)', 'Evening (6pm-12am)'].map(time => (
+                  <label key={time} className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.availabilityTimes.includes(time)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setFormData(prev => ({
+                            ...prev,
+                            availabilityTimes: [...prev.availabilityTimes, time]
+                          }));
+                        } else {
+                          setFormData(prev => ({
+                            ...prev,
+                            availabilityTimes: prev.availabilityTimes.filter(t => t !== time)
+                          }));
+                        }
+                      }}
+                      className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                    />
+                    <span className="text-sm text-gray-700">{time}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Hours Per Week */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Hours per Week (Optional)
+              </label>
+              <select
+                name="hoursPerWeek"
+                value={formData.hoursPerWeek}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              >
+                <option value="">Select...</option>
+                <option value="1-3">1-3 hours</option>
+                <option value="4-6">4-6 hours</option>
+                <option value="7-10">7-10 hours</option>
+                <option value="11-15">11-15 hours</option>
+                <option value="16-20">16-20 hours</option>
+                <option value="20+">20+ hours</option>
+              </select>
             </div>
 
             {/* Experience */}

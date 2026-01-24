@@ -23,6 +23,7 @@ export default function VolunteerManager() {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [interestFilter, setInterestFilter] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
 
   const statusOptions = [
@@ -31,6 +32,15 @@ export default function VolunteerManager() {
     { value: 'approved', label: 'Approved', color: 'text-green-600' },
     { value: 'rejected', label: 'Rejected', color: 'text-red-600' },
     { value: 'contacted', label: 'Contacted', color: 'text-blue-600' }
+  ];
+
+  const interestOptions = [
+    { value: 'all', label: 'All Interests' },
+    { value: 'fostering', label: '🏡 Foster Applications' },
+    { value: 'animal-care', label: 'Animal Care' },
+    { value: 'transport', label: 'Transport' },
+    { value: 'events', label: 'Events' },
+    { value: 'administrative', label: 'Administrative' }
   ];
 
   const sortOptions = [
@@ -66,6 +76,13 @@ export default function VolunteerManager() {
       );
     }
 
+    // Apply interest filter
+    if (interestFilter !== 'all') {
+      filtered = filtered.filter(volunteer => 
+        volunteer.interests && volunteer.interests.includes(interestFilter)
+      );
+    }
+
     // Apply sorting
     filtered.sort((a, b) => {
       switch (sortBy) {
@@ -87,7 +104,7 @@ export default function VolunteerManager() {
     });
 
     setFilteredVolunteers(filtered);
-  }, [volunteers, searchTerm, statusFilter, sortBy]);
+  }, [volunteers, searchTerm, statusFilter, interestFilter, sortBy]);
 
   useEffect(() => {
     fetchVolunteers();
@@ -124,7 +141,7 @@ export default function VolunteerManager() {
     }
   };
 
-  const updateVolunteerStatus = async (volunteerId, newStatus) => {
+  const updateVolunteerStatus = async (volunteerId, newStatus, reason = '', nextSteps = '') => {
     try {
       const adminToken = localStorage.getItem('adminToken');
       
@@ -134,7 +151,11 @@ export default function VolunteerManager() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${adminToken}`
         },
-        body: JSON.stringify({ status: newStatus })
+        body: JSON.stringify({ 
+          status: newStatus,
+          reason,
+          nextSteps
+        })
       });
 
       const data = await response.json();
@@ -152,7 +173,7 @@ export default function VolunteerManager() {
           setSelectedVolunteer({ ...selectedVolunteer, status: newStatus, applicationStatus: newStatus });
         }
         
-        alert(`Volunteer status updated to ${newStatus}`);
+        alert(`✅ Volunteer status updated to ${newStatus}. Email notification sent to applicant.`);
       } else {
         console.error('Error updating volunteer:', data.error);
         alert(`Error: ${data.error}`);
@@ -392,21 +413,30 @@ export default function VolunteerManager() {
           {/* Actions */}
           <div className="mt-6 flex flex-wrap gap-3">
             <button
-              onClick={() => updateVolunteerStatus(selectedVolunteer._id, 'approved')}
+              onClick={() => {
+                const nextSteps = prompt('📅 Optional: Enter next steps for the applicant (e.g., orientation date, what to bring):');
+                updateVolunteerStatus(selectedVolunteer._id, 'approved', '', nextSteps || '');
+              }}
               className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
             >
               <CheckCircleIcon className="w-4 h-4 mr-2" />
               Approve
             </button>
             <button
-              onClick={() => updateVolunteerStatus(selectedVolunteer._id, 'rejected')}
+              onClick={() => {
+                const reason = prompt('❌ Optional: Enter reason for rejection (will be included in email to applicant):');
+                updateVolunteerStatus(selectedVolunteer._id, 'rejected', reason || '', '');
+              }}
               className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center"
             >
               <XCircleIcon className="w-4 h-4 mr-2" />
               Reject
             </button>
             <button
-              onClick={() => updateVolunteerStatus(selectedVolunteer._id, 'contacted')}
+              onClick={() => {
+                const nextSteps = prompt('📞 Optional: Enter follow-up instructions (e.g., best time to reach them):');
+                updateVolunteerStatus(selectedVolunteer._id, 'contacted', '', nextSteps || '');
+              }}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
             >
               <PhoneIcon className="w-4 h-4 mr-2" />
@@ -642,6 +672,19 @@ export default function VolunteerManager() {
             ))}
           </select>
 
+          {/* Interest Filter */}
+          <select
+            value={interestFilter}
+            onChange={(e) => setInterestFilter(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            {interestOptions.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+
           {/* Sort */}
           <select
             value={sortBy}
@@ -734,9 +777,13 @@ export default function VolunteerManager() {
                         {(volunteer.interests || []).slice(0, 2).map((interest, index) => (
                           <span
                             key={index}
-                            className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
+                            className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                              interest === 'fostering' 
+                                ? 'bg-purple-100 text-purple-800 border border-purple-300' 
+                                : 'bg-blue-100 text-blue-800'
+                            }`}
                           >
-                            {interest}
+                            {interest === 'fostering' ? '🏡 ' + interest : interest}
                           </span>
                         ))}
                         {(volunteer.interests || []).length > 2 && (

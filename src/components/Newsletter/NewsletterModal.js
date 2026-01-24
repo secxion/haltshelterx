@@ -2,11 +2,6 @@ import React, { useState, useEffect } from 'react';
 import NewsletterForm from './NewsletterForm';
 import './NewsletterModal.css';
 
-/**
- * NewsletterModal Component
- * Full-screen modal for newsletter subscription
- * Used when user navigates with ?newsletter=true
- */
 const NewsletterModal = ({ isOpen, onClose }) => {
   const [fadeOut, setFadeOut] = useState(false);
 

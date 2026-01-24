@@ -21,16 +21,16 @@ const AnimalManager = () => {
     age: '',
     gender: 'Male',
     size: 'Medium',
-    color: '',
     status: 'Available',
     description: '',
     medicalNotes: '',
-    behavioralNotes: '',
+    behaviorNotes: '',
     isSpayedNeutered: false,
     isVaccinated: false,
     isMicrochipped: false,
+    specialNeeds: false,
+    specialNeedsDescription: '',
     adoptionFee: '',
-    location: '',
     photos: [],
     isUrgent: false,
     isAnimalOfTheWeek: false,
@@ -83,10 +83,14 @@ const AnimalManager = () => {
         fetchAnimals();
         resetForm();
         alert(editingAnimal ? 'Animal updated successfully!' : 'Animal added successfully!');
+      } else {
+        const errorData = await response.json();
+        console.error('Server error:', errorData);
+        alert(`Error saving animal: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Error saving animal:', error);
-      alert('Error saving animal');
+      alert('Error saving animal: ' + error.message);
     }
   };
 
@@ -99,16 +103,16 @@ const AnimalManager = () => {
       age: animal.age || '',
       gender: animal.gender || 'Male',
       size: animal.size || 'Medium',
-      color: animal.color || '',
       status: animal.status || 'Available',
       description: animal.description || '',
       medicalNotes: animal.medicalNotes || '',
-      behavioralNotes: animal.behavioralNotes || '',
+      behaviorNotes: animal.behaviorNotes || '',
       isSpayedNeutered: animal.isSpayedNeutered || false,
       isVaccinated: animal.isVaccinated || false,
       isMicrochipped: animal.isMicrochipped || false,
+      specialNeeds: animal.specialNeeds || false,
+      specialNeedsDescription: animal.specialNeedsDescription || '',
       adoptionFee: animal.adoptionFee || '',
-      location: animal.location || '',
       photos: animal.images ? animal.images.map(img => img.url) : [],
       isUrgent: animal.isUrgent || false,
       isAnimalOfTheWeek: animal.isAnimalOfTheWeek || false,
@@ -146,16 +150,16 @@ const AnimalManager = () => {
       age: '',
       gender: 'Male',
       size: 'Medium',
-      color: '',
       status: 'Available',
       description: '',
       medicalNotes: '',
-      behavioralNotes: '',
+      behaviorNotes: '',
       isSpayedNeutered: false,
       isVaccinated: false,
       isMicrochipped: false,
+      specialNeeds: false,
+      specialNeedsDescription: '',
       adoptionFee: '',
-      location: '',
       photos: [],
       isUrgent: false,
       isAnimalOfTheWeek: false,
@@ -237,9 +241,9 @@ const AnimalManager = () => {
     }
     // Define the fields to export
     const fields = [
-      'name', 'species', 'breed', 'age', 'gender', 'size', 'color', 'status',
-      'adoptionFee', 'location', 'isSpayedNeutered', 'isVaccinated', 'isMicrochipped',
-      'description', 'medicalNotes', 'behavioralNotes', 'images'
+      'name', 'species', 'breed', 'age', 'gender', 'size', 'status',
+      'adoptionFee', 'isSpayedNeutered', 'isVaccinated', 'isMicrochipped',
+      'description', 'medicalNotes', 'behaviorNotes', 'images'
     ];
     const csvRows = [];
     // Header
@@ -456,15 +460,7 @@ const AnimalManager = () => {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
-                <input
-                  type="text"
-                  value={formData.color}
-                  onChange={(e) => setFormData({...formData, color: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
+              {/* Color field removed - not in Animal model schema */}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
@@ -492,16 +488,8 @@ const AnimalManager = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                <input
-                  type="text"
-                  placeholder="Kennel #, Foster Home, etc."
-                  value={formData.location}
-                  onChange={(e) => setFormData({...formData, location: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
+              {/* Location field removed - model uses object structure {shelter, foster, city, state} */}
+              {/* TODO: Add structured location fields if needed */}
 
               {/* Medical Checkboxes */}
               <div className="md:col-span-2">
@@ -537,6 +525,28 @@ const AnimalManager = () => {
                 </div>
               </div>
 
+              {/* Special Needs */}
+              <div className="md:col-span-2">
+                <label className="flex items-center mb-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.specialNeeds}
+                    onChange={(e) => setFormData({...formData, specialNeeds: e.target.checked})}
+                    className="mr-2"
+                  />
+                  <span className="text-sm font-medium text-gray-700">Special Needs</span>
+                </label>
+                {formData.specialNeeds && (
+                  <textarea
+                    value={formData.specialNeedsDescription}
+                    onChange={(e) => setFormData({...formData, specialNeedsDescription: e.target.value})}
+                    rows="2"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md mt-2"
+                    placeholder="Describe special needs (medical conditions, dietary requirements, etc.)"
+                  />
+                )}
+              </div>
+
               {/* Description */}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
@@ -565,8 +575,8 @@ const AnimalManager = () => {
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Behavioral Notes</label>
                 <textarea
-                  value={formData.behavioralNotes}
-                  onChange={(e) => setFormData({...formData, behavioralNotes: e.target.value})}
+                  value={formData.behaviorNotes}
+                  onChange={(e) => setFormData({...formData, behaviorNotes: e.target.value})}
                   rows="2"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                   placeholder="Training needs, behavior with other animals, children..."

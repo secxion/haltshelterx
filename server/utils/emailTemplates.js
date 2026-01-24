@@ -395,5 +395,250 @@ module.exports = {
   newsletterWelcomeHtml,
   newsletterWelcomeText,
   newsletterBroadcastHtml,
-  newsletterBroadcastText
+  newsletterBroadcastText,
+  volunteerApplicationReceivedHtml,
+  volunteerApplicationReceivedText,
+  volunteerApplicationStatusHtml,
+  volunteerApplicationStatusText
 };
+
+// Volunteer Application Received (Confirmation)
+function volunteerApplicationReceivedHtml({ firstName, interests, applicationId }) {
+  const interestsList = interests && interests.length > 0 
+    ? interests.map(i => `<li style="color: #374151; font-size: 14px; margin: 4px 0;">${i === 'fostering' ? '🏡 Fostering' : i}</li>`).join('')
+    : '<li style="color: #374151; font-size: 14px;">General volunteering</li>';
+
+  const content = `
+    <h2 style="color: #111827; margin: 0 0 16px 0; font-size: 24px;">Thank You for Your Application! 🐾</h2>
+    
+    <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+      Dear <strong>${firstName}</strong>,
+    </p>
+    
+    <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+      We've received your volunteer application and are so grateful for your interest in helping animals! Your compassion and dedication are exactly what makes our mission possible.
+    </p>
+    
+    <!-- Application Details -->
+    <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 0 0 24px 0;">
+      <h3 style="color: #111827; margin: 0 0 16px 0; font-size: 18px;">📋 Application Details</h3>
+      <p style="color: #6b7280; font-size: 14px; margin: 0 0 8px 0;">Application ID: <strong style="color: #111827;">${applicationId}</strong></p>
+      <p style="color: #6b7280; font-size: 14px; margin: 0 0 12px 0;">Your interests:</p>
+      <ul style="margin: 0; padding-left: 20px;">
+        ${interestsList}
+      </ul>
+    </div>
+    
+    <!-- What's Next -->
+    <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 20px; margin: 0 0 24px 0;">
+      <h3 style="color: #1e40af; margin: 0 0 12px 0; font-size: 18px;">� What Happens Next?</h3>
+      <ol style="margin: 0; padding-left: 20px; color: #1e40af; font-size: 14px; line-height: 1.8;">
+        <li>Our volunteer coordinator will review your application within 24-48 hours</li>
+        <li>We'll contact you to schedule an orientation session</li>
+        <li>You'll learn about our animals and how you can make the biggest impact</li>
+        <li>Start making a difference in animals' lives! 🎉</li>
+      </ol>
+    </div>
+    
+    <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+      While you wait, feel free to explore our website to learn more about our animals and mission. If you have any questions, don't hesitate to reach out!
+    </p>
+    
+    <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0;">
+      With gratitude,<br/>
+      <strong style="color: #dc2626;">The HALT Shelter Team</strong>
+    </p>
+  `;
+
+  return emailWrapper(content, { preheader: 'Your volunteer application has been received!' });
+}
+
+function volunteerApplicationReceivedText({ firstName, interests, applicationId }) {
+  const interestsList = interests && interests.length > 0 
+    ? interests.map(i => `  - ${i === 'fostering' ? '🏡 Fostering' : i}`).join('\n')
+    : '  - General volunteering';
+
+  return `
+Thank You for Your Application! 🐾
+
+Dear ${firstName},
+
+We've received your volunteer application and are so grateful for your interest in helping animals! Your compassion and dedication are exactly what makes our mission possible.
+
+APPLICATION DETAILS
+-------------------
+Application ID: ${applicationId}
+Your interests:
+${interestsList}
+
+WHAT HAPPENS NEXT?
+------------------
+1. Our volunteer coordinator will review your application within 24-48 hours
+2. We'll contact you to schedule an orientation session
+3. You'll learn about our animals and how you can make the biggest impact
+4. Start making a difference in animals' lives! 🎉
+
+While you wait, feel free to explore our website to learn more about our animals and mission. If you have any questions, don't hesitate to reach out!
+
+With gratitude,
+The HALT Shelter Team
+
+---
+HALT Shelter | haltshelter.org | contact@haltshelter.org
+  `.trim();
+}
+
+// Volunteer Application Status Update
+function volunteerApplicationStatusHtml({ firstName, status, reason, nextSteps }) {
+  let statusColor, statusIcon, statusMessage, detailsContent;
+
+  switch(status) {
+    case 'approved':
+      statusColor = '#059669';
+      statusIcon = '✅';
+      statusMessage = 'Your Application Has Been Approved!';
+      detailsContent = `
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+          Congratulations! We're excited to welcome you to the HALT Shelter volunteer family. Your dedication and compassion will make a real difference in the lives of animals who need it most.
+        </p>
+      `;
+      break;
+    
+    case 'contacted':
+      statusColor = '#2563eb';
+      statusIcon = '📞';
+      statusMessage = 'We\'ve Tried to Reach You';
+      detailsContent = `
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+          We attempted to contact you regarding your volunteer application. Please reach out to us at your earliest convenience so we can discuss the next steps!
+        </p>
+      `;
+      break;
+    
+    case 'under-review':
+      statusColor = '#d97706';
+      statusIcon = '🔍';
+      statusMessage = 'Your Application is Under Review';
+      detailsContent = `
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+          Thank you for your patience! Our team is carefully reviewing your application and volunteer preferences. We'll be in touch soon with an update.
+        </p>
+      `;
+      break;
+    
+    case 'rejected':
+      statusColor = '#dc2626';
+      statusIcon = '❌';
+      statusMessage = 'Application Status Update';
+      detailsContent = `
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+          Thank you for your interest in volunteering with HALT Shelter. After careful consideration, we're unable to move forward with your application at this time.
+        </p>
+        ${reason ? `
+        <div style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px; margin: 0 0 24px 0;">
+          <p style="color: #991b1b; font-size: 14px; margin: 0;"><strong>Reason:</strong> ${reason}</p>
+        </div>
+        ` : ''}
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+          We appreciate your interest in helping animals and encourage you to continue supporting animal welfare in your community.
+        </p>
+      `;
+      break;
+    
+    default:
+      statusColor = '#6b7280';
+      statusIcon = '📋';
+      statusMessage = 'Application Status Update';
+      detailsContent = `
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+          We wanted to update you on the status of your volunteer application.
+        </p>
+      `;
+  }
+
+  const content = `
+    <h2 style="color: ${statusColor}; margin: 0 0 16px 0; font-size: 24px;">${statusIcon} ${statusMessage}</h2>
+    
+    <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+      Dear <strong>${firstName}</strong>,
+    </p>
+    
+    ${detailsContent}
+    
+    ${nextSteps ? `
+    <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 20px; margin: 0 0 24px 0;">
+      <h3 style="color: #1e40af; margin: 0 0 12px 0; font-size: 18px;">� Next Steps</h3>
+      <p style="color: #1e40af; margin: 0; font-size: 14px; line-height: 1.6;">${nextSteps}</p>
+    </div>
+    ` : ''}
+    
+    <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
+      If you have any questions, please don't hesitate to contact us at <a href="mailto:contact@haltshelter.org" style="color: #dc2626; text-decoration: none;">contact@haltshelter.org</a>
+    </p>
+    
+    <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0;">
+      ${status === 'approved' ? 'Welcome to the team!' : 'Thank you for your interest,'}
+      <br/>
+      <strong style="color: #dc2626;">The HALT Shelter Team</strong>
+    </p>
+  `;
+
+  return emailWrapper(content, { preheader: statusMessage });
+}
+
+function volunteerApplicationStatusText({ firstName, status, reason, nextSteps }) {
+  let statusIcon, statusMessage, detailsContent;
+
+  switch(status) {
+    case 'approved':
+      statusIcon = '✅';
+      statusMessage = 'Your Application Has Been Approved!';
+      detailsContent = `Congratulations! We're excited to welcome you to the HALT Shelter volunteer family. Your dedication and compassion will make a real difference in the lives of animals who need it most.`;
+      break;
+    
+    case 'contacted':
+      statusIcon = '📞';
+      statusMessage = 'We\'ve Tried to Reach You';
+      detailsContent = `We attempted to contact you regarding your volunteer application. Please reach out to us at your earliest convenience so we can discuss the next steps!`;
+      break;
+    
+    case 'under-review':
+      statusIcon = '🔍';
+      statusMessage = 'Your Application is Under Review';
+      detailsContent = `Thank you for your patience! Our team is carefully reviewing your application and volunteer preferences. We'll be in touch soon with an update.`;
+      break;
+    
+    case 'rejected':
+      statusIcon = '❌';
+      statusMessage = 'Application Status Update';
+      detailsContent = `Thank you for your interest in volunteering with HALT Shelter. After careful consideration, we're unable to move forward with your application at this time.${reason ? `\n\nReason: ${reason}` : ''}\n\nWe appreciate your interest in helping animals and encourage you to continue supporting animal welfare in your community.`;
+      break;
+    
+    default:
+      statusIcon = '📋';
+      statusMessage = 'Application Status Update';
+      detailsContent = `We wanted to update you on the status of your volunteer application.`;
+  }
+
+  return `
+${statusIcon} ${statusMessage}
+
+Dear ${firstName},
+
+${detailsContent}
+
+${nextSteps ? `
+NEXT STEPS
+----------
+${nextSteps}
+` : ''}
+
+If you have any questions, please don't hesitate to contact us at contact@haltshelter.org
+
+${status === 'approved' ? 'Welcome to the team!' : 'Thank you for your interest,'}
+The HALT Shelter Team
+
+---
+HALT Shelter | haltshelter.org | contact@haltshelter.org
+  `.trim();
+}

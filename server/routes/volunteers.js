@@ -1,7 +1,14 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const { Volunteer } = require('../models');
+const { Volunteer, NewsletterSubscriber } = require('../models');
 const { authenticate, authorize } = require('../middleware/auth');
+const { sendEmail } = require('../utils/email');
+const { 
+  volunteerApplicationReceivedHtml, 
+  volunteerApplicationReceivedText,
+  volunteerApplicationStatusHtml,
+  volunteerApplicationStatusText
+} = require('../utils/emailTemplates');
 
 const router = express.Router();
 
@@ -37,7 +44,11 @@ router.post('/apply', [
       email,
       phone,
       age,
+      address,
       availability,
+      availabilityDays,
+      availabilityTimes,
+      hoursPerWeek,
       interests,
       experience,
       message
@@ -56,13 +67,33 @@ router.post('/apply', [
     const firstName = nameParts[0] || '';
     const lastName = nameParts.slice(1).join(' ') || nameParts[0] || 'N/A';
 
+    // Parse address if provided (simple format: "City, State" or full address)
+    let addressObj = {};
+    if (address) {
+      const addressParts = address.split(',').map(p => p.trim());
+      if (addressParts.length >= 2) {
+        addressObj = {
+          street: addressParts[0] || '',
+          city: addressParts[addressParts.length - 2] || '',
+          state: addressParts[addressParts.length - 1] || ''
+        };
+      } else {
+        addressObj = {
+          street: address,
+          city: '',
+          state: ''
+        };
+      }
+    }
+
     const volunteer = new Volunteer({
       personalInfo: {
         firstName,
         lastName,
         email,
         phone,
-        age: age ? parseInt(age) : undefined
+        age: age ? parseInt(age) : undefined,
+        address: Object.keys(addressObj).length > 0 ? addressObj : undefined
       },
       interests,
       experience: {
@@ -70,23 +101,75 @@ router.post('/apply', [
         volunteerExperience: message || ''
       },
       availability: {
-        // Convert simple availability array to structured format
+        days: availabilityDays || [],
+        times: availabilityTimes || [],
+        hoursPerWeek: hoursPerWeek || 'Not specified',
+        // Convert simple availability array to structured format for backward compatibility
         weekdays: {
-          monday: { available: availability.includes('Weekday mornings') || availability.includes('Weekday afternoons') || availability.includes('Weekday evenings'), timeSlots: [] },
-          tuesday: { available: availability.includes('Weekday mornings') || availability.includes('Weekday afternoons') || availability.includes('Weekday evenings'), timeSlots: [] },
-          wednesday: { available: availability.includes('Weekday mornings') || availability.includes('Weekday afternoons') || availability.includes('Weekday evenings'), timeSlots: [] },
-          thursday: { available: availability.includes('Weekday mornings') || availability.includes('Weekday afternoons') || availability.includes('Weekday evenings'), timeSlots: [] },
-          friday: { available: availability.includes('Weekday mornings') || availability.includes('Weekday afternoons') || availability.includes('Weekday evenings'), timeSlots: [] }
+          monday: { available: (availabilityDays || []).includes('Monday'), timeSlots: [] },
+          tuesday: { available: (availabilityDays || []).includes('Tuesday'), timeSlots: [] },
+          wednesday: { available: (availabilityDays || []).includes('Wednesday'), timeSlots: [] },
+          thursday: { available: (availabilityDays || []).includes('Thursday'), timeSlots: [] },
+          friday: { available: (availabilityDays || []).includes('Friday'), timeSlots: [] }
         },
         weekends: {
-          saturday: { available: availability.includes('Weekend mornings') || availability.includes('Weekend afternoons') || availability.includes('Weekend evenings'), timeSlots: [] },
-          sunday: { available: availability.includes('Weekend mornings') || availability.includes('Weekend afternoons') || availability.includes('Weekend evenings'), timeSlots: [] }
+          saturday: { available: (availabilityDays || []).includes('Saturday'), timeSlots: [] },
+          sunday: { available: (availabilityDays || []).includes('Sunday'), timeSlots: [] }
         }
       },
       applicationStatus: 'pending'
     });
 
     await volunteer.save();
+
+    // Automatically subscribe to newsletter
+    try {
+      const existingSubscriber = await NewsletterSubscriber.findOne({ email });
+      if (!existingSubscriber) {
+        const subscriber = new NewsletterSubscriber({
+          email,
+          firstName: firstName,
+          lastName: lastName,
+          status: 'confirmed', // Auto-confirm since they filled application
+          source: interests.includes('fostering') ? 'foster-application' : 'volunteer-application',
+          subscriptionSource: interests.includes('fostering') ? 'Foster Application Form' : 'Volunteer Application Form',
+          tags: interests || [],
+          subscribedAt: new Date(),
+          confirmedAt: new Date(),
+          gdprConsent: true,
+          consentDate: new Date()
+        });
+        await subscriber.save();
+        console.log('✅ Automatically subscribed to newsletter:', email);
+      } else {
+        console.log('ℹ️  Already subscribed to newsletter:', email);
+      }
+    } catch (newsletterError) {
+      console.error('⚠️  Failed to subscribe to newsletter:', newsletterError.message);
+      // Don't fail the application if newsletter subscription fails
+    }
+
+    // Send confirmation email to applicant
+    try {
+      await sendEmail({
+        to: email,
+        subject: '🐾 Thank You for Your Volunteer Application - HALT Shelter',
+        html: volunteerApplicationReceivedHtml({
+          firstName,
+          interests: interests || [],
+          applicationId: volunteer._id.toString()
+        }),
+        text: volunteerApplicationReceivedText({
+          firstName,
+          interests: interests || [],
+          applicationId: volunteer._id.toString()
+        })
+      });
+      console.log('✅ Confirmation email sent to:', email);
+    } catch (emailError) {
+      console.error('⚠️  Failed to send confirmation email:', emailError.message);
+      // Don't fail the application if email fails
+    }
 
     res.status(201).json({
       success: true,
@@ -242,9 +325,9 @@ router.get('/applications', authenticate, async (req, res) => {
 // Update volunteer status (admin only)
 router.put('/applications/:id', authenticate, async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, reason, nextSteps } = req.body;
     
-    const validStatuses = ['pending', 'approved', 'rejected', 'contacted'];
+    const validStatuses = ['pending', 'approved', 'rejected', 'contacted', 'under-review'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
@@ -260,12 +343,44 @@ router.put('/applications/:id', authenticate, async (req, res) => {
       });
     }
 
+    const oldStatus = volunteer.applicationStatus;
     volunteer.applicationStatus = status;
     if (status === 'approved') {
       volunteer.approvedDate = new Date();
     }
     
     await volunteer.save();
+
+    // Send status update email to applicant (only if status actually changed)
+    if (oldStatus !== status) {
+      try {
+        const firstName = volunteer.personalInfo?.firstName || 'Volunteer';
+        const email = volunteer.personalInfo?.email;
+        
+        if (email) {
+          await sendEmail({
+            to: email,
+            subject: `Application Status Update - HALT Shelter`,
+            html: volunteerApplicationStatusHtml({
+              firstName,
+              status,
+              reason,
+              nextSteps
+            }),
+            text: volunteerApplicationStatusText({
+              firstName,
+              status,
+              reason,
+              nextSteps
+            })
+          });
+          console.log(`✅ Status update email sent to: ${email} (Status: ${status})`);
+        }
+      } catch (emailError) {
+        console.error('⚠️  Failed to send status update email:', emailError.message);
+        // Don't fail the status update if email fails
+      }
+    }
 
     res.json({
       success: true,

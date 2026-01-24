@@ -100,6 +100,8 @@ const volunteerSchema = new mongoose.Schema({
   },
 
   availability: {
+    days: [String], // Array of available days (e.g., ['Monday', 'Tuesday'])
+    times: [String], // Array of available times (e.g., ['Morning (6am-12pm)', 'Evening (6pm-12am)'])
     weekdays: {
       monday: { available: Boolean, timeSlots: [String] },
       tuesday: { available: Boolean, timeSlots: [String] },

@@ -49,7 +49,12 @@ router.post('/', authenticate, async (req, res) => {
     res.status(201).json(animal);
   } catch (error) {
     console.error('Error creating animal:', error);
-    res.status(500).json({ error: 'Failed to create animal' });
+    console.error('Error details:', error.message);
+    if (error.name === 'ValidationError') {
+      const validationErrors = Object.values(error.errors).map(e => e.message);
+      return res.status(400).json({ error: 'Validation failed: ' + validationErrors.join(', ') });
+    }
+    res.status(500).json({ error: 'Failed to create animal: ' + error.message });
   }
 });
 

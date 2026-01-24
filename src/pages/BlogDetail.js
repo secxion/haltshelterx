@@ -118,6 +118,13 @@ export default function BlogDetail() {
         // sync likes from server
         setLikes(res.data.likes);
 
+        // Sync the liked state based on what the server actually did
+        if (res.data.added) {
+          setLiked(true);
+        } else if (res.data.removed) {
+          setLiked(false);
+        }
+
         // Update local cache for anonymous users or to remember client-side
         const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
         if (res.data.added) {

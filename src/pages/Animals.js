@@ -152,15 +152,12 @@ const Animals = () => {
       }
       const API_BASE = process.env.REACT_APP_API_URL || '/api';
       const url = `${API_BASE}/animals/stats/breakdown`;
-      console.log('Fetching breakdown from:', url);
       const res = await fetch(url);
-      console.log('Breakdown response status:', res.status);
       if (!res.ok) {
         console.error('Breakdown fetch failed with status:', res.status);
         return;
       }
       const data = await res.json();
-      console.log('Breakdown data received:', data);
       if (data) {
         setStatusBreakdown(data);
         setLastUpdated(new Date());
@@ -229,23 +226,13 @@ const Animals = () => {
       Array.isArray(rec.species) ? rec.species : [rec.species]
     );
     
-    console.log('Quiz completed:', { recommendations, recommendedSpecies, answers });
-    console.log('Total animals in database:', animals.length);
-    console.log('Animals by species:', animals.reduce((acc, a) => {
-      acc[a.species] = (acc[a.species] || 0) + 1;
-      return acc;
-    }, {}));
-    
     // Store recommended species and set filter to show quiz results
     setQuizRecommendedSpecies(recommendedSpecies);
     setSelectedSpecies('Quiz Results');
     
-    console.log('Showing all recommended species:', recommendedSpecies);
-    
     // Scroll to animals filter section with proper timing
     setTimeout(() => {
       const animalsFilter = document.getElementById('animals-filter');
-      console.log('Scrolling to animals filter:', animalsFilter);
       if (animalsFilter) {
         // Get the position and scroll with offset for header
         const headerOffset = 100;
@@ -340,7 +327,6 @@ const Animals = () => {
         }
 
         const result = await response.json();
-        console.log('Adoption inquiry submitted successfully:', result);
         alert('Thank you for your interest! We have received your adoption inquiry and will contact you soon.');
         onClose();
       } catch (error) {

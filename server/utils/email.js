@@ -489,4 +489,9 @@ async function sendReceiptEmail({ to, subject, html, text }) {
   throw error;
 }
 
-module.exports = { sendReceiptEmail };
+// Generic send email function (alias for sendReceiptEmail)
+async function sendEmail({ to, subject, html, text }) {
+  return await sendReceiptEmail({ to, subject, html, text });
+}
+
+module.exports = { sendReceiptEmail, sendEmail };

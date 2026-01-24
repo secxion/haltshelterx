@@ -39,7 +39,7 @@ const newsletterSubscriberSchema = new mongoose.Schema({
   // Source Tracking
   source: {
     type: String,
-    enum: ['website', 'donation-form', 'event', 'social-media', 'referral', 'import'],
+    enum: ['website', 'donation-form', 'event', 'social-media', 'referral', 'import', 'volunteer-application', 'foster-application'],
     default: 'website'
   },
   subscriptionSource: String,
