@@ -282,6 +282,7 @@ app.post('/api/admin-auth/admin-login', adminLoginLimiter, checkAdminOrigin, (re
   try {
     // Use environment variable for admin key (secure for production)
     let storedAdminKey = process.env.ADMIN_KEY;
+    let backupAdminKey = process.env.BACKUP_ADMIN_KEY;
     
     // Fallback to file-based key only in development (for backwards compatibility)
     if (!storedAdminKey && NODE_ENV !== 'production') {
@@ -300,7 +301,10 @@ app.post('/api/admin-auth/admin-login', adminLoginLimiter, checkAdminOrigin, (re
       return res.status(500).json({ error: 'Server configuration error' });
     }
     
-    if (adminKey === storedAdminKey) {
+    // Check against primary key OR backup key
+    const isValidKey = (adminKey === storedAdminKey) || (backupAdminKey && adminKey === backupAdminKey);
+    
+    if (isValidKey) {
       // Generate real JWT token
       const token = jwt.sign(
         { 
