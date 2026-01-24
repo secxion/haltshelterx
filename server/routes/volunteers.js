@@ -36,6 +36,7 @@ router.post('/apply', [
       name,
       email,
       phone,
+      age,
       availability,
       interests,
       experience,
@@ -53,14 +54,15 @@ router.post('/apply', [
     // Split name into first and last name
     const nameParts = name.trim().split(' ');
     const firstName = nameParts[0] || '';
-    const lastName = nameParts.slice(1).join(' ') || '';
+    const lastName = nameParts.slice(1).join(' ') || nameParts[0] || 'N/A';
 
     const volunteer = new Volunteer({
       personalInfo: {
         firstName,
         lastName,
         email,
-        phone
+        phone,
+        age: age ? parseInt(age) : undefined
       },
       interests,
       experience: {

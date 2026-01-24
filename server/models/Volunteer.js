@@ -37,6 +37,11 @@ const volunteerSchema = new mongoose.Schema({
       }
     },
     dateOfBirth: Date,
+    age: {
+      type: Number,
+      min: 16,
+      max: 120
+    },
     emergencyContact: {
       name: String,
       phone: String,
