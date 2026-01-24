@@ -88,10 +88,9 @@ if (NODE_ENV === 'production' && fs.existsSync(FRONTEND_BUILD_PATH)) {
     'https://haltshelter.onrender.com',
     'https://haltshelter.org',
     'https://www.haltshelter.org',
-    'https://halt-admin.onrender.com',  // Admin panel production URL
     'https://admin.haltshelter.org',    // Custom admin domain if set up
     process.env.FRONTEND_URL,
-    process.env.ADMIN_PANEL_URL
+    process.env.ADMIN_PANEL_URL         // Admin panel URL from environment variable
   ].filter(Boolean);
   
   console.log('🌐 CORS set to production whitelist:', productionWhitelist);
@@ -281,18 +280,27 @@ app.post('/api/admin-auth/admin-login', adminLoginLimiter, checkAdminOrigin, (re
   const { adminKey } = req.body;
   
   try {
-    // Read the stored admin key from the project root (simpler for single-repo deployment)
-    const adminKeyPath = path.join(__dirname, 'admin-key.json');
-    let storedAdminKey = 'test123'; // Default fallback
+    // Use environment variable for admin key (secure for production)
+    let storedAdminKey = process.env.ADMIN_KEY;
     
-    if (fs.existsSync(adminKeyPath)) {
-      const adminKeyData = JSON.parse(fs.readFileSync(adminKeyPath, 'utf8'));
-      storedAdminKey = adminKeyData.adminKey;
+    // Fallback to file-based key only in development (for backwards compatibility)
+    if (!storedAdminKey && NODE_ENV !== 'production') {
+      const adminKeyPath = path.join(__dirname, 'admin-key.json');
+      if (fs.existsSync(adminKeyPath)) {
+        const adminKeyData = JSON.parse(fs.readFileSync(adminKeyPath, 'utf8'));
+        storedAdminKey = adminKeyData.adminKey;
+      } else {
+        storedAdminKey = 'test123'; // Development fallback only
+      }
     }
     
-    // Check against stored key and allow test key in non-production
-    const isTestLegacyKey = (NODE_ENV !== 'production' && adminKey === 'test123');
-    if (adminKey === storedAdminKey || isTestLegacyKey) {
+    // In production, ADMIN_KEY environment variable is required
+    if (!storedAdminKey) {
+      console.error('❌ ADMIN_KEY environment variable not set');
+      return res.status(500).json({ error: 'Server configuration error' });
+    }
+    
+    if (adminKey === storedAdminKey) {
       // Generate real JWT token
       const token = jwt.sign(
         { 
