@@ -47,8 +47,8 @@ if (rawTrust !== undefined) {
     app.set('trust proxy', rawTrust);
   }
 } else {
-  // Safer default for general use
-  app.set('trust proxy', NODE_ENV === 'production' ? true : false); 
+  // For Render/Heroku, trust only the first proxy (most secure for rate limiting)
+  app.set('trust proxy', NODE_ENV === 'production' ? 1 : false); 
 }
 
 // Connect to MongoDB (non-blocking)
