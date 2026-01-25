@@ -94,40 +94,54 @@ if (NODE_ENV === 'production' && fs.existsSync(FRONTEND_BUILD_PATH)) {
     process.env.ADMIN_PANEL_URL         // Admin panel URL from environment variable
   ].filter(Boolean);
   
+  // Paths that are allowed without origin header (health checks, webhooks)
+  const allowedPathsWithoutOrigin = [
+    '/api/health',
+    '/api/donations/webhook',
+    '/api/placeholder/'
+  ];
+  
   console.log('🌐 CORS set to production whitelist:', productionWhitelist);
-  app.use(cors({
-    origin: function (origin, callback) {
-      // Allow requests without origin ONLY for specific endpoints
-      if (!origin) {
-        // These endpoints need to work without origin (health checks, webhooks, etc.)
-        const path = this.req?.path || '';
-        const allowedPathsWithoutOrigin = [
-          '/api/health',
-          '/api/donations/webhook',
-          '/api/placeholder/',
-        ];
-        
-        const isAllowedPath = allowedPathsWithoutOrigin.some(p => path.startsWith(p));
-        
-        if (isAllowedPath) {
-          console.log(`[CORS] Allowed no-origin request to: ${path}`);
-          return callback(null, true);
-        } else {
-          console.warn(`[CORS] BLOCKED no-origin request to: ${path}`);
-          return callback(new Error('Origin header required'), false);
-        }
+  
+  // Custom CORS middleware with path-based exceptions
+  app.use((req, res, next) => {
+    const origin = req.get('origin');
+    const path = req.path;
+    
+    // Allow specific paths without origin (health checks, webhooks)
+    if (!origin && allowedPathsWithoutOrigin.some(p => path.startsWith(p))) {
+      console.log(`[CORS] Allowed no-origin request to: ${path}`);
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+      if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
       }
-      
-      if (productionWhitelist.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.error(`[CORS] BLOCKED origin: ${origin}`);
-        callback(new Error('Not allowed by CORS'), false);
+      return next();
+    }
+    
+    // Require origin for all other paths
+    if (!origin) {
+      console.warn(`[CORS] BLOCKED no-origin request to: ${path}`);
+      return res.status(403).json({ error: 'Origin header required' });
+    }
+    
+    // Check if origin is whitelisted
+    if (productionWhitelist.includes(origin)) {
+      res.header('Access-Control-Allow-Origin', origin);
+      res.header('Access-Control-Allow-Credentials', 'true');
+      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+      if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
       }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    credentials: true,
-  }));
+      return next();
+    }
+    
+    // Origin not whitelisted
+    console.error(`[CORS] BLOCKED origin: ${origin} for path: ${path}`);
+    return res.status(403).json({ error: 'Not allowed by CORS' });
+  });
 } else {
   // Development CORS: Allows a specific whitelist. The whitelist can be simplified 
   // or completely opened for development/testing if needed.
