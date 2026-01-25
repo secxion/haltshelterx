@@ -97,11 +97,27 @@ if (NODE_ENV === 'production' && fs.existsSync(FRONTEND_BUILD_PATH)) {
   console.log('🌐 CORS set to production whitelist:', productionWhitelist);
   app.use(cors({
     origin: function (origin, callback) {
-      // Reject requests without origin in production for security
+      // Allow requests without origin ONLY for specific endpoints
       if (!origin) {
-        console.warn('[CORS] BLOCKED request without origin');
-        return callback(new Error('Origin header required'), false);
+        // These endpoints need to work without origin (health checks, webhooks, etc.)
+        const path = this.req?.path || '';
+        const allowedPathsWithoutOrigin = [
+          '/api/health',
+          '/api/donations/webhook',
+          '/api/placeholder/',
+        ];
+        
+        const isAllowedPath = allowedPathsWithoutOrigin.some(p => path.startsWith(p));
+        
+        if (isAllowedPath) {
+          console.log(`[CORS] Allowed no-origin request to: ${path}`);
+          return callback(null, true);
+        } else {
+          console.warn(`[CORS] BLOCKED no-origin request to: ${path}`);
+          return callback(new Error('Origin header required'), false);
+        }
       }
+      
       if (productionWhitelist.includes(origin)) {
         callback(null, true);
       } else {
