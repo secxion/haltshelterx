@@ -18,6 +18,7 @@ router.post('/', [
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('❌ Adoption inquiry validation failed:', errors.array());
       return res.status(400).json({ errors: errors.array() });
     }
 
@@ -26,10 +27,12 @@ router.post('/', [
     // Verify animal exists and is available
     const animal = await Animal.findById(animalId);
     if (!animal) {
+      console.log(`❌ Adoption inquiry failed: Animal ${animalId} not found`);
       return res.status(404).json({ error: 'Animal not found' });
     }
 
     if (animal.status !== 'Available') {
+      console.log(`❌ Adoption inquiry failed: ${animal.name} status is "${animal.status}", not Available`);
       return res.status(400).json({ error: 'This animal is no longer available for adoption' });
     }
 
@@ -41,6 +44,7 @@ router.post('/', [
     });
 
     if (existingInquiry) {
+      console.log(`❌ Adoption inquiry failed: ${email} already has pending inquiry for ${animal.name}`);
       return res.status(400).json({ error: 'You already have a pending inquiry for this animal' });
     }
 
