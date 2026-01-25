@@ -96,9 +96,11 @@ if (NODE_ENV === 'production' && fs.existsSync(FRONTEND_BUILD_PATH)) {
   
   // Paths that are allowed without origin header (health checks, webhooks)
   const allowedPathsWithoutOrigin = [
-    '/api/health',
-    '/api/donations/webhook',
-    '/api/placeholder/'
+    '/',                        // Root path (Render health checks)
+    '/favicon.ico',             // Browser favicon requests
+    '/api/health',              // Health check endpoint
+    '/api/donations/webhook',   // Stripe webhook
+    '/api/placeholder/'         // Placeholder images
   ];
   
   console.log('🌐 CORS set to production whitelist:', productionWhitelist);
