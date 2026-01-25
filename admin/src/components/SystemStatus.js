@@ -190,7 +190,6 @@ const SystemStatus = () => {
         <StatusCard
           title="Admin Panel"
           status={adminStatus.status}
-          url={adminStatus.url}
         />
       </div>
 
