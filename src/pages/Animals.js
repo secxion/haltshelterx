@@ -88,6 +88,7 @@ const Animals = () => {
   const [viewingAnimal, setViewingAnimal] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showQuiz, setShowQuiz] = useState(false);
+  const [showAdopted, setShowAdopted] = useState(false);
   // Live stats state
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [isUpdating, setIsUpdating] = useState(false);
@@ -124,6 +125,13 @@ const Animals = () => {
     return () => clearInterval(statsRefreshInterval);
   }, []);
 
+  // Refetch animals when showAdopted toggle changes
+  useEffect(() => {
+    if (!loading) {
+      fetchAvailableAnimals();
+    }
+  }, [showAdopted]);
+
   // Animated counters for live stats
   const availableCount = useCountUp(statusBreakdown?.['Available'] ?? 0);
   const fosterCount = useCountUp(statusBreakdown?.['Foster'] ?? 0);
@@ -133,7 +141,8 @@ const Animals = () => {
   const fetchAvailableAnimals = async () => {
     try {
       const API_BASE = process.env.REACT_APP_API_URL || '/api';
-      const response = await fetch(`${API_BASE}/animals`);
+      const url = `${API_BASE}/animals${showAdopted ? '?showAdopted=true' : ''}`;
+      const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
         setAnimals(data);
@@ -1072,6 +1081,14 @@ const Animals = () => {
             </div>
             {/* Quick Filter Buttons */}
             <div className="flex flex-wrap justify-center gap-2 mb-2">
+              <button
+                onClick={() => setShowAdopted(!showAdopted)}
+                className={`px-4 py-2 rounded-full font-medium border ${showAdopted ? 'bg-purple-500 text-white border-purple-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-purple-50'}`}
+                aria-pressed={showAdopted}
+                title="Show adopted animals as success stories"
+              >
+                🏠 {showAdopted ? 'Showing All Animals' : 'Show Success Stories'}
+              </button>
               <button
                 onClick={() => setQuickFilters(f => ({ ...f, senior: !f.senior }))}
                 className={`px-4 py-2 rounded-full font-medium border ${quickFilters.senior ? 'bg-yellow-300 text-yellow-900 border-yellow-400' : 'bg-white text-gray-700 border-gray-300 hover:bg-yellow-50'}`}

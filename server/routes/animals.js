@@ -30,27 +30,47 @@ router.get('/foster-eligible', async (req, res) => {
   }
 });
 
-// Get all animals (public endpoint - only available animals)
+// Get all animals (public endpoint - available + optionally adopted animals)
 router.get('/', async (req, res) => {
   try {
-    const { species } = req.query;
+    const { species, showAdopted } = req.query;
 
-    // Build filter - show available animals and recently adopted animals to public
-    const filter = {
-      $or: [
-        { status: 'Available' },
-        { isRecentlyAdopted: true }
-      ]
-    };
-    if (species && species !== 'All') {
-      filter.$and = [{ species }];
+    // Calculate date 60 days ago for auto-filtering recently adopted animals
+    const sixtyDaysAgo = new Date();
+    sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+
+    let filter;
+    
+    if (showAdopted === 'true') {
+      // Show all animals when toggle is on
+      filter = {};
+      if (species && species !== 'All') {
+        filter.species = species;
+      }
+    } else {
+      // Default: show available + recently adopted (within 60 days) or manually flagged
+      filter = {
+        $or: [
+          { status: 'Available' },
+          { 
+            status: 'Adopted',
+            $or: [
+              { isRecentlyAdopted: true },
+              { adoptionDate: { $gte: sixtyDaysAgo } }
+            ]
+          }
+        ]
+      };
+      if (species && species !== 'All') {
+        filter.$and = [{ species }];
+      }
     }
 
     const animals = await Animal.find(filter)
       .select('-medicalNotes -behaviorNotes') // Hide sensitive info from public
       .sort({ createdAt: -1 });
 
-    console.log(`🐾 Public animals request: ${animals.length} available or recently adopted animals`);
+    console.log(`🐾 Public animals request: ${animals.length} animals (showAdopted: ${showAdopted || 'false'})`);
     res.json(animals);
   } catch (error) {
     console.error('Get animals error:', error);
