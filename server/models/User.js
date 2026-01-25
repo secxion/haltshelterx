@@ -127,8 +127,11 @@ userSchema.index({ role: 1, isActive: 1 });
 
 // Generate auth token for the user
 userSchema.methods.generateAuthToken = function() {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET environment variable is required');
+  }
   const payload = { id: this._id, role: this.role };
-  const token = jwt.sign(payload, process.env.JWT_SECRET || 'dev-secret', { expiresIn: '7d' });
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
   return token;
 };
 

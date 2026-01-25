@@ -9,8 +9,18 @@ const {
   volunteerApplicationStatusHtml,
   volunteerApplicationStatusText
 } = require('../utils/emailTemplates');
+const rateLimit = require('express-rate-limit');
 
 const router = express.Router();
+
+// Rate limiter for volunteer applications
+const volunteerLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3, // 3 applications per hour
+  message: { error: 'Too many applications submitted. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Get count of active volunteers (admin/staff only)
 router.get('/count', authenticate, authorize('admin', 'staff'), async (req, res) => {
@@ -23,7 +33,7 @@ router.get('/count', authenticate, authorize('admin', 'staff'), async (req, res)
 });
 
 // Submit volunteer application (public endpoint)
-router.post('/apply', [
+router.post('/apply', volunteerLimiter, [
   body('name').trim().isLength({ min: 1 }).withMessage('Name is required'),
   body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
   body('phone').trim().isLength({ min: 1 }).withMessage('Phone number is required'),

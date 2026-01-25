@@ -4,8 +4,18 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { Donation } = require('../models');
 const { authenticate, authorize,  } = require('../middleware/auth');
 const { logToFile } = require('../utils/fileLogger');
+const rateLimit = require('express-rate-limit');
 
 const router = express.Router();
+
+// Rate limiter for donation endpoints
+const donationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 donation attempts per 15 minutes
+  message: { error: 'Too many donation attempts. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Get count of completed donations (admin/staff only)
 router.get('/count', authenticate, authorize('admin', 'staff'), async (req, res) => {
@@ -18,7 +28,7 @@ router.get('/count', authenticate, authorize('admin', 'staff'), async (req, res)
 });
 
 // Create Stripe subscription for monthly donations
-router.post('/create-subscription', [
+router.post('/create-subscription', donationLimiter, [
   body('amount').isFloat({ min: 1 }).withMessage('Amount must be at least $1'),
   body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
   body('name').trim().isLength({ min: 1 }).withMessage('Donor name is required'),
@@ -116,7 +126,7 @@ router.post('/create-subscription', [
 
 
 // NEW: Create payment intent for frontend (matches webhook metadata format)
-router.post('/create-payment-intent', [
+router.post('/create-payment-intent', donationLimiter, [
   body('amount').isFloat({ min: 1 }).withMessage('Amount must be at least $1'),
   body('metadata.donor_email').isEmail().normalizeEmail().withMessage('Valid email is required'),
   body('metadata.donor_name').trim().isLength({ min: 1 }).withMessage('Donor name is required')
@@ -135,9 +145,6 @@ router.post('/create-payment-intent', [
       metadata
     });
  
-    // Create Stripe PaymentIntent with frontend-compatible metadata
-    // NOTE: We intentionally do NOT set receipt_email to prevent Stripe from
-    // sending automatic receipts. Our webhook handler sends branded emails instead.
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount, // Frontend already sends in cents
       currency: currency.toLowerCase(),
@@ -147,7 +154,6 @@ router.post('/create-payment-intent', [
         donation_type: metadata.donation_type || 'one-time',
         is_emergency: metadata.is_emergency || 'false'
       }
-      // receipt_email is NOT set - we handle emails via webhook
     });
 
     console.log('✅ Payment intent created:', paymentIntent.id);
@@ -167,7 +173,7 @@ router.post('/create-payment-intent', [
 });
 
 // LEGACY: Create donation intent (old endpoint for backward compatibility)
-router.post('/create-intent', [
+router.post('/create-intent', donationLimiter, [
   body('amount').isFloat({ min: 1 }).withMessage('Amount must be at least $1'),
   body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
   body('firstName').trim().isLength({ min: 1 }).withMessage('First name is required'),
@@ -235,10 +241,7 @@ router.post('/create-intent', [
   }
 });
 
-// NOTE: Webhook handler moved to separate file (donations-webhook.js) and mounted
-// directly in app.js before JSON parser to preserve raw body for signature verification
 
-// Get public donor wall
 router.get('/donors', async (req, res) => {
   try {
     const { page = 1, limit = 20 } = req.query;
@@ -405,142 +408,5 @@ router.get('/admin/analytics', authenticate, authorize('admin'), async (req, res
     res.status(500).json({ error: 'Server error' });
   }
 });
-
-// ==================== DISABLED - WEBHOOK HANDLES EMAILS ====================
-// Manual receipt endpoint disabled because webhook already sends emails
-// Keeping code for reference in case manual resend is needed in future
-/*
-router.post('/send-receipt-manual', async (req, res) => {
-  try {
-    const { paymentIntentId } = req.body;
-    if (!paymentIntentId) {
-      return res.status(400).json({ success: false, error: 'paymentIntentId required' });
-    }
-
-    console.log(`[MANUAL RECEIPT] Starting manual receipt flow for ${paymentIntentId}`);
-
-    // Retrieve payment intent from Stripe
-    let paymentIntent;
-    try {
-      paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId, { expand: ['charges'] });
-    } catch (e) {
-      console.error('[MANUAL RECEIPT] Failed to retrieve PaymentIntent:', e.message);
-      return res.status(404).json({ success: false, error: 'PaymentIntent not found', details: e.message });
-    }
-
-    // Extract donor info
-    const meta = paymentIntent.metadata || {};
-    let donorEmail = meta.donor_email || meta.donorEmail || paymentIntent.receipt_email || '';
-    let donorName = meta.donor_name || meta.donorName || paymentIntent.shipping?.name || 'Supporter';
-    let donationType = meta.donation_type || meta.donationType || 'one-time';
-    const amount = paymentIntent.amount ? paymentIntent.amount / 100 : 0;
-    const currency = paymentIntent.currency ? paymentIntent.currency.toUpperCase() : 'USD';
-    const stripeCustomerId = paymentIntent.customer || '';
-    const transactionId = paymentIntent.id;
-    const isRecurring = donationType !== 'one-time';
-
-    // Fallback: retrieve customer for missing email
-    if ((!donorEmail || donorEmail === 'null' || donorEmail === 'undefined') && stripeCustomerId) {
-      try {
-        const customer = await stripe.customers.retrieve(stripeCustomerId);
-        if (customer && customer.email) {
-          donorEmail = customer.email;
-          donorName = customer.name || donorName;
-          console.log(`[MANUAL RECEIPT] Retrieved donor email from customer: ${donorEmail}`);
-        }
-      } catch (custErr) {
-        console.warn('[MANUAL RECEIPT] Could not retrieve customer email:', custErr.message);
-      }
-    }
-
-    if (!donorEmail) {
-      return res.status(422).json({ success: false, error: 'Donor email missing in PaymentIntent and customer record.' });
-    }
-
-    // Check existing donation
-    let donation = await Donation.findOne({ transactionId });
-    let newlyCreated = false;
-    if (!donation) {
-      donation = new Donation({
-        donorInfo: { name: donorName, email: donorEmail },
-        amount,
-        currency,
-        donationType,
-        paymentMethod: 'stripe',
-        paymentStatus: 'completed',
-        transactionId,
-        stripeCustomerId,
-        source: 'manual-receipt',
-        isRecurring,
-        completedAt: new Date()
-      });
-      try {
-        await donation.save();
-        newlyCreated = true;
-        console.log(`[MANUAL RECEIPT] Donation created: ${donation._id}`);
-      } catch (saveErr) {
-        console.error('[MANUAL RECEIPT] Error saving donation:', saveErr.message);
-        return res.status(500).json({ success: false, error: 'Failed to persist donation', details: saveErr.message });
-      }
-    } else {
-      console.log(`[MANUAL RECEIPT] Using existing donation: ${donation._id}`);
-    }
-
-    if (donation.receiptSent) {
-      return res.json({ success: true, donationId: donation._id, receiptSent: true, message: 'Receipt already sent previously.' });
-    }
-
-    // Build receipt content (similar to webhook)
-    let paymentMethodStr = 'Stripe';
-    if (paymentIntent.charges && paymentIntent.charges.data && paymentIntent.charges.data.length > 0) {
-      const charge = paymentIntent.charges.data[0];
-      if (charge.payment_method_details && charge.payment_method_details.card) {
-        const brand = charge.payment_method_details.card.brand;
-        const last4 = charge.payment_method_details.card.last4;
-        paymentMethodStr = `${brand.charAt(0).toUpperCase() + brand.slice(1)} •••• ${last4}`;
-      } else if (charge.payment_method_details && charge.payment_method_details.type) {
-        paymentMethodStr = charge.payment_method_details.type.charAt(0).toUpperCase() + charge.payment_method_details.type.slice(1);
-      }
-    }
-    const recurringStr = donation.isRecurring ? `Yes (${donation.donationType.charAt(0).toUpperCase() + donation.donationType.slice(1)})` : 'No';
-    const dateStr = donation.completedAt ? new Date(donation.completedAt).toLocaleString('en-US', { timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : new Date().toLocaleString('en-US', { timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-    const subject = 'Thank you for your donation to HALT!';
-    const html = `
-      <p>Dear ${donorName},</p>
-      <p>Thank you for your generous donation to HALT. Here are your donation details:</p>
-      <ul>
-        <li><b>Donor Name:</b> ${donorName}</li>
-        <li><b>Donor Email:</b> ${donorEmail}</li>
-        <li><b>Amount:</b> $${donation.amount} ${donation.currency || 'USD'}</li>
-        <li><b>Donation Type:</b> ${donation.donationType.charAt(0).toUpperCase() + donation.donationType.slice(1)}</li>
-        <li><b>Payment Method:</b> ${paymentMethodStr}</li>
-        <li><b>Transaction ID:</b> ${donation.transactionId}</li>
-        <li><b>Date:</b> ${dateStr} UTC</li>
-        <li><b>Category:</b> ${donation.category || 'general'}</li>
-        <li><b>Recurring:</b> ${recurringStr}</li>
-      </ul>
-      <p>Your support helps us continue our mission to help animals live and thrive.</p>
-      <p>With gratitude,<br/>The HALT Team</p>
-    `;
-    const text = `Dear ${donorName},\n\nThank you for your generous donation to HALT. Here are your donation details:\n\nDonor Name: ${donorName}\nDonor Email: ${donorEmail}\nAmount: $${donation.amount} ${donation.currency || 'USD'}\nDonation Type: ${donation.donationType.charAt(0).toUpperCase() + donation.donationType.slice(1)}\nPayment Method: ${paymentMethodStr}\nTransaction ID: ${donation.transactionId}\nDate: ${dateStr} UTC\nCategory: ${donation.category || 'general'}\nRecurring: ${recurringStr}\n\nYour support helps us continue our mission to help animals live and thrive.\n\nWith gratitude,\nThe HALT Team`;
-
-    try {
-      const { sendReceiptEmail } = require('../utils/email');
-      console.log(`[MANUAL RECEIPT] Sending receipt to ${donorEmail}`);
-      const info = await sendReceiptEmail({ to: donorEmail, subject, html, text });
-      donation.receiptSent = true;
-      donation.receiptSentAt = new Date();
-      await donation.save();
-      return res.json({ success: true, donationId: donation._id, receiptSent: true, newlyCreated, emailAccepted: info.accepted || [], message: 'Receipt sent manually.' });
-    } catch (emailErr) {
-      console.error('[MANUAL RECEIPT] Email send failed:', emailErr.message);
-      return res.status(500).json({ success: false, error: 'Email send failed', details: emailErr.message });
-    }
-  } catch (err) {
-    console.error('[MANUAL RECEIPT] Unexpected error:', err.message);
-    return res.status(500).json({ success: false, error: 'Server error', details: err.message });
-  }
-});
-*/
 
 module.exports = router;

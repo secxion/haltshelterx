@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { apiService } from '../services/api';
 
 const NewsletterCompose = () => {
@@ -109,7 +110,11 @@ const NewsletterCompose = () => {
               <h2 className="text-xl font-bold text-gray-900 mb-4">{subject || 'Your Subject Here'}</h2>
               <div 
                 className="text-gray-700 prose prose-sm"
-                dangerouslySetInnerHTML={{ __html: content.replace(/\n/g, '<br/>') || '<p>Your content here...</p>' }}
+                dangerouslySetInnerHTML={{ 
+                  __html: DOMPurify.sanitize(
+                    content.replace(/\n/g, '<br/>') || '<p>Your content here...</p>'
+                  )
+                }}
               />
               <div className="text-center mt-8">
                 <span className="inline-block bg-red-600 text-white px-6 py-3 rounded-lg font-semibold">

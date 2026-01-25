@@ -12,8 +12,18 @@ const {
   newsletterBroadcastHtml,
   newsletterBroadcastText
 } = require('../utils/emailTemplates');
+const rateLimit = require('express-rate-limit');
 
 const router = express.Router();
+
+// Rate limiter for newsletter subscriptions
+const newsletterLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5, // 5 subscription attempts per hour
+  message: { error: 'Too many subscription attempts. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 /**
  * Generate newsletter confirmation email template
@@ -67,7 +77,7 @@ const sendConfirmationEmail = async (email, token, firstName = 'Supporter') => {
 };
 
 // Subscribe to newsletter with direct confirmation email
-router.post('/subscribe', [
+router.post('/subscribe', newsletterLimiter, [
   body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
   body('gdprConsent').isBoolean().toBoolean().custom((value) => value === true).withMessage('GDPR consent is required'),
   body('firstName').optional().trim(),

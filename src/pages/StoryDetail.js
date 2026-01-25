@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeftIcon, CalendarIcon, ClockIcon, TagIcon, HeartIcon, ShareIcon } from '@heroicons/react/24/outline';
+import DOMPurify from 'dompurify';
 import { apiService, handleApiError } from '../services/api';
 import { buildAbsoluteUrl } from '../utils/navigationUtils';
 
@@ -286,7 +287,9 @@ After 8 months at HALT, Bella found her forever family. The Johnson family fell 
           <div 
             className="text-gray-700 leading-relaxed"
             dangerouslySetInnerHTML={{ 
-              __html: story.content?.replace(/\n/g, '<br />') || story.excerpt || ''
+              __html: DOMPurify.sanitize(
+                story.content?.replace(/\n/g, '<br />') || story.excerpt || ''
+              )
             }}
           />
         </article>

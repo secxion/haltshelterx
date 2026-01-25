@@ -4,15 +4,16 @@
  * Production-Ready Settings Included
  */
 
-require('dotenv').config(); 
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') }); 
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const path = require('path');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
+const { authenticate, authorize } = require('./middleware/auth');
 
 // --- Configuration Constants ---
 const PORT = process.env.PORT || 5000;
@@ -96,10 +97,10 @@ if (NODE_ENV === 'production' && fs.existsSync(FRONTEND_BUILD_PATH)) {
   console.log('🌐 CORS set to production whitelist:', productionWhitelist);
   app.use(cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl) but log them
+      // Reject requests without origin in production for security
       if (!origin) {
-        console.log('[CORS] Request without origin - allowing');
-        return callback(null, true);
+        console.warn('[CORS] BLOCKED request without origin');
+        return callback(new Error('Origin header required'), false);
       }
       if (productionWhitelist.includes(origin)) {
         callback(null, true);
@@ -183,8 +184,8 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// System status endpoints for admin dashboard
-app.get('/api/system/status', async (req, res) => {
+// System status endpoints for admin dashboard - Protected
+app.get('/api/system/status', authenticate, authorize('admin', 'staff'), async (req, res) => {
   try {
     const status = {
       server: {
@@ -231,7 +232,7 @@ app.get('/api/system/status', async (req, res) => {
 });
 
 // Quick health checks for individual services (Simplified using Mongoose directly)
-app.get('/api/system/database', (req, res) => {
+app.get('/api/system/database', authenticate, authorize('admin', 'staff'), (req, res) => {
   try {
     const status = {
       connected: mongoose.connection.readyState === 1,
@@ -246,7 +247,7 @@ app.get('/api/system/database', (req, res) => {
   }
 });
 
-app.get('/api/system/server', (req, res) => {
+app.get('/api/system/server', authenticate, authorize('admin', 'staff'), (req, res) => {
   res.json({
     status: 'online',
     uptime: process.uptime(),
@@ -290,15 +291,13 @@ app.post('/api/admin-auth/admin-login', adminLoginLimiter, checkAdminOrigin, (re
       if (fs.existsSync(adminKeyPath)) {
         const adminKeyData = JSON.parse(fs.readFileSync(adminKeyPath, 'utf8'));
         storedAdminKey = adminKeyData.adminKey;
-      } else {
-        storedAdminKey = 'test123'; // Development fallback only
       }
     }
     
-    // In production, ADMIN_KEY environment variable is required
+    // ADMIN_KEY environment variable is required
     if (!storedAdminKey) {
       console.error('❌ ADMIN_KEY environment variable not set');
-      return res.status(500).json({ error: 'Server configuration error' });
+      return res.status(500).json({ error: 'Server configuration error: ADMIN_KEY required' });
     }
     
     // Check against primary key OR backup key
