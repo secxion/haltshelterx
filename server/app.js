@@ -39,18 +39,9 @@ const app = express();
 // --- Core Server Configuration & Middleware ---
 
 // Configure trust proxy (crucial for reverse proxies like Render/Heroku for rate-limiting)
-// Set TRUST_PROXY=true in production environment variables.
-const rawTrust = process.env.TRUST_PROXY;
-if (rawTrust !== undefined) {
-  if (rawTrust.toLowerCase && (rawTrust.toLowerCase() === 'true' || rawTrust.toLowerCase() === 'false')) {
-    app.set('trust proxy', rawTrust.toLowerCase() === 'true');
-  } else {
-    app.set('trust proxy', rawTrust);
-  }
-} else {
-  // For Render/Heroku, trust only the first proxy (most secure for rate limiting)
-  app.set('trust proxy', NODE_ENV === 'production' ? 1 : false); 
-}
+// Render uses 1 proxy layer, so we trust only the first proxy for security
+// NEVER use `true` as it allows IP spoofing attacks
+app.set('trust proxy', NODE_ENV === 'production' ? 1 : false);
 
 // Connect to MongoDB (non-blocking)
 connectDB().then((connected) => {
