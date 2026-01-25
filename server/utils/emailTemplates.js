@@ -399,8 +399,99 @@ module.exports = {
   volunteerApplicationReceivedHtml,
   volunteerApplicationReceivedText,
   volunteerApplicationStatusHtml,
-  volunteerApplicationStatusText
+  volunteerApplicationStatusText,
+  adoptionInquiryReceivedHtml,
+  adoptionInquiryReceivedText
 };
+
+// Adoption Inquiry Received (Confirmation)
+function adoptionInquiryReceivedHtml({ applicantName, animalName, animalSpecies, inquiryId }) {
+  const content = `
+    <h2 style="color: #111827; margin: 0 0 16px 0; font-size: 24px;">Thank You for Your Interest in ${animalName}! 🐾</h2>
+    
+    <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+      Dear <strong>${applicantName}</strong>,
+    </p>
+    
+    <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+      We've received your adoption inquiry for <strong style="color: #dc2626;">${animalName}</strong> and we're thrilled that you're considering opening your heart and home to this special ${animalSpecies}! Thank you for choosing adoption.
+    </p>
+    
+    <!-- Inquiry Details -->
+    <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 0 0 24px 0;">
+      <h3 style="color: #111827; margin: 0 0 16px 0; font-size: 18px;">📋 Inquiry Details</h3>
+      <p style="color: #6b7280; font-size: 14px; margin: 0 0 8px 0;">Inquiry ID: <strong style="color: #111827;">${inquiryId}</strong></p>
+      <p style="color: #6b7280; font-size: 14px; margin: 0 0 8px 0;">Animal: <strong style="color: #111827;">${animalName}</strong></p>
+      <p style="color: #6b7280; font-size: 14px; margin: 0;">Status: <strong style="color: #dc2626;">Under Review</strong></p>
+    </div>
+    
+    <!-- What's Next -->
+    <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 20px; margin: 0 0 24px 0;">
+      <h3 style="color: #1e40af; margin: 0 0 12px 0; font-size: 18px;">🕐 What Happens Next?</h3>
+      <ol style="margin: 0; padding-left: 20px; color: #1e40af; font-size: 14px; line-height: 1.8;">
+        <li>Our adoption coordinator will review your inquiry within 24-48 hours</li>
+        <li>We'll contact you to discuss ${animalName}'s needs and personality</li>
+        <li>Schedule a meet-and-greet visit to see if it's the perfect match</li>
+        <li>If approved, complete the adoption paperwork and bring ${animalName} home! 🏡</li>
+      </ol>
+    </div>
+    
+    <!-- Adoption Prep Tips -->
+    <div style="background-color: #fef3c7; border: 1px solid #fbbf24; border-radius: 8px; padding: 20px; margin: 0 0 24px 0;">
+      <h3 style="color: #92400e; margin: 0 0 12px 0; font-size: 18px;">💡 Prepare for Your New Companion</h3>
+      <p style="color: #92400e; font-size: 14px; line-height: 1.6; margin: 0;">
+        While you wait, start preparing! Research ${animalSpecies} care, gather supplies, and pet-proof your home. 
+        Check out our <a href="https://haltshelter.org/blog" style="color: #dc2626; text-decoration: underline;">adoption preparation guide</a> on our blog for helpful tips!
+      </p>
+    </div>
+    
+    <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+      We understand this is an exciting time! If you have any questions or need to update your application, please reply to this email or call us directly.
+    </p>
+    
+    <p style="color: #374151; font-size: 16px; line-height: 1.6; margin: 0;">
+      Thank you for considering adoption,<br/>
+      <strong style="color: #dc2626;">The HALT Shelter Team</strong>
+    </p>
+  `;
+
+  return emailWrapper(content, { preheader: `Your adoption inquiry for ${animalName} has been received!` });
+}
+
+function adoptionInquiryReceivedText({ applicantName, animalName, animalSpecies, inquiryId }) {
+  return `
+Thank You for Your Interest in ${animalName}! 🐾
+
+Dear ${applicantName},
+
+We've received your adoption inquiry for ${animalName} and we're thrilled that you're considering opening your heart and home to this special ${animalSpecies}! Thank you for choosing adoption.
+
+INQUIRY DETAILS
+---------------
+Inquiry ID: ${inquiryId}
+Animal: ${animalName}
+Status: Under Review
+
+WHAT HAPPENS NEXT?
+------------------
+1. Our adoption coordinator will review your inquiry within 24-48 hours
+2. We'll contact you to discuss ${animalName}'s needs and personality
+3. Schedule a meet-and-greet visit to see if it's the perfect match
+4. If approved, complete the adoption paperwork and bring ${animalName} home! 🏡
+
+PREPARE FOR YOUR NEW COMPANION
+-------------------------------
+While you wait, start preparing! Research ${animalSpecies} care, gather supplies, and pet-proof your home. Check out our adoption preparation guide on our blog for helpful tips: https://haltshelter.org/blog
+
+We understand this is an exciting time! If you have any questions or need to update your application, please reply to this email or call us directly.
+
+Thank you for considering adoption,
+The HALT Shelter Team
+
+---
+HALT Shelter | haltshelter.org | contact@haltshelter.org
+  `.trim();
+}
 
 // Volunteer Application Received (Confirmation)
 function volunteerApplicationReceivedHtml({ firstName, interests, applicationId }) {

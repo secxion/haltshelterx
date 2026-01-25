@@ -2,6 +2,8 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const AdoptionInquiry = require('../models/AdoptionInquiry');
 const Animal = require('../models/Animal');
+const { sendEmail } = require('../utils/email');
+const { adoptionInquiryReceivedHtml, adoptionInquiryReceivedText } = require('../utils/emailTemplates');
 
 const router = express.Router();
 
@@ -68,6 +70,31 @@ router.post('/', [
     await adoptionInquiry.save();
 
     console.log(`📧 New adoption inquiry for ${animal.name} from ${applicantName}`);
+
+    // Send confirmation email to applicant
+    try {
+      const firstName = applicantName.split(' ')[0] || applicantName;
+      await sendEmail({
+        to: email,
+        subject: `🐾 Thank You for Your Interest in ${animal.name} - HALT Shelter`,
+        html: adoptionInquiryReceivedHtml({
+          applicantName: firstName,
+          animalName: animal.name,
+          animalSpecies: animal.species,
+          inquiryId: adoptionInquiry._id.toString()
+        }),
+        text: adoptionInquiryReceivedText({
+          applicantName: firstName,
+          animalName: animal.name,
+          animalSpecies: animal.species,
+          inquiryId: adoptionInquiry._id.toString()
+        })
+      });
+      console.log(`✅ Confirmation email sent to: ${email}`);
+    } catch (emailError) {
+      console.error('❌ Failed to send confirmation email:', emailError);
+      // Don't fail the request if email fails
+    }
 
     res.status(201).json({
       success: true,
