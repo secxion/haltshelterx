@@ -16,14 +16,39 @@ const SystemStatus = () => {
   const fetchSystemStatus = async () => {
     try {
       setError(null);
-      const response = await fetch(`${API_BASE_URL}/system/status`);
+      
+      // Get admin token for authentication
+      const token = localStorage.getItem('adminToken');
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      
+      const response = await fetch(`${API_BASE_URL}/system/status`, { headers });
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const data = await response.json();
-      setSystemStatus(data);
+      
+      // Merge backend data with local status
+      setSystemStatus({
+        server: data.server || { status: 'unknown', uptime: 0, memory: { used: 0, total: 0 } },
+        database: data.database || { status: 'unknown', connected: false },
+        mainWebsite: { 
+          status: 'online', // Same server, so if API responds, website is online
+          url: process.env.REACT_APP_MAIN_SITE_URL || 'https://haltshelter.onrender.com' 
+        },
+        adminPanel: { 
+          status: 'online', // If this code is running, admin panel is online
+          url: window.location.origin 
+        }
+      });
+      
       setLastUpdate(new Date());
       setIsLoading(false);
     } catch (error) {
