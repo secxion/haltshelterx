@@ -1143,6 +1143,34 @@ const Animals = () => {
                         🐾
                       </div>
                     )}
+                    {/* Status Badge */}
+                    <div className="absolute top-3 right-3">
+                      {animal.status === 'Available' && (
+                        <span className="bg-green-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border-2 border-white">
+                          ✓ Available
+                        </span>
+                      )}
+                      {animal.status === 'Adopted' && (
+                        <span className="bg-purple-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border-2 border-white">
+                          🏠 Adopted!
+                        </span>
+                      )}
+                      {animal.status === 'Pending' && (
+                        <span className="bg-yellow-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border-2 border-white">
+                          ⏳ Adoption Pending
+                        </span>
+                      )}
+                      {animal.status === 'Foster' && (
+                        <span className="bg-blue-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border-2 border-white">
+                          🏡 In Foster Care
+                        </span>
+                      )}
+                      {animal.status === 'Medical Hold' && (
+                        <span className="bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border-2 border-white">
+                          🏥 Medical Hold
+                        </span>
+                      )}
+                    </div>
                   </div>
                   {/* Animal Info */}
                   <div className="p-6">
@@ -1188,13 +1216,27 @@ const Animals = () => {
                       >
                         View Details
                       </button>
-                      <button
-                        onClick={() => setSelectedAnimal(animal)}
-                        className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors"
-                        aria-label={`Express interest in adopting ${animal.name}`}
-                      >
-                        I'm Interested in {animal.name}
-                      </button>
+                      {animal.status === 'Available' ? (
+                        <button
+                          onClick={() => setSelectedAnimal(animal)}
+                          className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors"
+                          aria-label={`Express interest in adopting ${animal.name}`}
+                        >
+                          💙 I'm Interested in {animal.name}
+                        </button>
+                      ) : (
+                        <button
+                          disabled
+                          className="w-full bg-gray-300 text-gray-600 font-bold py-2 px-4 rounded cursor-not-allowed"
+                          title={`${animal.name} is currently ${animal.status}`}
+                        >
+                          {animal.status === 'Adopted' && '🏠 Already Adopted'}
+                          {animal.status === 'Pending' && '⏳ Adoption Pending'}
+                          {animal.status === 'Foster' && '🏡 In Foster Care'}
+                          {animal.status === 'Medical Hold' && '🏥 Medical Hold'}
+                          {!['Adopted', 'Pending', 'Foster', 'Medical Hold'].includes(animal.status) && `Not Available (${animal.status})`}
+                        </button>
+                      )}
                       <Link
                         to={`/donate?animal=${encodeURIComponent(animal.name)}`}
                         className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-2 px-4 rounded transition-colors block text-center border-2 border-yellow-300"
