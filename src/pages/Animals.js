@@ -327,7 +327,7 @@ const Animals = () => {
         }
 
         const result = await response.json();
-        alert('Thank you for your interest! We have received your adoption inquiry and will contact you soon.');
+        alert('Thank you for your interest! We have received your adoption inquiry and will contact you soon.\n\n📬 A confirmation email has been sent. Please check your spam/junk folder if you don\'t see it.');
         onClose();
       } catch (error) {
         console.error('Error submitting adoption inquiry:', error);

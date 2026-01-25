@@ -196,6 +196,10 @@ const DonateSuccess = () => {
                   <span className="leading-relaxed">You'll receive an email receipt for tax purposes within 24 hours <span className="font-semibold">(EIN: 41-2531054)</span></span>
                 </li>
                 <li className="flex items-start hover:translate-x-2 transition-transform duration-200">
+                  <span className="text-yellow-600 font-bold text-xl mr-3 flex-shrink-0">📬</span>
+                  <span className="leading-relaxed"><strong>Don't see your receipt?</strong> Please check your <strong>spam/junk folder</strong> and mark us as a trusted sender</span>
+                </li>
+                <li className="flex items-start hover:translate-x-2 transition-transform duration-200">
                   <span className="text-green-600 font-bold text-xl mr-3 flex-shrink-0">✓</span>
                   <span className="leading-relaxed">Your donation is immediately put to work helping animals in need</span>
                 </li>

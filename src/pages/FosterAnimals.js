@@ -236,7 +236,7 @@ const FosterAnimals = () => {
         }
 
         // Success!
-        alert(`Thank you! Your foster application for ${animal.name} has been submitted successfully. We'll contact you within 24-48 hours.`);
+        alert(`Thank you! Your foster application for ${animal.name} has been submitted successfully. We'll contact you within 24-48 hours.\n\n📬 A confirmation email has been sent. Please check your spam/junk folder if you don't see it.`);
         onClose();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } catch (error) {

@@ -179,6 +179,12 @@ export default function Volunteer() {
               We've received your volunteer application and will be in touch within 2-3 business days 
               to discuss next steps and answer any questions you might have.
             </p>
+            <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4 mb-6">
+              <p className="text-yellow-900 font-semibold flex items-center">
+                <span className="text-2xl mr-2">📬</span>
+                A confirmation email has been sent to you. <strong className="ml-1">Please check your spam/junk folder</strong> if you don't see it in your inbox.
+              </p>
+            </div>
             <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">What happens next?</h3>
               <ul className="text-gray-700 space-y-2 text-left">

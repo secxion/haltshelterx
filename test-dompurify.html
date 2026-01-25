@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOMPurify Test - XSS Protection Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .dangerous {
+            border: 3px solid #dc2626;
+        }
+        .safe {
+            border: 3px solid #16a34a;
+        }
+        h2 {
+            margin-top: 0;
+        }
+        .dangerous h2 {
+            color: #dc2626;
+        }
+        .safe h2 {
+            color: #16a34a;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .output {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            min-height: 100px;
+        }
+        .warning {
+            background: #fef2f2;
+            border: 2px solid #dc2626;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .info {
+            background: #eff6ff;
+            border: 2px solid #3b82f6;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .examples {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .example-btn {
+            background: #6366f1;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔒 DOMPurify XSS Protection Test</h1>
+    
+    <div class="warning">
+        <strong>⚠️ WARNING:</strong> The left side demonstrates DANGEROUS code that allows XSS attacks. 
+        The right side shows how DOMPurify protects against these attacks.
+    </div>
+
+    <div class="info">
+        <strong>📚 What you'll learn:</strong> This demo shows the difference between rendering untrusted HTML 
+        with and without sanitization. Try the example attacks below to see DOMPurify in action!
+    </div>
+
+    <div class="examples">
+        <h3>Try These Attack Examples:</h3>
+        <button class="example-btn" onclick="loadExample(1)">Script Alert Attack</button>
+        <button class="example-btn" onclick="loadExample(2)">Image Error Attack</button>
+        <button class="example-btn" onclick="loadExample(3)">Link JavaScript Attack</button>
+        <button class="example-btn" onclick="loadExample(4)">Event Handler Attack</button>
+        <button class="example-btn" onclick="loadExample(5)">Safe HTML (Allowed)</button>
+    </div>
+
+    <div class="container">
+        <!-- DANGEROUS SIDE -->
+        <div class="box dangerous">
+            <h2>❌ WITHOUT DOMPurify (VULNERABLE)</h2>
+            <p>This uses <code>dangerouslySetInnerHTML</code> without sanitization:</p>
+            <textarea id="unsafeInput" placeholder="Enter HTML content here..."></textarea>
+            <button onclick="renderUnsafe()">Render Unsafe (DANGEROUS)</button>
+            <div class="output" id="unsafeOutput">
+                <em>Output will appear here...</em>
+            </div>
+        </div>
+
+        <!-- SAFE SIDE -->
+        <div class="box safe">
+            <h2>✅ WITH DOMPurify (PROTECTED)</h2>
+            <p>This sanitizes HTML with <code>DOMPurify.sanitize()</code>:</p>
+            <textarea id="safeInput" placeholder="Same content as left..."></textarea>
+            <button onclick="renderSafe()">Render Safe (PROTECTED)</button>
+            <div class="output" id="safeOutput">
+                <em>Output will appear here...</em>
+            </div>
+        </div>
+    </div>
+
+    <div class="examples" style="margin-top: 30px;">
+        <h3>📊 Results Comparison:</h3>
+        <div id="comparison" style="padding: 15px; background: #f9fafb; border-radius: 4px;">
+            <p>Render some HTML to see the comparison...</p>
+        </div>
+    </div>
+
+    <script>
+        const examples = {
+            1: `<p>Hello!</p>
+<script>
+  alert('🚨 XSS ATTACK! Your data could be stolen!');
+  // This could send your data to attackers
+</script>`,
+            2: `<h2>Cute Puppy!</h2>
+<img src="invalid-url" onerror="alert('🚨 XSS via img error!')">
+<p>The image above tries to run JavaScript when it fails to load.</p>`,
+            3: `<p>Click this "safe" link:</p>
+<a href="javascript:alert('🚨 XSS via javascript: URL!')">Donate Now</a>
+<p>This link runs JavaScript instead of navigating.</p>`,
+            4: `<div onclick="alert('🚨 XSS via onclick handler!')">
+  <h3>Click anywhere in this box</h3>
+  <p>This entire div has a malicious click handler.</p>
+</div>`,
+            5: `<h2>Bella's Rescue Story</h2>
+<p>This is <strong>safe HTML</strong> with:</p>
+<ul>
+  <li>Bold text</li>
+  <li>Paragraphs</li>
+  <li><em>Emphasis</em></li>
+</ul>
+<p>DOMPurify allows this content because it's safe!</p>`
+        };
+
+        function loadExample(num) {
+            const html = examples[num];
+            document.getElementById('unsafeInput').value = html;
+            document.getElementById('safeInput').value = html;
+            renderBoth();
+        }
+
+        function renderUnsafe() {
+            const input = document.getElementById('unsafeInput').value;
+            const output = document.getElementById('unsafeOutput');
+            
+            // DANGEROUS: Direct HTML rendering without sanitization
+            output.innerHTML = input;
+            
+            updateComparison();
+        }
+
+        function renderSafe() {
+            const input = document.getElementById('safeInput').value;
+            const output = document.getElementById('safeOutput');
+            
+            // SAFE: Sanitize with DOMPurify before rendering
+            const clean = DOMPurify.sanitize(input);
+            output.innerHTML = clean;
+            
+            updateComparison();
+        }
+
+        function renderBoth() {
+            renderUnsafe();
+            renderSafe();
+        }
+
+        function updateComparison() {
+            const unsafeInput = document.getElementById('unsafeInput').value;
+            const safeInput = document.getElementById('safeInput').value;
+            
+            if (!unsafeInput && !safeInput) return;
+            
+            const cleanHtml = DOMPurify.sanitize(unsafeInput);
+            const comparison = document.getElementById('comparison');
+            
+            const hasScripts = /<script/i.test(unsafeInput);
+            const hasJsHandlers = /(onerror|onclick|onload|onmouseover)/i.test(unsafeInput);
+            const hasJsUrls = /javascript:/i.test(unsafeInput);
+            
+            let removed = [];
+            if (hasScripts) removed.push('<code>&lt;script&gt;</code> tags');
+            if (hasJsHandlers) removed.push('event handlers (onclick, onerror, etc.)');
+            if (hasJsUrls) removed.push('<code>javascript:</code> URLs');
+            
+            if (removed.length > 0) {
+                comparison.innerHTML = `
+                    <strong style="color: #dc2626;">🛡️ DOMPurify Blocked:</strong>
+                    <ul style="margin: 10px 0;">
+                        ${removed.map(item => `<li>${item}</li>`).join('')}
+                    </ul>
+                    <strong style="color: #16a34a;">✅ Kept Safe HTML:</strong>
+                    <pre style="background: white; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 12px;">${escapeHtml(cleanHtml)}</pre>
+                `;
+            } else {
+                comparison.innerHTML = `
+                    <strong style="color: #16a34a;">✅ All HTML is safe! No dangerous content detected.</strong>
+                    <pre style="background: white; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 12px;">${escapeHtml(cleanHtml)}</pre>
+                `;
+            }
+        }
+
+        function escapeHtml(html) {
+            const div = document.createElement('div');
+            div.textContent = html;
+            return div.innerHTML;
+        }
+
+        // Load first example on page load
+        window.onload = () => {
+            loadExample(1);
+        };
+    </script>
+</body>
+</html>

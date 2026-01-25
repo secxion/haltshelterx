@@ -109,8 +109,10 @@ const NewsletterForm = ({ onSuccess, onError, variant = 'default' }) => {
             We've sent a confirmation email to <strong>{email}</strong>
           </p>
           <p className="newsletter-success-instructions">
-            Please check your inbox and click the confirmation link to complete your subscription. 
-            If you don't see it, check your spam folder.
+            Please check your inbox and click the confirmation link to complete your subscription.
+          </p>
+          <p className="newsletter-success-instructions" style={{backgroundColor: '#fef3c7', padding: '12px', borderRadius: '8px', border: '2px solid #fbbf24', marginTop: '12px'}}>
+            📬 <strong>Don't see it?</strong> Please check your <strong>spam/junk folder</strong> and mark us (contact@haltshelter.org) as a trusted sender.
           </p>
           <button
             type="button"
