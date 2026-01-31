@@ -293,9 +293,9 @@ async function handlePaymentIntentSucceeded(event, res) {
       });
       console.log(`[EMAIL] ✅ Email sent successfully`);
       logToFile(`[EMAIL-SUCCESS] Email sent to ${donorEmail}`);
-      console.log(`\n[PAYMENT-SUCCESS] ✅ COMPLETE - Donation ${updateResult._id} processed and email sent`);
-      logToFile(`[PAYMENT-SUCCESS-COMPLETE] donation=${updateResult._id}`);
-      res.json({ received: true, status: 'success', donationId: updateResult._id });
+      console.log(`\n[PAYMENT-SUCCESS] ✅ COMPLETE - Donation ${upsertResult._id} processed and email sent`);
+      logToFile(`[PAYMENT-SUCCESS-COMPLETE] donation=${upsertResult._id}`);
+      res.json({ received: true, status: 'success', donationId: upsertResult._id });
       return;
     } catch (emailErr) {
       console.error(`[EMAIL] ❌ Failed to send receipt email`);
@@ -304,7 +304,7 @@ async function handlePaymentIntentSucceeded(event, res) {
       res.json({ 
         received: true, 
         status: 'saved_but_email_failed',
-        donationId: updateResult._id,
+        donationId: upsertResult._id,
         emailError: emailErr.message
       });
       return;
