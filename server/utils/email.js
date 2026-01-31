@@ -34,23 +34,37 @@ console.log('[EMAIL] SMTP configuration:', {
   SMTP_SECURE: process.env.SMTP_SECURE || 'not set (defaults to false)'
 });
 
-// SendGrid Configuration
+// SendGrid Configuration (initial detection; logging happens after SMTP check)
+const hasSendGrid = !!process.env.SENDGRID_API_KEY;
+const useSendGridFirstRaw = process.env.USE_SENDGRID_FIRST;
+
+// Check for missing SMTP variables
+const missingVars = [];
+if (!process.env.SMTP_HOST) missingVars.push('SMTP_HOST');
+if (!process.env.SMTP_PORT) missingVars.push('SMTP_PORT');
+if (!process.env.SMTP_USER) missingVars.push('SMTP_USER');
+if (!process.env.SMTP_PASS) missingVars.push('SMTP_PASS');
+
+// Dynamically determine if SMTP is configured
+const smtpConfigured = missingVars.length === 0;
+
+// Allow runtime toggle: USE_SENDGRID_FIRST=true|false
+// Default behavior: prefer SMTP when configured, otherwise SendGrid
+const useSendGridFirst = useSendGridFirstRaw
+  ? useSendGridFirstRaw === 'true'
+  : !smtpConfigured;
+
+// SendGrid Configuration (logging after SMTP config known)
 console.log('');
 console.log('┌──────────────────────────────────────────────────────────────────┐');
 console.log('│              🔷 SENDGRID CONFIGURATION CHECK                     │');
 console.log('└──────────────────────────────────────────────────────────────────┘');
-const hasSendGrid = !!process.env.SENDGRID_API_KEY;
-// Allow runtime toggle: USE_SENDGRID_FIRST=true|false (defaults to true)
-const useSendGridFirst = process.env.USE_SENDGRID_FIRST
-  ? process.env.USE_SENDGRID_FIRST === 'true'
-  : true;
-
 console.log('[EMAIL] SendGrid configuration:', {
   SENDGRID_API_KEY: hasSendGrid ? '***configured***' : 'MISSING',
   SENDGRID_FROM_EMAIL: process.env.SENDGRID_FROM_EMAIL || 'contact@haltshelter.org',
   status: hasSendGrid ? '✅ SendGrid ENABLED' : '⚠️  Not configured',
   USE_SENDGRID_FIRST: useSendGridFirst ? 'ENABLED - SendGrid is primary' : 'DISABLED - SMTP is primary',
-  USE_SENDGRID_FIRST_RAW: process.env.USE_SENDGRID_FIRST || '(default true)'
+  USE_SENDGRID_FIRST_RAW: useSendGridFirstRaw || '(default smtp if configured)'
 });
 
 if (hasSendGrid) {
@@ -64,16 +78,6 @@ if (hasSendGrid) {
 } else {
   console.log('[EMAIL] ⚠️  SendGrid API Key NOT configured - SendGrid disabled');
 }
-
-// Check for missing SMTP variables
-const missingVars = [];
-if (!process.env.SMTP_HOST) missingVars.push('SMTP_HOST');
-if (!process.env.SMTP_PORT) missingVars.push('SMTP_PORT');
-if (!process.env.SMTP_USER) missingVars.push('SMTP_USER');
-if (!process.env.SMTP_PASS) missingVars.push('SMTP_PASS');
-
-// Dynamically determine if SMTP is configured
-const smtpConfigured = missingVars.length === 0;
 
 if (missingVars.length > 0) {
   console.log('[EMAIL] ⚠️  SMTP not fully configured. Missing:', missingVars.join(', '));
