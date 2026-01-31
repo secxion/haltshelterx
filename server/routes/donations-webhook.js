@@ -224,14 +224,14 @@ async function handlePaymentIntentSucceeded(event, res) {
     }
 
 
-    // ===== ATOMIC EMAIL SEND & DEDUPLICATION =====
-    console.log(`\n[DEDUP] Atomic update for donation receipt...`);
+    // ===== ATOMIC EMAIL SEND & DEDUPLICATION (UPSERT) =====
+    console.log(`\n[DEDUP] Atomic upsert for donation receipt...`);
     const now = new Date();
-    // Only update if receiptSent is false, and set it to true atomically
-    const updateResult = await Donation.findOneAndUpdate(
-      { transactionId, receiptSent: false },
+    // Try to insert or update the donation atomically
+    const upsertResult = await Donation.findOneAndUpdate(
+      { transactionId },
       {
-        $set: {
+        $setOnInsert: {
           donorInfo: { name: donorName, email: donorEmail },
           amount,
           currency,
@@ -247,14 +247,13 @@ async function handlePaymentIntentSucceeded(event, res) {
           receiptSentAt: now
         }
       },
-      { new: true }
+      { new: true, upsert: true }
     );
-    if (!updateResult) {
+    // Only send email if this is a new donation (receiptSentAt == now)
+    if (!upsertResult.receiptSentAt || Math.abs(upsertResult.receiptSentAt.getTime() - now.getTime()) > 1000) {
       console.log(`[DEDUP] ✅ Receipt already sent, skipping...`);
       logToFile(`[DEDUP] Receipt already sent, skipping email`);
-      // Find the existing donation for reference
-      const existing = await Donation.findOne({ transactionId });
-      res.json({ received: true, status: 'duplicate_processed', donationId: existing?._id });
+      res.json({ received: true, status: 'duplicate_processed', donationId: upsertResult?._id });
       return;
     }
 
