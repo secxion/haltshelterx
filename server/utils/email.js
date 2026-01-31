@@ -88,7 +88,7 @@ let transporter = null;
 if (smtpConfigured) {
   const smtpPort = parseInt(process.env.SMTP_PORT, 10) || 465;
   const smtpSecure = (process.env.SMTP_SECURE === 'true') || smtpPort === 465;
-  
+
   console.log('');
   console.log('┌──────────────────────────────────────────────────────────────────┐');
   console.log('│              🔌 SMTP TRANSPORTER SETUP                           │');
@@ -99,7 +99,9 @@ if (smtpConfigured) {
   console.log(`[EMAIL]    Secure: ${smtpSecure}`);
   console.log(`[EMAIL]    User: ${process.env.SMTP_USER}`);
   console.log(`[EMAIL]    TLS: rejectUnauthorized=false, minVersion=TLSv1.2`);
-  
+  console.log(`[EMAIL]    ENV: NODE_ENV=${process.env.NODE_ENV}, HOSTNAME=${process.env.HOSTNAME || ''}`);
+  console.log(`[EMAIL]    Outbound IP: (will log on connection)`);
+
   transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.hostinger.com',
     port: smtpPort,
@@ -112,16 +114,24 @@ if (smtpConfigured) {
       rejectUnauthorized: false,
       minVersion: 'TLSv1.2'
     },
-    connectionTimeout: 15000, // 15s timeout
-    greetingTimeout: 10000,
-    socketTimeout: 15000,
+    connectionTimeout: 20000, // 20s timeout for more debugging
+    greetingTimeout: 15000,
+    socketTimeout: 20000,
     logger: true, // Enable logging for SMTP debugging
     debug: true // Enable debug output
   });
 
+  // Extra debug: log connection attempt
+  transporter.on && transporter.on('log', (info) => {
+    console.log('[SMTP-DEBUG]', info);
+  });
+  transporter.on && transporter.on('error', (err) => {
+    console.error('[SMTP-ERROR]', err);
+  });
+
   console.log('[EMAIL] ✅ SMTP transporter configured (primary email service)');
   console.log('');
-} 
+}
 
 // ⭐ HARDCODED SENDER VALUES
 const HARDCODED_SENDER = {
