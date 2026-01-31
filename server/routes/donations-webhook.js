@@ -224,13 +224,14 @@ async function handlePaymentIntentSucceeded(event, res) {
     }
 
 
-    // ===== ATOMIC UPSERT FOR DEDUPLICATION =====
-    console.log(`\n[DEDUP] Atomic upsert for donation...`);
+    // ===== ATOMIC EMAIL SEND & DEDUPLICATION =====
+    console.log(`\n[DEDUP] Atomic update for donation receipt...`);
     const now = new Date();
-    const upsertResult = await Donation.findOneAndUpdate(
-      { transactionId },
+    // Only update if receiptSent is false, and set it to true atomically
+    const updateResult = await Donation.findOneAndUpdate(
+      { transactionId, receiptSent: false },
       {
-        $setOnInsert: {
+        $set: {
           donorInfo: { name: donorName, email: donorEmail },
           amount,
           currency,
@@ -242,24 +243,25 @@ async function handlePaymentIntentSucceeded(event, res) {
           source: 'website',
           isRecurring: donationType !== 'one-time',
           completedAt: now,
-          receiptSent: false,
+          receiptSent: true,
+          receiptSentAt: now
         }
       },
-      { new: true, upsert: true }
+      { new: true }
     );
-    // Only send email if receiptSent is false (atomic check)
-    if (upsertResult.receiptSent) {
+    if (!updateResult) {
       console.log(`[DEDUP] ✅ Receipt already sent, skipping...`);
       logToFile(`[DEDUP] Receipt already sent, skipping email`);
-      res.json({ received: true, status: 'duplicate_processed', donationId: upsertResult._id });
+      // Find the existing donation for reference
+      const existing = await Donation.findOne({ transactionId });
+      res.json({ received: true, status: 'duplicate_processed', donationId: existing?._id });
       return;
     }
-    // (Removed duplicate block)
 
     // ===== SEND RECEIPT EMAIL =====
     console.log(`\n[EMAIL] Preparing receipt email...`);
     logToFile(`[EMAIL-ATTEMPT] About to call sendReceiptEmail for ${donorEmail}`);
-    
+
     const emailSubject = 'Thank You for Your Compassion 💙 - HALT Shelter';
     const emailHtml = donationReceiptHtml({
       donorName,
@@ -292,13 +294,9 @@ async function handlePaymentIntentSucceeded(event, res) {
       });
       console.log(`[EMAIL] ✅ Email sent successfully`);
       logToFile(`[EMAIL-SUCCESS] Email sent to ${donorEmail}`);
-      // Atomically mark receipt as sent on the upserted document
-      await Donation.updateOne({ _id: upsertResult._id, receiptSent: false }, { $set: { receiptSent: true, receiptSentAt: new Date() } });
-      console.log(`[EMAIL] 💾 Donation record updated with receiptSent=true`);
-      logToFile(`[EMAIL-MARKED] Donation updated: receiptSent=true`);
-      console.log(`\n[PAYMENT-SUCCESS] ✅ COMPLETE - Donation ${upsertResult._id} processed and email sent`);
-      logToFile(`[PAYMENT-SUCCESS-COMPLETE] donation=${upsertResult._id}`);
-      res.json({ received: true, status: 'success', donationId: upsertResult._id });
+      console.log(`\n[PAYMENT-SUCCESS] ✅ COMPLETE - Donation ${updateResult._id} processed and email sent`);
+      logToFile(`[PAYMENT-SUCCESS-COMPLETE] donation=${updateResult._id}`);
+      res.json({ received: true, status: 'success', donationId: updateResult._id });
       return;
     } catch (emailErr) {
       console.error(`[EMAIL] ❌ Failed to send receipt email`);
@@ -307,7 +305,7 @@ async function handlePaymentIntentSucceeded(event, res) {
       res.json({ 
         received: true, 
         status: 'saved_but_email_failed',
-        donationId: upsertResult._id,
+        donationId: updateResult._id,
         emailError: emailErr.message
       });
       return;
