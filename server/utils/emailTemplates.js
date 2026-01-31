@@ -188,8 +188,13 @@ haltshelter.org
 
 // Newsletter Confirmation Email
 function newsletterConfirmationHtml(email, token, firstName = 'Supporter') {
-  const rawBaseUrl = process.env.FRONTEND_URL || process.env.REACT_APP_API_URL || 'http://localhost:3000';
-  const baseUrl = rawBaseUrl.replace(/\/+$/, '').replace(/\/api$/, '');
+  // Use production domain if available, fallback to localhost for dev
+  let rawBaseUrl = process.env.FRONTEND_URL || process.env.REACT_APP_API_URL || 'http://localhost:3000';
+  // If running in production and .env.production exists, prefer that value
+  if (process.env.NODE_ENV === 'production' && process.env.FRONTEND_URL) {
+    rawBaseUrl = process.env.FRONTEND_URL;
+  }
+  const baseUrl = rawBaseUrl.replace(/\/+ $/, '').replace(/\/api$/, '');
   const confirmationUrl = `${baseUrl}/api/newsletter/confirm/${token}`;
 
   const content = `
@@ -228,8 +233,11 @@ function newsletterConfirmationHtml(email, token, firstName = 'Supporter') {
 }
 
 function newsletterConfirmationText(email, token, firstName = 'Supporter') {
-  const rawBaseUrl = process.env.FRONTEND_URL || process.env.REACT_APP_API_URL || 'http://localhost:3000';
-  const baseUrl = rawBaseUrl.replace(/\/+$/, '').replace(/\/api$/, '');
+  let rawBaseUrl = process.env.FRONTEND_URL || process.env.REACT_APP_API_URL || 'http://localhost:3000';
+  if (process.env.NODE_ENV === 'production' && process.env.FRONTEND_URL) {
+    rawBaseUrl = process.env.FRONTEND_URL;
+  }
+  const baseUrl = rawBaseUrl.replace(/\/+ $/, '').replace(/\/api$/, '');
   const confirmationUrl = `${baseUrl}/api/newsletter/confirm/${token}`;
 
   return `

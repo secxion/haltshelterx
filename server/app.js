@@ -145,7 +145,8 @@ if (NODE_ENV === 'production' && fs.existsSync(FRONTEND_BUILD_PATH)) {
   'http://localhost:3002',
   'http://localhost:5000',
   'http://192.168.56.1:3001',
-  'https://haltshelter.onrender.com'
+  'https://haltshelter.onrender.com',
+  'http://localhost:5000'
 
 ];
   
@@ -171,15 +172,14 @@ if (NODE_ENV === 'production' && fs.existsSync(FRONTEND_BUILD_PATH)) {
 app.use(morgan(NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 // Stripe webhook endpoint - MUST be before express.json() to preserve raw body
-// Add a lightweight logger to confirm requests hit this path at all
 const donationsWebhookHandler = require('./routes/donations-webhook');
-app.post('/api/donations/webhook', (req, res, next) => {
+app.post('/api/donations/webhook', express.raw({ type: 'application/json' }), (req, res, next) => {
   try {
     console.log('[WEBHOOK] Incoming request to /api/donations/webhook');
     console.log('[WEBHOOK] Headers:', JSON.stringify(req.headers));
   } catch (e) {}
   next();
-}, express.raw({ type: 'application/json' }), donationsWebhookHandler);
+}, donationsWebhookHandler);
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
