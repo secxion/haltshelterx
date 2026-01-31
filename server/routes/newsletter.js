@@ -254,8 +254,8 @@ router.get('/confirm/:token', async (req, res) => {
     }
 
     // Redirect to success page
-    console.log(`[NEWSLETTER] Redirecting to success page...`);
-    res.redirect(`${process.env.REACT_APP_URL || 'https://haltshelter.onrender.com'}?newsletter=confirmed`);
+    console.log(`[NEWSLETTER] Redirecting to https://haltshelter.org/?newsletter=confirmed ...`);
+    res.redirect('https://haltshelter.org/?newsletter=confirmed');
   } catch (error) {
     console.error('[NEWSLETTER] ❌ Confirmation error:', error.message);
     console.error('[NEWSLETTER] Stack:', error.stack);

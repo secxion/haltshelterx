@@ -6,10 +6,26 @@ import { apiService, handleApiError } from '../services/api';
 import { navigateTo } from '../utils/navigationUtils';
 import NewsletterModal from '../components/Newsletter/NewsletterModal';
 
+// Simple confirmation modal for newsletter confirmation
+function NewsletterConfirmedModal({ isOpen, onClose }) {
+  if (!isOpen) return null;
+  return (
+    <div className="newsletter-modal-backdrop" style={{zIndex: 1000}}>
+      <div className="newsletter-modal-container" style={{maxWidth: 400, margin: '10% auto', background: 'white', borderRadius: 16, boxShadow: '0 4px 32px #0002', padding: 32, textAlign: 'center'}}>
+        <img src="/haltfav.png" alt="HALT Heart" style={{width: 64, height: 64, marginBottom: 16}} />
+        <h2 style={{color: '#16a34a', fontWeight: 800, fontSize: 24, marginBottom: 12}}>Thank you for confirming!</h2>
+        <p style={{color: '#444', marginBottom: 24}}>You're now subscribed to the HALT newsletter.<br/>Watch your inbox for heartwarming stories and updates.</p>
+        <button onClick={onClose} style={{background: '#facc15', color: '#222', fontWeight: 700, border: 'none', borderRadius: 8, padding: '10px 28px', fontSize: 16, cursor: 'pointer'}}>Close</button>
+      </div>
+    </div>
+  );
+}
+
 const Home = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [newsletterModalOpen, setNewsletterModalOpen] = useState(false);
   const [featuredStories, setFeaturedStories] = useState([]);
+  const [newsletterConfirmedModalOpen, setNewsletterConfirmedModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newsletterEmail, setNewsletterEmail] = useState('');
@@ -29,11 +45,13 @@ const Home = () => {
     const newsletter = searchParams.get('newsletter');
     if (newsletter === 'true') {
       setNewsletterModalOpen(true);
-      // Remove query parameter
       setSearchParams({});
     } else if (newsletter === 'confirmed') {
-      // Newsletter subscription confirmed
       setNewsletterModalOpen(false);
+      setNewsletterConfirmedModalOpen(true);
+      setSearchParams({});
+      // Auto-close after 7s
+      setTimeout(() => setNewsletterConfirmedModalOpen(false), 7000);
     }
   }, [searchParams, setSearchParams]);
 
@@ -483,6 +501,10 @@ const Home = () => {
       <NewsletterModal 
         isOpen={newsletterModalOpen}
         onClose={() => setNewsletterModalOpen(false)}
+      />
+      <NewsletterConfirmedModal
+        isOpen={newsletterConfirmedModalOpen}
+        onClose={() => setNewsletterConfirmedModalOpen(false)}
       />
     </div>
   );

@@ -49,10 +49,15 @@ if (!process.env.SMTP_PASS) missingVars.push('SMTP_PASS');
 const smtpConfigured = missingVars.length === 0;
 
 // Allow runtime toggle: USE_SENDGRID_FIRST=true|false
-// Default behavior: prefer SMTP when configured, otherwise SendGrid
-const useSendGridFirst = useSendGridFirstRaw
-  ? useSendGridFirstRaw === 'true'
-  : !smtpConfigured;
+// Default: prefer SendGrid in production, SMTP in dev if configured
+let useSendGridFirst;
+if (typeof useSendGridFirstRaw !== 'undefined') {
+  useSendGridFirst = useSendGridFirstRaw === 'true';
+} else if (process.env.NODE_ENV === 'production') {
+  useSendGridFirst = true;
+} else {
+  useSendGridFirst = !smtpConfigured;
+}
 
 // SendGrid Configuration (logging after SMTP config known)
 console.log('');
@@ -114,9 +119,9 @@ if (smtpConfigured) {
       rejectUnauthorized: false,
       minVersion: 'TLSv1.2'
     },
-    connectionTimeout: 20000, // 20s timeout for more debugging
-    greetingTimeout: 15000,
-    socketTimeout: 20000,
+    connectionTimeout: 5000, // 5s connection timeout
+    greetingTimeout: 5000,   // 5s greeting timeout
+    socketTimeout: 5000,     // 5s socket timeout
     logger: true, // Enable logging for SMTP debugging
     debug: true // Enable debug output
   });
