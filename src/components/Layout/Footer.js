@@ -6,7 +6,7 @@ import { navigateTo } from '../../utils/navigationUtils';
 
 const Footer = () => {
   // Allow overriding the Facebook URL via environment variable for easy updates without code changes
-  const fbUrl = process.env.REACT_APP_FACEBOOK_URL || 'https://www.facebook.com/HelpingAnimalsLiveAndThrive';
+  const fbUrl = process.env.REACT_APP_FACEBOOK_URL || 'https://www.facebook.com/profile.php?id=827913347067008';
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
