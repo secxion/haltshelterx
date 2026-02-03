@@ -36,7 +36,11 @@ const {
 // Initialize Express app
 const app = express();
 
+
 // --- Core Server Configuration & Middleware ---
+
+// Serve static files from public directory (robots.txt, sitemap.xml, etc.)
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Configure trust proxy (crucial for reverse proxies like Render/Heroku for rate-limiting)
 // Render uses 1 proxy layer, so we trust only the first proxy for security
