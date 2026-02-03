@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "postbuild": "react-snap"
+  },
+  "reactSnap": {
+    "inlineCss": true,
+    "minifyHtml": true,
+    "removeBlobs": true,
+    "puppeteerArgs": ["--no-sandbox"]
+  }
+}
