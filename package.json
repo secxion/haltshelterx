@@ -63,7 +63,8 @@
         "inlineCss": true,
         "minifyHtml": true,
         "removeBlobs": true,
-        "puppeteerArgs": ["--no-sandbox"]
+        "puppeteerArgs": ["--no-sandbox"],
+        "routes": ["/", "/about", "/contact"]
       },
     "test": "react-scripts test",
     "eject": "react-scripts eject"
