@@ -39,8 +39,14 @@ const app = express();
 
 // --- Core Server Configuration & Middleware ---
 
-// Serve static files from public directory (robots.txt, sitemap.xml, etc.)
-app.use(express.static(path.join(__dirname, '../public')));
+
+// Serve only robots.txt and sitemap.xml from public directory
+app.get('/robots.txt', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/robots.txt'));
+});
+app.get('/sitemap.xml', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/sitemap.xml'));
+});
 
 // Configure trust proxy (crucial for reverse proxies like Render/Heroku for rate-limiting)
 // Render uses 1 proxy layer, so we trust only the first proxy for security
