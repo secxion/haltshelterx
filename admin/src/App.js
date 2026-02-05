@@ -15,6 +15,7 @@ import StatsManager from './components/StatsManager/StatsManager';
 import NewsletterSubscribers from './pages/NewsletterSubscribers';
 import NewsletterCompose from './pages/NewsletterCompose';
 import FundingNeedsManager from './components/FundingNeedsManager';
+import TestimonialsManager from './pages/TestimonialsManager';
 
 // Simple auth context
 const AuthContext = React.createContext();
@@ -170,6 +171,13 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <FundingNeedsManager />
+              </Layout>
+            </ProtectedRoute>
+          } />
+          <Route path="/testimonials" element={
+            <ProtectedRoute>
+              <Layout>
+                <TestimonialsManager />
               </Layout>
             </ProtectedRoute>
           } />

@@ -146,27 +146,11 @@ if (NODE_ENV === 'production' && fs.existsSync(FRONTEND_BUILD_PATH)) {
     return res.status(403).json({ error: 'Not allowed by CORS' });
   });
 } else {
-  // Development CORS: Allows a specific whitelist. The whitelist can be simplified 
-  // or completely opened for development/testing if needed.
-  const whitelist = [
-  'http://localhost:3000', 
-  'http://127.0.0.1:3000', 
-  'http://localhost:3001',
-  'http://localhost:3002',
-  'http://localhost:5000',
-  'http://192.168.56.1:3001',
-  'https://haltshelter.onrender.com',
-  'http://localhost:5000'
-
-];
-  
-  if (process.env.FRONTEND_URL) {
-    whitelist.push(process.env.FRONTEND_URL);
-  }
-
+  // Development CORS: Allow all localhost origins
   app.use(cors({
     origin: function (origin, callback) {
-      if (!origin || whitelist.indexOf(origin) !== -1) {
+      // Allow requests from any localhost origin (development only)
+      if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1')) {
         callback(null, true);
       } else {
         console.error(`CORS: Blocked access from origin: ${origin}`);
@@ -383,6 +367,7 @@ app.use('/api/users', checkAdminOrigin, adminApiLimiter, require('./routes/users
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/stats', require('./routes/stats'));
 app.use('/api/funding-needs', require('./routes/funding-needs'));
+app.use('/api/testimonials', require('./routes/testimonials'));
 
 // Test email endpoint (for diagnosing SMTP issues in production)
 // app.use('/api/test', require('./routes/test-email')); // Disabled for security

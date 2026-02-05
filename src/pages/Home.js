@@ -5,6 +5,7 @@ import { FaEnvelope } from 'react-icons/fa';
 import { apiService, handleApiError } from '../services/api';
 import { navigateTo } from '../utils/navigationUtils';
 import NewsletterModal from '../components/Newsletter/NewsletterModal';
+import TestimonialsPanel from '../components/TestimonialsPanel';
 
 // Simple confirmation modal for newsletter confirmation
 function NewsletterConfirmedModal({ isOpen, onClose }) {
@@ -96,7 +97,7 @@ const Home = () => {
             _id: '1',
             title: "Bella's Second Chance",
             excerpt: "Rescued from neglect, Bella found her forever family and now helps other rescue dogs as a therapy companion.",
-            featuredImage: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlJlc2N1ZSBTdG9yeTwvdGV4dD48L3N2Zz4=",
+            featuredImage: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlJlc2N1ZSBTdG9yeTwvdGV4dD48L3N2Zz4=",
             category: "Success Story",
             slug: "bellas-second-chance"
           },
@@ -343,6 +344,13 @@ const Home = () => {
               <img src="https://www.peta.org/wp-content/uploads/2025/08/Charli-August-2025-Group.jpg" alt="Volunteers in action" className="w-40 h-40 rounded-full object-cover shadow-lg border-4 border-yellow-200" />
             </div>
           </>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-12 sm:py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <TestimonialsPanel />
         </div>
       </section>
 

@@ -22,6 +22,7 @@ const Layout = ({ children }) => {
     { name: 'Dashboard', href: '/', icon: HomeIcon, current: location.pathname === '/' },
     { name: 'Stories', href: '/stories', icon: DocumentTextIcon, current: location.pathname === '/stories' },
     { name: 'Blog', href: '/blog', icon: NewspaperIcon, current: location.pathname === '/blog' },
+    { name: 'Testimonials', href: '/testimonials', icon: UsersIcon, current: location.pathname === '/testimonials' },
     { name: 'Animals', href: '/animals', icon: PhotoIcon, current: location.pathname === '/animals' },
     { name: 'Adoption Inquiries', href: '/adoption-inquiries', icon: HeartIcon, current: location.pathname === '/adoption-inquiries' },
     { name: 'Volunteers', href: '/volunteers', icon: UsersIcon, current: location.pathname === '/volunteers' },
