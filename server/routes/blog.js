@@ -182,48 +182,6 @@ router.get('/tags', async (req, res) => {
   }
 });
 
-// Get single blog by slug (public endpoint)
-router.get('/:slug', async (req, res) => {
-  try {
-    const blog = await Blog.findOne({ 
-      slug: req.params.slug, 
-      status: 'published' 
-    })
-    .populate('relatedAnimals', 'name breed age photos')
-    .populate('relatedStories', 'title slug excerpt image')
-    .lean();
-
-    if (!blog) {
-      return res.status(404).json({ error: 'Blog post not found' });
-    }
-
-    // Increment view count
-    await Blog.findByIdAndUpdate(blog._id, { $inc: { views: 1 } });
-
-    // Get related blogs (same category, different post)
-    const relatedBlogs = await Blog.find({
-      category: blog.category,
-      _id: { $ne: blog._id },
-      status: 'published'
-    })
-    .sort({ publishedAt: -1 })
-    .limit(3)
-    .select('title slug excerpt featuredImage publishedAt category')
-    .lean();
-
-    res.json({
-      success: true,
-      data: {
-        ...blog,
-        relatedBlogs
-      }
-    });
-  } catch (error) {
-    console.error('Get blog error:', error);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
 // Create new blog (admin only)
 router.post('/', authenticate, authorize('admin', 'staff'), upload.single('featuredImage'), 
   // Preprocess FormData/JSON
@@ -675,6 +633,48 @@ router.post('/admin/recompute-likes', authenticate, authorize('admin'), async (r
   } catch (error) {
     console.error('Recompute likes error:', error);
     res.status(500).json({ error: 'Failed to recompute likes' });
+  }
+});
+
+// Get single blog by slug (public endpoint) - MUST BE LAST as catch-all route
+router.get('/:slug', async (req, res) => {
+  try {
+    const blog = await Blog.findOne({ 
+      slug: req.params.slug, 
+      status: 'published' 
+    })
+    .populate('relatedAnimals', 'name breed age photos')
+    .populate('relatedStories', 'title slug excerpt image')
+    .lean();
+
+    if (!blog) {
+      return res.status(404).json({ error: 'Blog post not found' });
+    }
+
+    // Increment view count
+    await Blog.findByIdAndUpdate(blog._id, { $inc: { views: 1 } });
+
+    // Get related blogs (same category, different post)
+    const relatedBlogs = await Blog.find({
+      category: blog.category,
+      _id: { $ne: blog._id },
+      status: 'published'
+    })
+    .sort({ publishedAt: -1 })
+    .limit(3)
+    .select('title slug excerpt featuredImage publishedAt category')
+    .lean();
+
+    res.json({
+      success: true,
+      data: {
+        ...blog,
+        relatedBlogs
+      }
+    });
+  } catch (error) {
+    console.error('Get blog error:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
