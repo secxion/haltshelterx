@@ -111,9 +111,13 @@ router.get('/', optionalAuth, async (req, res) => {
         .populate('author', 'firstName lastName');
       total = stories.length;
     }
+
+    // Transform image URLs in all stories
+    const transformedStories = stories.map(story => transformImageUrls(story, req));
+
     res.json({
       success: true,
-      data: stories,
+      data: transformedStories,
       pagination: {
         page: parseInt(page),
         limit: lim || total,
@@ -203,9 +207,12 @@ router.get('/:slug', optionalAuth, async (req, res) => {
     story.views = (story.views || 0) + 1;
     await story.save();
 
+    // Transform image URLs
+    const transformedStory = transformImageUrls(story, req);
+
     res.json({
       success: true,
-      story
+      story: transformedStory
     });
   } catch (error) {
     console.error('Get story error:', error);
@@ -321,9 +328,12 @@ router.post('/', authenticate, authorize('admin', 'staff'), [
     await story.save();
     await story.populate('author', 'firstName lastName');
 
+    // Transform image URLs
+    const transformedStory = transformImageUrls(story, req);
+
     res.status(201).json({
       success: true,
-      story
+      story: transformedStory
     });
   } catch (error) {
     console.error('Create story error:', error);
@@ -366,9 +376,12 @@ router.put('/:id', authenticate, authorize('admin', 'staff'), async (req, res) =
 
     await story.populate('author', 'firstName lastName');
 
+    // Transform image URLs
+    const transformedStory = transformImageUrls(story, req);
+
     res.json({
       success: true,
-      story
+      story: transformedStory
     });
   } catch (error) {
     console.error('Update story error:', error);
