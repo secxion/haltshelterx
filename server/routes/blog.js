@@ -233,7 +233,7 @@ router.post('/', authenticate, authorize('admin', 'staff'), upload.single('featu
   ]).withMessage('Valid category is required'),
   body('status').optional().isIn(['draft', 'published', 'scheduled']).withMessage('Invalid status'),
   body('scheduledFor').optional().isISO8601().toDate(),
-  body('isFeatured').optional().isBoolean().toBoolean(),
+  body('isFeatured').optional().toBoolean(),
   body('metaTitle').optional().trim().isLength({ max: 60 }),
   body('metaDescription').optional().trim().isLength({ max: 160 })
 ], async (req, res) => {
@@ -455,7 +455,7 @@ router.put('/:id', authenticate, authorize('admin', 'staff'), upload.single('fea
   ]),
   body('status').optional().isIn(['draft', 'published', 'scheduled', 'archived']),
   body('scheduledFor').optional().isISO8601().toDate(),
-  body('isFeatured').optional().isBoolean().toBoolean()
+  body('isFeatured').optional().toBoolean()
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
