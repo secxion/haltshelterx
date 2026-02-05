@@ -146,7 +146,7 @@ export default function Blog() {
       {blog.featuredImage?.url && (
         <div className={`relative ${featured ? 'h-64' : 'h-48'} overflow-hidden`}>
           <img
-            src={`${SERVER_BASE_URL}${blog.featuredImage.url}`}
+            src={blog.featuredImage.url.startsWith('data:') ? blog.featuredImage.url : `${SERVER_BASE_URL}${blog.featuredImage.url}`}
             alt={blog.featuredImage.alt || blog.title}
             className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
           />

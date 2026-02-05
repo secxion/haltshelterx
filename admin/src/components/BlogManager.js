@@ -197,6 +197,7 @@ const BlogManager = () => {
           }
         });
 
+        console.log('Submitting blog with FormData (featured image included):', blogData);
         response = await fetch(url, {
           method,
           headers: {
@@ -206,6 +207,7 @@ const BlogManager = () => {
         });
       } else {
         // Use JSON for request when no file upload needed
+        console.log('Submitting blog with JSON (no featured image):', blogData);
         response = await fetch(url, {
           method,
           headers: {
@@ -225,10 +227,15 @@ const BlogManager = () => {
         fetchBlogs();
       } else {
         // Show detailed validation errors
+        console.error('Blog submission error:', data);
         if (data.errors && Array.isArray(data.errors)) {
-          const errorMessages = data.errors.map(err => err.msg).join('\n');
+          const errorMessages = data.errors.map(err => `${err.path}: ${err.msg}`).join('\n');
           alert(`Validation errors:\n${errorMessages}`);
+        } else if (data.error) {
+          alert(`Error: ${data.error}`);
         } else {
+          alert('Failed to save blog');
+        }
           console.error('Error saving blog:', data.error);
           alert(`Error saving blog: ${data.error || 'Unknown error'}`);
         }
