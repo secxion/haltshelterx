@@ -24,7 +24,8 @@ const storage = multer.diskStorage({
 const upload = multer({ 
   storage: storage,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
+    fileSize: 5 * 1024 * 1024, // 5MB limit per file
+    fieldSize: 50 * 1024 * 1024 // 50MB limit for form fields (for base64 images)
   },
   fileFilter: function (req, file, cb) {
     if (file.mimetype.startsWith('image/')) {
@@ -225,16 +226,32 @@ router.get('/:slug', async (req, res) => {
 
 // Create new blog (admin only)
 router.post('/', authenticate, authorize('admin', 'staff'), upload.single('featuredImage'), 
-  // Preprocess FormData
+  // Preprocess FormData/JSON
   (req, res, next) => {
-    // Handle tags array from FormData
-    if (req.body.tags && typeof req.body.tags === 'string') {
-      try {
-        req.body.tags = JSON.parse(req.body.tags);
-      } catch (e) {
-        // If parsing fails, treat as single tag
-        req.body.tags = [req.body.tags];
+    // Handle tags array from FormData or JSON
+    if (req.body.tags) {
+      if (typeof req.body.tags === 'string') {
+        try {
+          req.body.tags = JSON.parse(req.body.tags);
+        } catch (e) {
+          req.body.tags = [req.body.tags];
+        }
       }
+      // If already an array, leave as is
+    }
+    
+    // Handle images array from FormData or JSON
+    if (req.body.images) {
+      if (typeof req.body.images === 'string') {
+        try {
+          req.body.images = JSON.parse(req.body.images);
+        } catch (e) {
+          req.body.images = [];
+        }
+      }
+      // If already an array, leave as is
+    } else {
+      req.body.images = [];
     }
     
     // Convert boolean strings
@@ -276,7 +293,8 @@ router.post('/', authenticate, authorize('admin', 'staff'), upload.single('featu
       metaTitle,
       metaDescription,
       featuredImageAlt,
-      featuredImageCaption
+      featuredImageCaption,
+      images = []
     } = req.body;
 
     const blogData = {
@@ -309,6 +327,11 @@ router.post('/', authenticate, authorize('admin', 'staff'), upload.single('featu
         alt: featuredImageAlt || title,
         caption: featuredImageCaption || ''
       };
+    }
+
+    // Add gallery images if provided
+    if (Array.isArray(images) && images.length > 0) {
+      blogData.images = images.slice(0, 10); // Limit to 10 images
     }
 
     if (metaTitle || metaDescription) {
@@ -427,7 +450,38 @@ router.get('/admin/:id', authenticate, authorize('admin', 'staff'), async (req, 
 });
 
 // Update blog (admin only)
-router.put('/:id', authenticate, authorize('admin', 'staff'), upload.single('featuredImage'), [
+router.put('/:id', authenticate, authorize('admin', 'staff'), upload.single('featuredImage'),
+  // Preprocess FormData/JSON
+  (req, res, next) => {
+    // Handle tags array from FormData or JSON
+    if (req.body.tags) {
+      if (typeof req.body.tags === 'string') {
+        try {
+          req.body.tags = JSON.parse(req.body.tags);
+        } catch (e) {
+          req.body.tags = [];
+        }
+      }
+    }
+    
+    // Handle images array from FormData or JSON
+    if (req.body.images) {
+      if (typeof req.body.images === 'string') {
+        try {
+          req.body.images = JSON.parse(req.body.images);
+        } catch (e) {
+          req.body.images = [];
+        }
+      }
+    }
+    
+    // Convert boolean strings
+    if (req.body.isFeatured === 'true') req.body.isFeatured = true;
+    if (req.body.isFeatured === 'false') req.body.isFeatured = false;
+    
+    next();
+  },
+  [
   body('title').optional().trim().isLength({ min: 1, max: 200 }),
   body('excerpt').optional().trim().isLength({ min: 1, max: 300 }),
   body('content').optional().trim().isLength({ min: 1 }),
@@ -457,6 +511,8 @@ router.put('/:id', authenticate, authorize('admin', 'staff'), upload.single('fea
       if (req.body[key] !== undefined) {
         if (key === 'tags' && Array.isArray(req.body[key])) {
           blog[key] = req.body[key].filter(tag => tag.trim()).map(tag => tag.trim().toLowerCase());
+        } else if (key === 'images' && Array.isArray(req.body[key])) {
+          blog[key] = req.body[key].slice(0, 10); // Limit to 10 images
         } else {
           blog[key] = req.body[key];
         }
