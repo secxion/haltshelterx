@@ -5,6 +5,49 @@ const { authenticate, authorize, optionalAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
+// Helper function to transform image URLs to use request origin
+// This ensures images work in both development and production
+const transformImageUrls = (story, req) => {
+  if (!story) return story;
+  
+  const storyObj = story.toObject ? story.toObject() : story;
+  
+  const transformUrl = (url) => {
+    if (!url) return url;
+    
+    // If it's already a full URL with localhost, replace with request origin
+    if (url.includes('localhost:5000') || url.includes('127.0.0.1:5000')) {
+      const protocol = req.protocol || 'https';
+      const host = req.get('host') || 'localhost:5000';
+      return url.replace(/https?:\/\/[^/]+/, `${protocol}://${host}`);
+    }
+    
+    // If it's a relative path to uploads, make it absolute with request origin
+    if (url.startsWith('/uploads/')) {
+      const protocol = req.protocol || 'https';
+      const host = req.get('host') || 'localhost:5000';
+      return `${protocol}://${host}${url}`;
+    }
+    
+    return url;
+  };
+  
+  // Transform featured image
+  if (storyObj.featuredImage && storyObj.featuredImage.url) {
+    storyObj.featuredImage.url = transformUrl(storyObj.featuredImage.url);
+  }
+  
+  // Transform additional images
+  if (storyObj.additionalImages && Array.isArray(storyObj.additionalImages)) {
+    storyObj.additionalImages = storyObj.additionalImages.map(img => ({
+      ...img,
+      url: transformUrl(img.url)
+    }));
+  }
+  
+  return storyObj;
+};
+
 // Get count of published stories (admin/staff only)
 router.get('/count', authenticate, authorize('admin', 'staff'), async (req, res) => {
   try {
@@ -67,9 +110,13 @@ router.get('/', optionalAuth, async (req, res) => {
         .populate('author', 'firstName lastName');
       total = stories.length;
     }
+    
+    // Transform image URLs in all stories
+    const transformedStories = stories.map(story => transformImageUrls(story, req));
+    
     res.json({
       success: true,
-      data: stories,
+      data: transformedStories,
       pagination: {
         page: parseInt(page),
         limit: lim || total,
@@ -95,9 +142,12 @@ router.get('/featured', async (req, res) => {
       .populate('author', 'firstName lastName')
       .select('title slug excerpt featuredImage createdAt author readTime');
 
+    // Transform image URLs in all stories
+    const transformedStories = stories.map(story => transformImageUrls(story, req));
+
     res.json({
       success: true,
-      stories
+      stories: transformedStories
     });
   } catch (error) {
     console.error('Get featured stories error:', error);
@@ -121,9 +171,12 @@ router.get('/:slug', optionalAuth, async (req, res) => {
     story.views = (story.views || 0) + 1;
     await story.save();
 
+    // Transform image URLs
+    const transformedStory = transformImageUrls(story, req);
+
     res.json({
       success: true,
-      story
+      story: transformedStory
     });
   } catch (error) {
     console.error('Get story error:', error);
@@ -161,9 +214,12 @@ router.get('/admin/all', authenticate, authorize('admin', 'staff'), async (req, 
 
     const total = await Story.countDocuments(filter);
 
+    // Transform image URLs in all stories
+    const transformedStories = stories.map(story => transformImageUrls(story, req));
+
     res.json({
       success: true,
-      stories,
+      stories: transformedStories,
       pagination: {
         page: parseInt(page),
         limit: parseInt(limit),
@@ -239,9 +295,12 @@ router.post('/', authenticate, authorize('admin', 'staff'), [
     await story.save();
     await story.populate('author', 'firstName lastName');
 
+    // Transform image URLs
+    const transformedStory = transformImageUrls(story, req);
+
     res.status(201).json({
       success: true,
-      story
+      story: transformedStory
     });
   } catch (error) {
     console.error('Create story error:', error);
@@ -284,9 +343,12 @@ router.put('/:id', authenticate, authorize('admin', 'staff'), async (req, res) =
 
     await story.populate('author', 'firstName lastName');
 
+    // Transform image URLs
+    const transformedStory = transformImageUrls(story, req);
+
     res.json({
       success: true,
-      story
+      story: transformedStory
     });
   } catch (error) {
     console.error('Update story error:', error);

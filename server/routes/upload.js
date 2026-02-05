@@ -47,8 +47,11 @@ router.post('/image', authenticate, authorize('admin', 'staff'), upload.single('
       return res.status(400).json({ error: 'No image file provided' });
     }
 
-    // Generate URL for the uploaded image
-    const imageUrl = `http://localhost:5000/uploads/images/${req.file.filename}`;
+    // Generate URL for the uploaded image using the request origin
+    // This ensures URLs work in both development (localhost:5000) and production (haltshelter.org)
+    const protocol = req.protocol || 'https';
+    const host = req.get('host') || 'localhost:5000';
+    const imageUrl = `${protocol}://${host}/uploads/images/${req.file.filename}`;
 
     res.json({
       success: true,
