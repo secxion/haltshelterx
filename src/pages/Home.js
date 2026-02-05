@@ -325,7 +325,7 @@ const Home = () => {
             )}
             {/* Stories Grid */}
             {!loading && (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 sm:gap-8">
                 {featuredStories.map((story) => (
                   <div key={story._id || story.id} className="bg-white rounded-lg shadow-md overflow-hidden hover-lift" tabIndex={0} aria-label={`Rescue story: ${story.title}`}>
                     <img 

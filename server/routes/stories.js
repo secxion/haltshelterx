@@ -133,14 +133,38 @@ router.get('/', optionalAuth, async (req, res) => {
 // Get featured stories (public endpoint) - MUST be before /:slug route
 router.get('/featured', async (req, res) => {
   try {
+    // Featured stories filtered by rescue/success categories (for hero section)
+    // These categories best represent the mission-driven content
+    const rescueMissionCategories = ['Recent Rescue', 'Medical Success', 'Success Story'];
+    
+    // Get 6 most recent published stories in rescue/success categories (newest first)
     const stories = await Story.find({ 
       isPublished: true,
-      isFeatured: true 
+      category: { $in: rescueMissionCategories }
     })
       .sort({ createdAt: -1 })
       .limit(6)
       .populate('author', 'firstName lastName')
       .select('title slug excerpt featuredImage createdAt author readTime');
+
+    // If fewer than 6 stories in these categories, supplement with other published stories
+    if (stories.length < 6) {
+      const remaining = 6 - stories.length;
+      const additionalStories = await Story.find({ 
+        isPublished: true,
+        category: { $nin: rescueMissionCategories },
+        _id: { $nin: stories.map(s => s._id) }
+      })
+        .sort({ createdAt: -1 })
+        .limit(remaining)
+        .populate('author', 'firstName lastName')
+        .select('title slug excerpt featuredImage createdAt author readTime');
+      
+      stories.push(...additionalStories);
+    }
+
+    // Re-sort combined results by newest first
+    stories.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     // Transform image URLs in all stories
     const transformedStories = stories.map(story => transformImageUrls(story, req));
