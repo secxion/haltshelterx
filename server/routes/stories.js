@@ -5,50 +5,9 @@ const { authenticate, authorize, optionalAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Helper function to transform image URLs for multi-environment support
+// No URL transformation needed - base64 data URLs work everywhere
 const transformImageUrls = (story, req) => {
-  const storyObj = story.toObject ? story.toObject() : { ...story };
-  
-  const transformUrl = (url) => {
-    if (!url || typeof url !== 'string') return url;
-    
-    // Replace localhost URLs with request origin
-    if (url.includes('localhost:5000') || url.includes('127.0.0.1:5000')) {
-      const protocol = req.protocol || 'https';
-      const host = req.get('host') || 'localhost:5000';
-      return url.replace(/https?:\/\/[^/]+/, `${protocol}://${host}`);
-    }
-    
-    // Convert relative paths to absolute URLs
-    if (url.startsWith('/uploads/')) {
-      const protocol = req.protocol || 'https';
-      const host = req.get('host') || 'localhost:5000';
-      return `${protocol}://${host}${url}`;
-    }
-    
-    return url;
-  };
-
-  // Transform featured image
-  if (storyObj.featuredImage) {
-    if (typeof storyObj.featuredImage === 'string') {
-      storyObj.featuredImage = transformUrl(storyObj.featuredImage);
-    } else if (storyObj.featuredImage && typeof storyObj.featuredImage === 'object') {
-      if (storyObj.featuredImage.url) {
-        storyObj.featuredImage.url = transformUrl(storyObj.featuredImage.url);
-      }
-    }
-  }
-
-  // Transform additional images
-  if (storyObj.additionalImages && Array.isArray(storyObj.additionalImages)) {
-    storyObj.additionalImages = storyObj.additionalImages.map(img => ({
-      ...img,
-      url: transformUrl(img.url || img)
-    }));
-  }
-
-  return storyObj;
+  return story.toObject ? story.toObject() : story;
 };
 
 // Get count of published stories (admin/staff only)
@@ -275,13 +234,13 @@ router.post('/', authenticate, authorize('admin', 'staff'), [
   body('content').trim().isLength({ min: 10 }).withMessage('Content must be at least 10 characters'),
   body('category').isIn(['Success Story', 'Recent Rescue', 'Medical Success', 'Volunteer Spotlight', 'Foster Story', 'Memorial', 'News', 'Event']).withMessage('Invalid category'),
   body('featuredImage.url').custom((value, { req }) => {
-    // Check if featuredImage.url exists and is a valid URL
+    // Check if featuredImage.url exists
     if (!value || typeof value !== 'string' || value.trim() === '') {
       throw new Error('Featured image URL is required');
     }
-    // Allow both full URLs and local paths (for uploaded images)
-    if (!value.match(/^(https?:\/\/|\/uploads\/)/)) {
-      throw new Error('Featured image URL must be a valid URL or uploaded image path');
+    // Allow base64 data URLs (like testimonials), full URLs, or paths
+    if (!value.match(/^(data:image\/|https?:\/\/|\/)/)) {
+      throw new Error('Featured image must be uploaded or a valid URL');
     }
     return true;
   })

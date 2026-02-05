@@ -6,24 +6,8 @@ const { authenticate, authorize } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Create uploads directory if it doesn't exist
-const uploadsDir = path.join(__dirname, '../uploads/images');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
-// Configure multer for image uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadsDir);
-  },
-  filename: (req, file, cb) => {
-    // Generate unique filename
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    cb(null, 'story-' + uniqueSuffix + ext);
-  }
-});
+// Use memory storage - we'll convert to base64 immediately
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage: storage,
@@ -40,21 +24,21 @@ const upload = multer({
   }
 });
 
-// Upload single image endpoint
+// Upload single image endpoint - Convert to base64 like testimonials
 router.post('/image', authenticate, authorize('admin', 'staff'), upload.single('image'), (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No image file provided' });
     }
 
-    // Store as relative path - will be transformed to absolute URL when served
-    const relativePath = `/uploads/images/${req.file.filename}`;
+    // Convert to base64 data URL (exactly like testimonials)
+    const base64Data = req.file.buffer.toString('base64');
+    const dataUrl = `data:${req.file.mimetype};base64,${base64Data}`;
 
     res.json({
       success: true,
-      imageUrl: relativePath,
-      filename: req.file.filename,
-      originalName: req.file.originalname,
+      imageUrl: dataUrl,
+      filename: req.file.originalname,
       size: req.file.size
     });
   } catch (error) {
