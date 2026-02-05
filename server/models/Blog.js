@@ -56,6 +56,17 @@ const blogSchema = new mongoose.Schema({
     caption: String
   },
   
+  // Multiple images for carousel/gallery display
+  images: [{
+    url: String,
+    alt: String,
+    caption: String,
+    isPrimary: {
+      type: Boolean,
+      default: false
+    }
+  }],
+  
   author: {
     name: {
       type: String,

@@ -22,6 +22,7 @@ export default function BlogDetail() {
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(0);
   const [isLiking, setIsLiking] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const categoryLabels = {
     'pet-care': 'Pet Care',
@@ -182,6 +183,18 @@ export default function BlogDetail() {
     });
   };
 
+  const nextImage = () => {
+    if (blog.images && blog.images.length > 1) {
+      setCurrentImageIndex((prev) => (prev + 1) % blog.images.length);
+    }
+  };
+
+  const prevImage = () => {
+    if (blog.images && blog.images.length > 1) {
+      setCurrentImageIndex((prev) => (prev - 1 + blog.images.length) % blog.images.length);
+    }
+  };
+
   const calculateReadTime = (content) => {
     const wordsPerMinute = 200;
     const wordCount = content.split(' ').length;
@@ -332,6 +345,54 @@ export default function BlogDetail() {
             {blog.featuredImage.caption && (
               <p className="text-sm text-gray-500 text-center mt-2 italic">
                 {blog.featuredImage.caption}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Image Gallery Carousel */}
+        {blog.images && blog.images.length > 0 && (
+          <div className="mb-12">
+            <div className="relative">
+              <img
+                src={blog.images[currentImageIndex].url}
+                alt={blog.images[currentImageIndex].alt || blog.title}
+                className="w-full h-64 md:h-96 object-cover rounded-xl shadow-lg"
+              />
+              {blog.images.length > 1 && (
+                <>
+                  <button
+                    onClick={prevImage}
+                    className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-colors"
+                    aria-label="Previous image"
+                  >
+                    ←
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-colors"
+                    aria-label="Next image"
+                  >
+                    →
+                  </button>
+                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
+                    {blog.images.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          index === currentImageIndex ? 'bg-white w-6' : 'bg-white bg-opacity-50'
+                        }`}
+                        aria-label={`Go to image ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+            {blog.images[currentImageIndex].caption && (
+              <p className="text-sm text-gray-500 text-center mt-2 italic">
+                {blog.images[currentImageIndex].caption}
               </p>
             )}
           </div>

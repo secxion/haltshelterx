@@ -44,7 +44,9 @@ const BlogManager = () => {
     scheduledFor: '',
     featuredImage: null,
     featuredImageAlt: '',
-    featuredImageCaption: ''
+    featuredImageCaption: '',
+    images: [],
+    galleryFiles: null // Files for multi-image upload
   });
 
   const categories = [
@@ -124,22 +126,54 @@ const BlogManager = () => {
     
     try {
       const adminToken = localStorage.getItem('adminToken');
-      const formDataToSend = new FormData();
+      
+      // Process multiple images if provided
+      let processedImages = [];
+      if (formData.galleryFiles && formData.galleryFiles.length > 0) {
+        const galleryFormData = new FormData();
+        Array.from(formData.galleryFiles).forEach(file => {
+          galleryFormData.append('images', file);
+        });
 
-      // Add all form fields
-      Object.keys(formData).forEach(key => {
-        if (key === 'tags') {
-          // Send tags as JSON string for proper parsing
-          formDataToSend.append(key, JSON.stringify(formData[key]));
-        } else if (key === 'featuredImage' && formData[key]) {
-          formDataToSend.append(key, formData[key]);
-        } else if (key === 'scheduledFor' && formData[key].trim()) {
-          // Only send scheduledFor if it has a non-empty value
-          formDataToSend.append(key, formData[key]);
-        } else if (key !== 'featuredImage' && key !== 'scheduledFor' && key !== 'tags') {
-          formDataToSend.append(key, formData[key]);
+        const uploadResponse = await fetch(`${API_BASE_URL}/upload/images`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${adminToken}`
+          },
+          body: galleryFormData
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error('Failed to upload images');
         }
-      });
+
+        const uploadData = await uploadResponse.json();
+        if (uploadData.success) {
+          processedImages = uploadData.images.map(img => ({
+            url: img.url,
+            alt: '',
+            caption: '',
+            isPrimary: false
+          }));
+        }
+      }
+
+      // Create blog data object for JSON transmission
+      const blogData = {
+        title: formData.title,
+        excerpt: formData.excerpt,
+        content: formData.content,
+        category: formData.category,
+        status: formData.status,
+        tags: formData.tags || [],
+        isFeatured: formData.isFeatured,
+        metaTitle: formData.metaTitle,
+        metaDescription: formData.metaDescription,
+        featuredImageAlt: formData.featuredImageAlt,
+        featuredImageCaption: formData.featuredImageCaption,
+        ...(formData.scheduledFor && formData.status === 'scheduled' && { scheduledFor: formData.scheduledFor }),
+        ...(processedImages.length > 0 && { images: processedImages })
+      };
 
       const url = editingBlog 
         ? `${API_BASE_URL}/blog/${editingBlog._id}`
@@ -147,13 +181,40 @@ const BlogManager = () => {
       
       const method = editingBlog ? 'PUT' : 'POST';
 
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Authorization': `Bearer ${adminToken}`
-        },
-        body: formDataToSend
-      });
+      // Prepare request based on whether we have featured image
+      let response;
+      if (formData.featuredImage) {
+        // Use FormData only for featured image file
+        const formDataToSend = new FormData();
+        formDataToSend.append('featuredImage', formData.featuredImage);
+        
+        // Add other fields
+        Object.keys(blogData).forEach(key => {
+          if (key === 'tags' || key === 'images') {
+            formDataToSend.append(key, JSON.stringify(blogData[key]));
+          } else {
+            formDataToSend.append(key, blogData[key]);
+          }
+        });
+
+        response = await fetch(url, {
+          method,
+          headers: {
+            'Authorization': `Bearer ${adminToken}`
+          },
+          body: formDataToSend
+        });
+      } else {
+        // Use JSON for request when no file upload needed
+        response = await fetch(url, {
+          method,
+          headers: {
+            'Authorization': `Bearer ${adminToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(blogData)
+        });
+      }
 
       const data = await response.json();
       
@@ -251,7 +312,9 @@ const BlogManager = () => {
       scheduledFor: '',
       featuredImage: null,
       featuredImageAlt: '',
-      featuredImageCaption: ''
+      featuredImageCaption: '',
+      images: [],
+      galleryFiles: null
     });
   };
 
@@ -645,6 +708,65 @@ const BlogManager = () => {
                       onChange={(e) => setFormData(prev => ({ ...prev, featuredImage: e.target.files[0] }))}
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     />
+                  </div>
+
+                  {/* Gallery Images */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Gallery Images (up to 10)
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => {
+                        const newFiles = Array.from(e.target.files || []);
+                        const currentFiles = formData.galleryFiles ? Array.from(formData.galleryFiles) : [];
+                        const combinedFiles = [...currentFiles, ...newFiles];
+                        
+                        if (combinedFiles.length > 10) {
+                          alert(`Maximum 10 images allowed. You selected ${combinedFiles.length} total.`);
+                          e.target.value = '';
+                          return;
+                        }
+                        
+                        // Convert combined array to FileList-like object
+                        const dt = new DataTransfer();
+                        combinedFiles.forEach(file => dt.items.add(file));
+                        
+                        setFormData(prev => ({ ...prev, galleryFiles: dt.files }));
+                        e.target.value = ''; // Reset input for next selection
+                      }}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Upload multiple images for the gallery carousel. Max 10 images per post.
+                    </p>
+                    {formData.galleryFiles && formData.galleryFiles.length > 0 && (
+                      <div className="mt-3">
+                        <div className="grid grid-cols-2 gap-2 mb-2">
+                          {Array.from(formData.galleryFiles).map((file, index) => (
+                            <div key={index} className="text-xs text-gray-600 bg-gray-50 p-2 rounded flex justify-between items-center">
+                              <span>{file.name} ({(file.size / 1024).toFixed(2)} KB)</span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const dt = new DataTransfer();
+                                  Array.from(formData.galleryFiles).forEach((f, i) => {
+                                    if (i !== index) dt.items.add(f);
+                                  });
+                                  setFormData(prev => ({ ...prev, galleryFiles: dt.files }));
+                                }}
+                                className="ml-2 text-red-600 hover:text-red-800 font-bold"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="text-xs text-gray-400">{formData.galleryFiles.length}/10 images selected</p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Tags */}
