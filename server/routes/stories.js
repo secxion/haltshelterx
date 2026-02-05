@@ -7,10 +7,10 @@ const router = express.Router();
 
 // Helper function to transform image URLs for multi-environment support
 const transformImageUrls = (story, req) => {
-  const storyObj = story.toObject ? story.toObject() : story;
+  const storyObj = story.toObject ? story.toObject() : { ...story };
   
   const transformUrl = (url) => {
-    if (!url) return url;
+    if (!url || typeof url !== 'string') return url;
     
     // Replace localhost URLs with request origin
     if (url.includes('localhost:5000') || url.includes('127.0.0.1:5000')) {
@@ -33,8 +33,10 @@ const transformImageUrls = (story, req) => {
   if (storyObj.featuredImage) {
     if (typeof storyObj.featuredImage === 'string') {
       storyObj.featuredImage = transformUrl(storyObj.featuredImage);
-    } else if (storyObj.featuredImage.url) {
-      storyObj.featuredImage.url = transformUrl(storyObj.featuredImage.url);
+    } else if (storyObj.featuredImage && typeof storyObj.featuredImage === 'object') {
+      if (storyObj.featuredImage.url) {
+        storyObj.featuredImage.url = transformUrl(storyObj.featuredImage.url);
+      }
     }
   }
 
@@ -42,7 +44,7 @@ const transformImageUrls = (story, req) => {
   if (storyObj.additionalImages && Array.isArray(storyObj.additionalImages)) {
     storyObj.additionalImages = storyObj.additionalImages.map(img => ({
       ...img,
-      url: transformUrl(img.url)
+      url: transformUrl(img.url || img)
     }));
   }
 
