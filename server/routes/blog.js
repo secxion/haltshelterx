@@ -232,10 +232,10 @@ router.post('/', authenticate, authorize('admin', 'staff'), upload.single('featu
     'community-outreach', 'educational', 'announcements'
   ]).withMessage('Valid category is required'),
   body('status').optional().isIn(['draft', 'published', 'scheduled']).withMessage('Invalid status'),
-  body('scheduledFor').optional().isISO8601().toDate(),
+  body('scheduledFor').optional({ checkFalsy: true }).isISO8601().toDate(),
   body('isFeatured').optional().toBoolean(),
-  body('metaTitle').optional().trim().isLength({ max: 60 }),
-  body('metaDescription').optional().trim().isLength({ max: 160 })
+  body('metaTitle').optional({ checkFalsy: true }).trim().isLength({ max: 60 }),
+  body('metaDescription').optional({ checkFalsy: true }).trim().isLength({ max: 160 })
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -454,7 +454,7 @@ router.put('/:id', authenticate, authorize('admin', 'staff'), upload.single('fea
     'community-outreach', 'educational', 'announcements'
   ]),
   body('status').optional().isIn(['draft', 'published', 'scheduled', 'archived']),
-  body('scheduledFor').optional().isISO8601().toDate(),
+  body('scheduledFor').optional({ checkFalsy: true }).isISO8601().toDate(),
   body('isFeatured').optional().toBoolean()
 ], async (req, res) => {
   try {
