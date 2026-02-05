@@ -5,24 +5,21 @@ const { authenticate, authorize, optionalAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Helper function to transform image URLs to use request origin
-// This ensures images work in both development and production
+// Helper function to transform image URLs for multi-environment support
 const transformImageUrls = (story, req) => {
-  if (!story) return story;
-  
   const storyObj = story.toObject ? story.toObject() : story;
   
   const transformUrl = (url) => {
     if (!url) return url;
     
-    // If it's already a full URL with localhost, replace with request origin
+    // Replace localhost URLs with request origin
     if (url.includes('localhost:5000') || url.includes('127.0.0.1:5000')) {
       const protocol = req.protocol || 'https';
       const host = req.get('host') || 'localhost:5000';
       return url.replace(/https?:\/\/[^/]+/, `${protocol}://${host}`);
     }
     
-    // If it's a relative path to uploads, make it absolute with request origin
+    // Convert relative paths to absolute URLs
     if (url.startsWith('/uploads/')) {
       const protocol = req.protocol || 'https';
       const host = req.get('host') || 'localhost:5000';
@@ -31,12 +28,16 @@ const transformImageUrls = (story, req) => {
     
     return url;
   };
-  
+
   // Transform featured image
-  if (storyObj.featuredImage && storyObj.featuredImage.url) {
-    storyObj.featuredImage.url = transformUrl(storyObj.featuredImage.url);
+  if (storyObj.featuredImage) {
+    if (typeof storyObj.featuredImage === 'string') {
+      storyObj.featuredImage = transformUrl(storyObj.featuredImage);
+    } else if (storyObj.featuredImage.url) {
+      storyObj.featuredImage.url = transformUrl(storyObj.featuredImage.url);
+    }
   }
-  
+
   // Transform additional images
   if (storyObj.additionalImages && Array.isArray(storyObj.additionalImages)) {
     storyObj.additionalImages = storyObj.additionalImages.map(img => ({
@@ -44,7 +45,7 @@ const transformImageUrls = (story, req) => {
       url: transformUrl(img.url)
     }));
   }
-  
+
   return storyObj;
 };
 
@@ -110,13 +111,9 @@ router.get('/', optionalAuth, async (req, res) => {
         .populate('author', 'firstName lastName');
       total = stories.length;
     }
-    
-    // Transform image URLs in all stories
-    const transformedStories = stories.map(story => transformImageUrls(story, req));
-    
     res.json({
       success: true,
-      data: transformedStories,
+      data: stories,
       pagination: {
         page: parseInt(page),
         limit: lim || total,
@@ -133,26 +130,35 @@ router.get('/', optionalAuth, async (req, res) => {
 // Get featured stories (public endpoint) - MUST be before /:slug route
 router.get('/featured', async (req, res) => {
   try {
-    // Featured stories filtered by rescue/success categories (for hero section)
-    // These categories best represent the mission-driven content
-    const rescueMissionCategories = ['Recent Rescue', 'Medical Success', 'Success Story'];
-    
-    // Get 6 most recent published stories in rescue/success categories (newest first)
-    const stories = await Story.find({ 
-      isPublished: true,
-      category: { $in: rescueMissionCategories }
+    // Pinned story for hero section (Highway Heroes story)
+    const pinnedStory = await Story.findOne({
+      title: "Highway Heroes: The Great Interstate Rescue",
+      isPublished: true
     })
-      .sort({ createdAt: -1 })
-      .limit(6)
       .populate('author', 'firstName lastName')
       .select('title slug excerpt featuredImage createdAt author readTime');
 
-    // If fewer than 6 stories in these categories, supplement with other published stories
-    if (stories.length < 6) {
-      const remaining = 6 - stories.length;
+    // Featured stories filtered by rescue/success categories (for hero section)
+    const rescueMissionCategories = ['Recent Rescue', 'Medical Success', 'Success Story'];
+    
+    // Get 5 most recent published stories in rescue/success categories (we'll add the pinned story to make 6)
+    let stories = await Story.find({ 
+      isPublished: true,
+      category: { $in: rescueMissionCategories },
+      _id: { $ne: pinnedStory?._id } // Exclude pinned story to avoid duplication
+    })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate('author', 'firstName lastName')
+      .select('title slug excerpt featuredImage createdAt author readTime');
+
+    // If fewer than 5 stories in these categories, supplement with other published stories
+    if (stories.length < 5) {
+      const remaining = 5 - stories.length;
       const additionalStories = await Story.find({ 
         isPublished: true,
         category: { $nin: rescueMissionCategories },
+        _id: { $ne: pinnedStory?._id },
         _id: { $nin: stories.map(s => s._id) }
       })
         .sort({ createdAt: -1 })
@@ -163,8 +169,10 @@ router.get('/featured', async (req, res) => {
       stories.push(...additionalStories);
     }
 
-    // Re-sort combined results by newest first
-    stories.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // Place pinned story first if it exists
+    if (pinnedStory) {
+      stories.unshift(pinnedStory);
+    }
 
     // Transform image URLs in all stories
     const transformedStories = stories.map(story => transformImageUrls(story, req));
@@ -195,12 +203,9 @@ router.get('/:slug', optionalAuth, async (req, res) => {
     story.views = (story.views || 0) + 1;
     await story.save();
 
-    // Transform image URLs
-    const transformedStory = transformImageUrls(story, req);
-
     res.json({
       success: true,
-      story: transformedStory
+      story
     });
   } catch (error) {
     console.error('Get story error:', error);
@@ -238,12 +243,9 @@ router.get('/admin/all', authenticate, authorize('admin', 'staff'), async (req, 
 
     const total = await Story.countDocuments(filter);
 
-    // Transform image URLs in all stories
-    const transformedStories = stories.map(story => transformImageUrls(story, req));
-
     res.json({
       success: true,
-      stories: transformedStories,
+      stories,
       pagination: {
         page: parseInt(page),
         limit: parseInt(limit),
@@ -319,12 +321,9 @@ router.post('/', authenticate, authorize('admin', 'staff'), [
     await story.save();
     await story.populate('author', 'firstName lastName');
 
-    // Transform image URLs
-    const transformedStory = transformImageUrls(story, req);
-
     res.status(201).json({
       success: true,
-      story: transformedStory
+      story
     });
   } catch (error) {
     console.error('Create story error:', error);
@@ -367,12 +366,9 @@ router.put('/:id', authenticate, authorize('admin', 'staff'), async (req, res) =
 
     await story.populate('author', 'firstName lastName');
 
-    // Transform image URLs
-    const transformedStory = transformImageUrls(story, req);
-
     res.json({
       success: true,
-      story: transformedStory
+      story
     });
   } catch (error) {
     console.error('Update story error:', error);
