@@ -186,6 +186,9 @@ router.get('/tags', async (req, res) => {
 router.post('/', authenticate, authorize('admin', 'staff'), upload.single('featuredImage'), 
   // Preprocess FormData/JSON
   (req, res, next) => {
+    console.log('[Blog POST] Received request body keys:', Object.keys(req.body));
+    console.log('[Blog POST] isFeatured value:', req.body.isFeatured, 'type:', typeof req.body.isFeatured);
+    
     // Handle tags array from FormData or JSON
     if (req.body.tags) {
       if (typeof req.body.tags === 'string') {
@@ -216,6 +219,7 @@ router.post('/', authenticate, authorize('admin', 'staff'), upload.single('featu
     if (req.body.isFeatured === 'true') req.body.isFeatured = true;
     if (req.body.isFeatured === 'false') req.body.isFeatured = false;
     
+    console.log('[Blog POST] After preprocessing - isFeatured:', req.body.isFeatured, 'type:', typeof req.body.isFeatured);
     next();
   },
   [
@@ -236,6 +240,7 @@ router.post('/', authenticate, authorize('admin', 'staff'), upload.single('featu
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.error('[Blog POST] Validation errors:', errors.array());
       return res.status(400).json({ errors: errors.array() });
     }
 
