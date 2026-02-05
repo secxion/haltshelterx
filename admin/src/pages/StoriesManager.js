@@ -15,6 +15,11 @@ const StoriesManager = () => {
   const getImageUrl = (imageUrl) => {
     if (!imageUrl) return '';
     
+    // If it's a data URL (base64 encoded image), return as-is
+    if (imageUrl.startsWith('data:')) {
+      return imageUrl;
+    }
+    
     // If it's already a full URL (uploaded images), return as-is
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
       return imageUrl;
