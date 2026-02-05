@@ -236,9 +236,6 @@ const BlogManager = () => {
         } else {
           alert('Failed to save blog');
         }
-          console.error('Error saving blog:', data.error);
-          alert(`Error saving blog: ${data.error || 'Unknown error'}`);
-        }
       }
     } catch (error) {
       console.error('Error saving blog:', error);
