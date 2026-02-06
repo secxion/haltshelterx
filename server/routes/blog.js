@@ -234,8 +234,8 @@ router.post('/', authenticate, authorize('admin', 'staff'), upload.single('featu
   body('status').optional().isIn(['draft', 'published', 'scheduled']).withMessage('Invalid status'),
   body('scheduledFor').optional({ checkFalsy: true }).isISO8601().toDate(),
   body('isFeatured').optional().toBoolean(),
-  body('metaTitle').optional({ checkFalsy: true }).trim().isLength({ max: 60 }),
-  body('metaDescription').optional({ checkFalsy: true }).trim().isLength({ max: 160 })
+  body('metaTitle').optional({ checkFalsy: true }).trim().isLength({ max: 60 }).withMessage('Meta title must be 60 characters or less'),
+  body('metaDescription').optional({ checkFalsy: true }).trim().isLength({ max: 160 }).withMessage('Meta description must be 160 characters or less')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);

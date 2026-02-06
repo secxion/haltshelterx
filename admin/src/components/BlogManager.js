@@ -831,23 +831,25 @@ const BlogManager = () => {
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Meta Title
+                          Meta Title <span className="text-xs text-gray-500">({formData.metaTitle?.length || 0}/60 characters)</span>
                         </label>
                         <input
                           type="text"
                           value={formData.metaTitle}
-                          onChange={(e) => setFormData(prev => ({ ...prev, metaTitle: e.target.value }))}
+                          onChange={(e) => setFormData(prev => ({ ...prev, metaTitle: e.target.value.slice(0, 60) }))}
+                          maxLength="60"
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                           placeholder="Leave blank to use blog title"
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Meta Description
+                          Meta Description <span className="text-xs text-gray-500">({formData.metaDescription?.length || 0}/160 characters)</span>
                         </label>
                         <textarea
                           value={formData.metaDescription}
-                          onChange={(e) => setFormData(prev => ({ ...prev, metaDescription: e.target.value }))}
+                          onChange={(e) => setFormData(prev => ({ ...prev, metaDescription: e.target.value.slice(0, 160) }))}
+                          maxLength="160"
                           rows={2}
                           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                           placeholder="Leave blank to use excerpt"
