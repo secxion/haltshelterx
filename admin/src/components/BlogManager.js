@@ -452,7 +452,7 @@ const BlogManager = () => {
                       {blog.featuredImage?.url ? (
                         <img
                           className="h-10 w-10 rounded-lg object-cover mr-3"
-                          src={`${SERVER_BASE_URL}${blog.featuredImage.url}`}
+                          src={blog.featuredImage.url}
                           alt={blog.featuredImage.alt}
                         />
                       ) : (
@@ -692,6 +692,24 @@ const BlogManager = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Featured Image
                     </label>
+                    {formData.featuredImage && (
+                      <div className="mb-3">
+                        <img
+                          src={URL.createObjectURL(formData.featuredImage)}
+                          alt="Featured preview"
+                          className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                        />
+                      </div>
+                    )}
+                    {!formData.featuredImage && editingBlog?.featuredImage?.url && (
+                      <div className="mb-3">
+                        <img
+                          src={editingBlog.featuredImage.url}
+                          alt="Featured preview"
+                          className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                        />
+                      </div>
+                    )}
                     <input
                       type="file"
                       accept="image/*"
@@ -732,29 +750,56 @@ const BlogManager = () => {
                     <p className="text-xs text-gray-500 mt-1">
                       Upload multiple images for the gallery carousel. Max 10 images per post.
                     </p>
-                    {formData.galleryFiles && formData.galleryFiles.length > 0 && (
-                      <div className="mt-3">
-                        <div className="grid grid-cols-2 gap-2 mb-2">
-                          {Array.from(formData.galleryFiles).map((file, index) => (
-                            <div key={index} className="text-xs text-gray-600 bg-gray-50 p-2 rounded flex justify-between items-center">
-                              <span>{file.name} ({(file.size / 1024).toFixed(2)} KB)</span>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const dt = new DataTransfer();
-                                  Array.from(formData.galleryFiles).forEach((f, i) => {
-                                    if (i !== index) dt.items.add(f);
-                                  });
-                                  setFormData(prev => ({ ...prev, galleryFiles: dt.files }));
-                                }}
-                                className="ml-2 text-red-600 hover:text-red-800 font-bold"
-                              >
-                                ×
-                              </button>
+                    {/* Show existing gallery images */}
+                    {editingBlog?.images && editingBlog.images.length > 0 && (
+                      <div className="mt-3 mb-4">
+                        <h4 className="text-sm font-medium text-gray-700 mb-2">Current Gallery Images</h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          {editingBlog.images.map((img, idx) => (
+                            <div key={idx} className="relative group">
+                              <img
+                                src={img.url}
+                                alt={`Gallery ${idx}`}
+                                className="w-full h-24 object-cover rounded-lg border border-gray-300"
+                              />
+                              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+                                <span className="text-white text-xs">{idx + 1}</span>
+                              </div>
                             </div>
                           ))}
                         </div>
-                        <p className="text-xs text-gray-400">{formData.galleryFiles.length}/10 images selected</p>
+                      </div>
+                    )}
+                    {/* Show new gallery files being uploaded */}
+                    {formData.galleryFiles && formData.galleryFiles.length > 0 && (
+                      <div className="mt-3 mb-3">
+                        <h4 className="text-sm font-medium text-gray-700 mb-2">New Gallery Images to Upload</h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
+                          {Array.from(formData.galleryFiles).map((file, index) => (
+                            <div key={index} className="relative group">
+                              <img
+                                src={URL.createObjectURL(file)}
+                                alt={`New ${index}`}
+                                className="w-full h-24 object-cover rounded-lg border border-gray-300"
+                              />
+                              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const dt = new DataTransfer();
+                                    Array.from(formData.galleryFiles).forEach((f, i) => {
+                                      if (i !== index) dt.items.add(f);
+                                    });
+                                    setFormData(prev => ({ ...prev, galleryFiles: dt.files }));
+                                  }}
+                                  className="text-white text-lg hover:text-red-400 font-bold"
+                                >
+                                  ✕
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
