@@ -255,6 +255,7 @@ router.post('/', authenticate, authorize('admin', 'staff'), upload.single('featu
       isFeatured = false,
       metaTitle,
       metaDescription,
+      featuredImage,
       featuredImageAlt,
       featuredImageCaption,
       images = []
@@ -290,6 +291,21 @@ router.post('/', authenticate, authorize('admin', 'staff'), upload.single('featu
         alt: featuredImageAlt || title,
         caption: featuredImageCaption || ''
       };
+    } else if (featuredImage) {
+      // Handle base64 featured image from JSON
+      if (typeof featuredImage === 'string') {
+        blogData.featuredImage = {
+          url: featuredImage,
+          alt: featuredImageAlt || title,
+          caption: featuredImageCaption || ''
+        };
+      } else if (featuredImage.url) {
+        blogData.featuredImage = {
+          url: featuredImage.url,
+          alt: featuredImage.alt || featuredImageAlt || title,
+          caption: featuredImage.caption || featuredImageCaption || ''
+        };
+      }
     }
 
     // Add gallery images if provided
@@ -489,6 +505,21 @@ router.put('/:id', authenticate, authorize('admin', 'staff'), upload.single('fea
         alt: req.body.featuredImageAlt || blog.title,
         caption: req.body.featuredImageCaption || ''
       };
+    } else if (req.body.featuredImage) {
+      // Handle base64 featured image from JSON
+      if (typeof req.body.featuredImage === 'string') {
+        blog.featuredImage = {
+          url: req.body.featuredImage,
+          alt: req.body.featuredImageAlt || blog.title,
+          caption: req.body.featuredImageCaption || ''
+        };
+      } else if (req.body.featuredImage.url) {
+        blog.featuredImage = {
+          url: req.body.featuredImage.url,
+          alt: req.body.featuredImage.alt || req.body.featuredImageAlt || blog.title,
+          caption: req.body.featuredImage.caption || req.body.featuredImageCaption || ''
+        };
+      }
     }
 
     // Handle featured order

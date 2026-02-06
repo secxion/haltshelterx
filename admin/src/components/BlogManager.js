@@ -127,6 +127,17 @@ const BlogManager = () => {
     try {
       const adminToken = localStorage.getItem('adminToken');
       
+      // Process featured image if provided - convert to base64
+      let featuredImageBase64 = null;
+      if (formData.featuredImage) {
+        featuredImageBase64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(formData.featuredImage);
+        });
+      }
+      
       // Process multiple images if provided
       let processedImages = [];
       if (formData.galleryFiles && formData.galleryFiles.length > 0) {
@@ -171,6 +182,7 @@ const BlogManager = () => {
         metaDescription: formData.metaDescription,
         featuredImageAlt: formData.featuredImageAlt,
         featuredImageCaption: formData.featuredImageCaption,
+        ...(featuredImageBase64 && { featuredImage: { url: featuredImageBase64, alt: formData.featuredImageAlt, caption: formData.featuredImageCaption } }),
         ...(formData.scheduledFor && formData.status === 'scheduled' && { scheduledFor: formData.scheduledFor }),
         ...(processedImages.length > 0 && { images: processedImages })
       };
@@ -181,42 +193,16 @@ const BlogManager = () => {
       
       const method = editingBlog ? 'PUT' : 'POST';
 
-      // Prepare request based on whether we have featured image
-      let response;
-      if (formData.featuredImage) {
-        // Use FormData only for featured image file
-        const formDataToSend = new FormData();
-        formDataToSend.append('featuredImage', formData.featuredImage);
-        
-        // Add other fields
-        Object.keys(blogData).forEach(key => {
-          if (key === 'tags' || key === 'images') {
-            formDataToSend.append(key, JSON.stringify(blogData[key]));
-          } else {
-            formDataToSend.append(key, blogData[key]);
-          }
-        });
-
-        console.log('Submitting blog with FormData (featured image included):', blogData);
-        response = await fetch(url, {
-          method,
-          headers: {
-            'Authorization': `Bearer ${adminToken}`
-          },
-          body: formDataToSend
-        });
-      } else {
-        // Use JSON for request when no file upload needed
-        console.log('Submitting blog with JSON (no featured image):', blogData);
-        response = await fetch(url, {
-          method,
-          headers: {
-            'Authorization': `Bearer ${adminToken}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(blogData)
-        });
-      }
+      // Always use JSON now - featured images are base64 encoded
+      console.log('Submitting blog with JSON:', blogData);
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Authorization': `Bearer ${adminToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(blogData)
+      });
 
       const data = await response.json();
       
