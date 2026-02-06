@@ -248,7 +248,7 @@ export default function Stories() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {filteredStories.map((story) => (
                     <article key={story._id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                      <div className="aspect-w-16 aspect-h-10">
+                      <div className="aspect-w-16 aspect-h-10 relative">
                         <img 
                           src={story.featuredImage?.url || story.featuredImage || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlJlc2N1ZSBTdG9yeTwvdGV4dD48L3N2Zz4='} 
                           alt={story.featuredImage?.altText || story.title}
@@ -257,7 +257,31 @@ export default function Stories() {
                             e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlJlc2N1ZSBTdG9yeTwvdGV4dD48L3N2Zz4=';
                           }}
                         />
+                        {story.images && story.images.length > 0 && (
+                          <div className="absolute bottom-0 right-0 bg-black bg-opacity-70 text-white px-2 py-1 text-xs rounded-tl-lg">
+                            +{story.images.length} photos
+                          </div>
+                        )}
                       </div>
+                      
+                      {/* Gallery Thumbnails */}
+                      {story.images && story.images.length > 0 && (
+                        <div className="px-6 pt-4 pb-2 bg-gray-50 border-t">
+                          <div className="grid grid-cols-4 gap-2">
+                            {story.images.slice(0, 4).map((img, idx) => (
+                              <img
+                                key={idx}
+                                src={img.url}
+                                alt={`Gallery ${idx + 1}`}
+                                className="w-full h-12 object-cover rounded-lg border border-gray-200"
+                                onError={(e) => {
+                                  e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PC9zdmc+';
+                                }}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
                       
                       <div className="p-6">
                         <div className="flex items-center justify-between mb-3">

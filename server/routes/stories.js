@@ -305,37 +305,37 @@ router.post('/', authenticate, authorize('admin', 'staff'), [
 // Update story (staff/admin only)
 router.put('/:id', authenticate, authorize('admin', 'staff'), async (req, res) => {
   try {
-    const story = await Story.findById(req.params.id);
+    // Build update object
+    const updateData = {};
     
-    if (!story) {
-      return res.status(404).json({ error: 'Story not found' });
-    }
-
-    // Update allowed fields, including publishedAt if provided
     const allowedUpdates = [
       'title', 'content', 'excerpt', 'category', 'featured', 
-      'images', 'status', 'tags', 'metaDescription', 'publishedAt'
+      'images', 'status', 'tags', 'metaDescription', 'publishedAt',
+      'featuredImage'
     ];
 
     allowedUpdates.forEach(field => {
       if (req.body[field] !== undefined) {
-        story[field] = req.body[field];
+        updateData[field] = req.body[field];
       }
     });
 
-    // Set published date if publishing for first time, but allow publishedAt from request
-    if (req.body.status === 'published' && !story.publishedAt) {
-      if (req.body.publishedAt) {
-        story.publishedAt = req.body.publishedAt;
-      } else {
-        story.publishedAt = new Date();
-      }
+    // Handle publishing
+    if (req.body.status === 'published') {
+      updateData.publishedAt = req.body.publishedAt || new Date();
     }
 
-    story.updatedAt = new Date();
-    await story.save();
+    updateData.updatedAt = new Date();
 
-    await story.populate('author', 'firstName lastName');
+    const story = await Story.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true, runValidators: true }
+    ).populate('author', 'firstName lastName');
+
+    if (!story) {
+      return res.status(404).json({ error: 'Story not found' });
+    }
 
     // Transform image URLs
     const transformedStory = transformImageUrls(story, req);

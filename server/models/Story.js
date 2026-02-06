@@ -113,4 +113,7 @@ storySchema.index({ title: 'text', excerpt: 'text', content: 'text' });
 storySchema.index({ category: 1, isPublished: 1, publishedAt: -1 });
 storySchema.index({ isFeatured: 1, isPublished: 1 });
 
+// Disable versioning
+storySchema.set('versionKey', false);
+
 module.exports = mongoose.model('Story', storySchema);
