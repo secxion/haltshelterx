@@ -47,20 +47,23 @@ const StoriesManager = () => {
     excerpt: '',
     category: 'Success Story',
     content: '',
-    featuredImage: { url: '', altText: '' },
-    isPublished: true,
-    isFeatured: false
+    featuredImage: null,
+    featuredImageAlt: '',
+    featuredImageCaption: '',
+    images: [],
+    galleryFiles: null,
+    status: 'published'
   });
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState('');
 
   const categories = [
     'Success Story',
     'Recent Rescue',
     'Medical Success',
-    'Foster Story',
     'Volunteer Spotlight',
-    'News'
+    'Foster Story',
+    'Memorial',
+    'News',
+    'Event'
   ];
 
   // Fetch stories
@@ -90,82 +93,103 @@ const StoriesManager = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImageFile(file);
-      
-      // Create preview URL
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+      setFormData(prev => ({ ...prev, featuredImage: file }));
     }
   };
 
-  // Upload image to server
-  const uploadImage = async (file) => {
-    const formData = new FormData();
-    formData.append('image', file);
+  // Handle gallery file selection
+  const handleGalleryChange = (e) => {
+    const newFiles = Array.from(e.target.files || []);
+    const currentFiles = formData.galleryFiles ? Array.from(formData.galleryFiles) : [];
+    const combinedFiles = [...currentFiles, ...newFiles];
     
-    const token = localStorage.getItem('adminToken');
-    const response = await fetch(`${API_BASE_URL}/upload/image`, {
-      method: 'POST',
-      headers: {
-        'Authorization': token ? `Bearer ${token}` : '',
-      },
-      body: formData,
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to upload image');
+    if (combinedFiles.length > 10) {
+      alert(`Maximum 10 images allowed. You selected ${combinedFiles.length} total.`);
+      e.target.value = '';
+      return;
     }
     
-    const data = await response.json();
-    return data.imageUrl;
+    const dt = new DataTransfer();
+    combinedFiles.forEach(file => dt.items.add(file));
+    
+    setFormData(prev => ({ ...prev, galleryFiles: dt.files }));
+    e.target.value = '';
+  };
+
+  // Convert file to base64
+  const convertImageToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate image requirement
-    if (!imageFile && !formData.featuredImage.url) {
-      alert('Please select an image for the story.');
+    if (!formData.featuredImage && !editingStory?.featuredImage?.url) {
+      alert('Please select a featured image for the story.');
       return;
     }
     
     try {
-      let finalFormData = { ...formData };
-      
-      // Upload image if a new file is selected
-      if (imageFile) {
-        try {
-          const imageUrl = await uploadImage(imageFile);
-          finalFormData.featuredImage.url = imageUrl;
-        } catch (error) {
-          alert('Failed to upload image. Please try again.');
-          return;
-        }
+      // Convert featured image to base64 if selected
+      let featuredImageData = null;
+      if (formData.featuredImage instanceof File) {
+        const base64 = await convertImageToBase64(formData.featuredImage);
+        featuredImageData = {
+          url: base64,
+          alt: formData.featuredImageAlt,
+          caption: formData.featuredImageCaption
+        };
+      } else if (editingStory?.featuredImage) {
+        featuredImageData = editingStory.featuredImage;
       }
+
+      // Convert gallery files to base64
+      let galleryImages = [...(formData.images || [])];
       
-      // Log the data being sent for debugging
-      console.log('Sending story data:', finalFormData);
-      
+      if (formData.galleryFiles && formData.galleryFiles.length > 0) {
+        const newImages = await Promise.all(
+          Array.from(formData.galleryFiles).map(async (file) => {
+            const base64 = await convertImageToBase64(file);
+            return {
+              url: base64,
+              alt: '',
+              caption: ''
+            };
+          })
+        );
+        galleryImages = [...galleryImages, ...newImages];
+      }
+
+      const storyData = {
+        title: formData.title,
+        excerpt: formData.excerpt,
+        content: formData.content,
+        category: formData.category,
+        status: formData.status,
+        featuredImage: featuredImageData,
+        images: galleryImages
+      };
+
+      const token = localStorage.getItem('adminToken');
       const url = editingStory 
         ? `${API_BASE_URL}/stories/${editingStory._id}`
         : `${API_BASE_URL}/stories`;
       
       const method = editingStory ? 'PUT' : 'POST';
-      
-      // Get admin token for authentication
-      const token = localStorage.getItem('adminToken');
-      
+
       const response = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': token ? `Bearer ${token}` : '',
         },
-        body: JSON.stringify(finalFormData),
+        body: JSON.stringify(storyData),
       });
 
       if (response.ok) {
@@ -174,12 +198,11 @@ const StoriesManager = () => {
         alert(editingStory ? 'Story updated successfully!' : 'Story created successfully!');
       } else {
         const errorData = await response.json().catch(() => ({}));
-        console.error('Server response:', errorData);
         alert(`Error saving story: ${errorData.error || errorData.errors?.[0]?.msg || response.statusText}`);
       }
     } catch (error) {
       console.error('Error saving story:', error);
-      alert('Error saving story');
+      alert('Error saving story: ' + error.message);
     }
   };
 
@@ -218,32 +241,31 @@ const StoriesManager = () => {
       excerpt: '',
       category: 'Success Story',
       content: '',
-      featuredImage: { url: '', altText: '' },
-      isPublished: true,
-      isFeatured: false
+      featuredImage: null,
+      featuredImageAlt: '',
+      featuredImageCaption: '',
+      images: [],
+      galleryFiles: null,
+      status: 'published'
     });
-    setImageFile(null);
-    setImagePreview('');
     setEditingStory(null);
     setShowForm(false);
   };
 
   // Handle edit
   const handleEdit = (story) => {
-    console.log('Editing story:', story);
-    console.log('Featured image URL:', story.featuredImage?.url);
     setFormData({
-      title: story.title,
+      title: story.title || '',
       excerpt: story.excerpt || '',
-      category: story.category,
-      content: story.content,
-      featuredImage: story.featuredImage || { url: '', altText: '' },
-      isPublished: story.isPublished || false,
-      isFeatured: story.isFeatured || false
+      category: story.category || 'Success Story',
+      content: story.content || '',
+      featuredImage: null,
+      featuredImageAlt: story.featuredImage?.alt || '',
+      featuredImageCaption: story.featuredImage?.caption || '',
+      images: story.images || [],
+      galleryFiles: null,
+      status: story.status || 'published'
     });
-    setImageFile(null);
-    // Keep existing image preview when editing
-    setImagePreview(story.featuredImage?.url || '');
     setEditingStory(story);
     setShowForm(true);
   };
@@ -337,64 +359,101 @@ const StoriesManager = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Featured Image</label>
-                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                    <div className="space-y-1 text-center">
-                      {imagePreview || formData.featuredImage.url ? (
-                        <div className="mb-4">
-                          <img
-                            src={imagePreview || getImageUrl(formData.featuredImage.url)}
-                            alt="Preview"
-                            className="mx-auto h-32 w-auto object-cover rounded-lg"
-                            onError={(e) => {
-                              console.error('Image failed to load:', e.target.src);
-                              console.log('imagePreview:', imagePreview);
-                              console.log('formData.featuredImage.url:', formData.featuredImage.url);
-                            }}
-                            onLoad={() => {
-                              console.log('Image loaded successfully:', imagePreview || formData.featuredImage.url);
-                            }}
-                          />
-                        </div>
-                      ) : (
-                        <PhotoIcon className="mx-auto h-12 w-12 text-gray-400" />
-                      )}
-                      <div className="flex text-sm text-gray-600">
-                        <label
-                          htmlFor="image-upload"
-                          className="relative cursor-pointer bg-white rounded-md font-medium text-primary-600 hover:text-primary-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500"
-                        >
-                          <span>{imagePreview || formData.featuredImage.url ? 'Change image' : 'Upload an image'}</span>
-                          <input
-                            id="image-upload"
-                            name="image-upload"
-                            type="file"
-                            accept="image/*"
-                            className="sr-only"
-                            onChange={handleImageChange}
-                          />
-                        </label>
-                        <p className="pl-1">or drag and drop</p>
-                      </div>
-                      <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-                      {!imageFile && !formData.featuredImage.url && (
-                        <p className="text-xs text-red-500">* Featured image is required</p>
-                      )}
+                  {formData.featuredImage && (
+                    <div className="mb-3">
+                      <img
+                        src={URL.createObjectURL(formData.featuredImage)}
+                        alt="Featured preview"
+                        className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                      />
                     </div>
-                  </div>
+                  )}
+                  {!formData.featuredImage && editingStory?.featuredImage?.url && (
+                    <div className="mb-3">
+                      <img
+                        src={editingStory.featuredImage.url}
+                        alt="Featured preview"
+                        className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                      />
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Image Alt Text</label>
+                  <label className="block text-sm font-medium text-gray-700">Featured Image Alt Text</label>
                   <input
                     type="text"
-                    value={formData.featuredImage.altText}
-                    onChange={(e) => setFormData({ 
-                      ...formData, 
-                      featuredImage: { ...formData.featuredImage, altText: e.target.value }
-                    })}
-                    placeholder="Description of the image for accessibility"
+                    value={formData.featuredImageAlt}
+                    onChange={(e) => setFormData(prev => ({ ...prev, featuredImageAlt: e.target.value }))}
                     className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Gallery Images (up to 10)</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleGalleryChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Upload additional images for the story gallery</p>
+
+                  {/* Show existing gallery images */}
+                  {formData.images && formData.images.length > 0 && (
+                    <div className="mt-3 mb-4">
+                      <h4 className="text-sm font-medium text-gray-700 mb-2">Current Gallery Images</h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {formData.images.map((img, idx) => (
+                          <div key={idx} className="relative group">
+                            <img
+                              src={img.url}
+                              alt={`Gallery ${idx}`}
+                              className="w-full h-24 object-cover rounded-lg border border-gray-300"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Show new gallery files */}
+                  {formData.galleryFiles && formData.galleryFiles.length > 0 && (
+                    <div className="mt-3 mb-3">
+                      <h4 className="text-sm font-medium text-gray-700 mb-2">New Gallery Images</h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
+                        {Array.from(formData.galleryFiles).map((file, index) => (
+                          <div key={index} className="relative group">
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt={`New ${index}`}
+                              className="w-full h-24 object-cover rounded-lg border border-gray-300"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const dt = new DataTransfer();
+                                Array.from(formData.galleryFiles).forEach((f, i) => {
+                                  if (i !== index) dt.items.add(f);
+                                });
+                                setFormData(prev => ({ ...prev, galleryFiles: dt.files }));
+                              }}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -408,32 +467,17 @@ const StoriesManager = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center">
-                    <input
-                      id="isPublished"
-                      type="checkbox"
-                      checked={formData.isPublished}
-                      onChange={(e) => setFormData({ ...formData, isPublished: e.target.checked })}
-                      className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                    />
-                    <label htmlFor="isPublished" className="ml-2 block text-sm text-gray-900">
-                      Publish immediately
-                    </label>
-                  </div>
-                  
-                  <div className="flex items-center">
-                    <input
-                      id="isFeatured"
-                      type="checkbox"
-                      checked={formData.isFeatured}
-                      onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
-                      className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                    />
-                    <label htmlFor="isFeatured" className="ml-2 block text-sm text-gray-900">
-                      Feature this story
-                    </label>
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Status</label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value }))}
+                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  >
+                    <option value="draft">Draft</option>
+                    <option value="published">Published</option>
+                    <option value="archived">Archived</option>
+                  </select>
                 </div>
 
                 <div className="flex justify-end space-x-3 pt-4">

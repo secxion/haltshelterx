@@ -238,7 +238,7 @@ router.post('/', authenticate, authorize('admin', 'staff'), [
     if (!value || typeof value !== 'string' || value.trim() === '') {
       throw new Error('Featured image URL is required');
     }
-    // Allow base64 data URLs (like testimonials), full URLs, or paths
+    // Allow base64 data URLs or full URLs
     if (!value.match(/^(data:image\/|https?:\/\/|\/)/)) {
       throw new Error('Featured image must be uploaded or a valid URL');
     }

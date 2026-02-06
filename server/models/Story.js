@@ -37,13 +37,14 @@ const storySchema = new mongoose.Schema({
       type: String,
       required: [true, 'Featured image is required']
     },
-    altText: String,
+    alt: String,
     caption: String
   },
-  additionalImages: [{
+  images: [{
     url: String,
-    altText: String,
-    caption: String
+    alt: String,
+    caption: String,
+    isPrimary: Boolean
   }],
   animal: {
     type: mongoose.Schema.Types.ObjectId,

@@ -282,6 +282,32 @@ After 8 months at HALT, Bella found her forever family. The Johnson family fell 
           </div>
         )}
 
+        {/* Gallery Images */}
+        {story.images && story.images.length > 0 && (
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Story Gallery</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {story.images.map((image, index) => (
+                <div key={index} className="rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200">
+                  <img
+                    src={image.url}
+                    alt={image.alt || `Gallery image ${index + 1}`}
+                    className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlJlc2N1ZSBTdG9yeTwvdGV4dD48L3N2Zz4=';
+                    }}
+                  />
+                  {image.caption && (
+                    <div className="p-3 bg-gray-50">
+                      <p className="text-sm text-gray-600">{image.caption}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Story Content */}
         <article className="prose prose-lg max-w-none mb-12">
           <div 
