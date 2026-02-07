@@ -674,14 +674,14 @@ const Animals = () => {
           </div>
         </div>
       </section>
-        <div className="bg-gradient-to-br from-red-800 via-red-700 to-red-600 text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="bg-gradient-to-br from-red-800 via-red-700 to-red-600 text-white bg-cover bg-center" style={{backgroundImage: 'url(/a-friend-to-felines-marias-cat-room-magic.jpg)'}}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 bg-black/30">
             <div className="text-center">
               <div className="flex justify-center mb-6">
-                <img src="/haltfav.png" alt="" className="w-24 h-24 hover:scale-105 transition-transform duration-300" />
+                <img src="/haltfav.png" alt="" className="w-28 h-28 sm:w-32 sm:h-32 hover:scale-105 transition-transform duration-300" />
               </div>
-              <h1 className="text-6xl sm:text-7xl font-black mb-8 tracking-tight">💕 Adopt a Pet.<br />Transform Two Lives.</h1>
-              <p className="text-xl sm:text-2xl text-red-100 mb-10 max-w-3xl mx-auto font-medium tracking-wide leading-relaxed">
+              <h1 className="text-7xl sm:text-8xl font-black mb-8 tracking-tight">💕 Adopt a Pet.<br />Transform Two Lives.</h1>
+              <p className="text-2xl sm:text-3xl text-red-100 mb-10 max-w-3xl mx-auto font-medium tracking-wide leading-relaxed">
                 Each animal here has a story, a dream, and endless love to give. When you adopt, you don't just change their world—you change yours. Are you ready for the commitment? Our animals are waiting for loving forever homes where they can truly thrive.
               </p>
 
@@ -879,8 +879,8 @@ const Animals = () => {
         </div>
 
         {/* Urgent Needs / Featured Animals Banner */}
-        <div className="bg-gradient-to-r from-red-700 to-red-600 border-t-4 border-amber-400 py-8 px-4 sm:px-0">
-          <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="bg-gradient-to-r from-red-700 to-red-600 border-t-4 border-amber-400 py-8 px-4 sm:px-0 bg-cover bg-center" style={{backgroundImage: 'url(/sashas-sanctuary-the-goose-who-found-a-flock.jpg)'}}>
+          <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 bg-black/40 rounded-lg p-6">
             <div className="flex items-center gap-4 flex-1">
               <span className="text-4xl md:text-5xl flex-shrink-0">🚨</span>
               <div>

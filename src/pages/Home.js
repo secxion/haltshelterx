@@ -173,11 +173,11 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-red-800 via-red-700 to-red-600 text-white overflow-hidden">
+      <section className="relative bg-gradient-to-br from-red-800 via-red-700 to-red-600 text-white overflow-hidden bg-cover bg-center" style={{backgroundImage: 'url(/the-power-of-persistence-james-and-the-dog-training-program.jpg)'}}>
         {/* Decorative background elements */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full -mr-40 -mt-40"></div>
         <div className="absolute bottom-0 left-0 w-72 h-72 bg-white opacity-5 rounded-full -ml-36 -mb-36"></div>
-        <div className="absolute inset-0 bg-black opacity-15"></div>
+        <div className="absolute inset-0 bg-black opacity-30"></div>
         
         {/* Decorative Logo Icons */}
         <img 
@@ -198,19 +198,19 @@ const Home = () => {
               <img 
                 src="/haltfav.png" 
                 alt="HALT Logo" 
-                className="w-20 h-20 sm:w-24 sm:h-24 drop-shadow-2xl animate-bounce"
+                className="w-24 h-24 sm:w-32 sm:h-32 drop-shadow-2xl animate-bounce"
               />
             </div>
             
             {/* HALT Brand Identity */}
             <div>
-              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-10 sm:mb-12 tracking-tighter leading-none">
+              <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black mb-10 sm:mb-12 tracking-tighter leading-none">
                 <span className="text-amber-200">H</span>ALT<br/>
                 <span className="text-amber-200">SHELTER</span>
               </h1>
               
               {/* HALT Meaning - Enhanced Styling */}
-              <div className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold text-white mb-12 sm:mb-14 space-y-3 tracking-wide">
+              <div className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-white mb-12 sm:mb-14 space-y-3 tracking-wide">
                 <div className="bg-black/25 backdrop-blur-sm rounded-xl p-6 sm:p-8 max-w-3xl mx-auto border border-white/15">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     <div className="flex items-center justify-center gap-4 group">
@@ -236,11 +236,11 @@ const Home = () => {
             
             {/* Main Tagline */}
             <div className="space-y-8">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tight">
                 Every Animal Deserves
                 <span className="block text-amber-200 mt-3">Love, Care & A Forever Home</span>
               </h2>
-              <p className="text-lg sm:text-xl md:text-2xl lg:text-2xl text-red-50 max-w-3xl mx-auto leading-relaxed font-medium tracking-wide">
+              <p className="text-xl sm:text-2xl md:text-3xl lg:text-3xl text-red-50 max-w-3xl mx-auto leading-relaxed font-medium tracking-wide">
                 From rescue to rehabilitation, from healing to happiness. We're here for animals who need us most. Together, we transform lives and create loving families.
               </p>
             </div>
@@ -271,10 +271,10 @@ const Home = () => {
       <section className="py-20 sm:py-28 bg-gradient-to-b from-gray-900 to-gray-800 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14 sm:mb-18">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight tracking-tight">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight tracking-tight">
               🏆 Our Impact This Year
             </h2>
-            <p className="text-lg sm:text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed tracking-wide">
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-300 max-w-3xl mx-auto leading-relaxed tracking-wide">
               Every number represents a life saved, a family made whole, and hope restored through community support
             </p>
           </div>

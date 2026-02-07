@@ -23,10 +23,10 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-20">
           <div className="flex items-center gap-3">
             <Link to="/" className="flex-shrink-0 flex items-center gap-3 group">
-              <img src="/halt.png" alt="HALT Shelter" className="h-16 w-auto transition-transform duration-300 group-hover:scale-105" />
+              <img src="/halt.png" alt="HALT Shelter" className="h-28 sm:h-32 w-auto transition-transform duration-300 group-hover:scale-105" />
               <div className="hidden sm:block">
-                <div className="text-sm font-black text-red-700 tracking-tight leading-none">HALT</div>
-                <div className="text-xs font-semibold text-gray-600 tracking-wide">SHELTER</div>
+                <div className="text-lg md:text-xl font-black text-red-700 tracking-tight leading-none">HALT</div>
+                <div className="text-sm font-semibold text-gray-600 tracking-wide">SHELTER</div>
               </div>
             </Link>
           </div>
