@@ -269,7 +269,13 @@ After 8 months at HALT, Bella found her forever family. The Johnson family fell 
               {story.readTime} min read
             </span>
             {story.author && (
-              <span>By {typeof story.author === 'string' ? story.author : story.author.firstName + ' ' + story.author.lastName}</span>
+              <span>By {
+                typeof story.author === 'string' 
+                  ? story.author 
+                  : story.author.firstName && story.author.lastName
+                    ? `${story.author.firstName} ${story.author.lastName}`
+                    : story.author.name || 'HALT Team'
+              }</span>
             )}
           </div>
           
