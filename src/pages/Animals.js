@@ -112,14 +112,15 @@ const Animals = () => {
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
     
+    // Load animals first for faster page display
     fetchAvailableAnimals();
+    // Load stats in parallel
     fetchAnimalStatsBreakdown();
     
-    // Set up auto-refresh for live stats every 30 seconds
+    // Set up auto-refresh for live stats every 60 seconds (reduced from 30)
     const statsRefreshInterval = setInterval(() => {
       fetchAnimalStatsBreakdown(true); // true = background update
-      fetchAvailableAnimals();
-    }, 30000);
+    }, 60000);
 
     return () => clearInterval(statsRefreshInterval);
   }, []);
@@ -133,7 +134,12 @@ const Animals = () => {
   const fetchAvailableAnimals = async () => {
     try {
       const API_BASE = process.env.REACT_APP_API_URL || '/api';
-      const response = await fetch(`${API_BASE}/animals`);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      
+      const response = await fetch(`${API_BASE}/animals`, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      
       if (response.ok) {
         const data = await response.json();
         setAnimals(data);
@@ -151,8 +157,13 @@ const Animals = () => {
         setIsUpdating(true);
       }
       const API_BASE = process.env.REACT_APP_API_URL || '/api';
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+      
       const url = `${API_BASE}/animals/stats/breakdown`;
-      const res = await fetch(url);
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      
       if (!res.ok) {
         console.error('Breakdown fetch failed with status:', res.status);
         return;
@@ -605,14 +616,7 @@ const Animals = () => {
     );
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-
+  // Show page immediately, only stats/animals section shows loading state
   return (
     <div className="min-h-screen bg-gray-50">
       <UrgentAlertBanner />
@@ -1105,7 +1109,21 @@ const Animals = () => {
             </div>
           </div>
           {/* Animals Grid */}
-          {filteredAnimals.length === 0 ? (
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse">
+                  <div className="h-64 bg-gray-300"></div>
+                  <div className="p-4 space-y-4">
+                    <div className="h-6 bg-gray-300 rounded w-2/3"></div>
+                    <div className="h-4 bg-gray-200 rounded w-full"></div>
+                    <div className="h-4 bg-gray-200 rounded w-full"></div>
+                    <div className="h-10 bg-gray-300 rounded"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredAnimals.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">🐾</div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">

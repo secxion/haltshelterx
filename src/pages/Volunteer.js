@@ -229,8 +229,8 @@ export default function Volunteer() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-red-800 via-red-700 to-red-900 text-white">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 py-20">
+      <div className="bg-gradient-to-r from-red-800 via-red-700 to-red-900 text-white bg-cover bg-center" style={{backgroundImage: 'url(/rescue-OP.jpg)'}}>
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 py-20 bg-black/30 rounded-lg">
           <div className="text-center">
             <h1 className="text-6xl md:text-7xl font-black mb-6 tracking-tight">
               Transform Lives <span className="text-amber-300">Together</span>

@@ -279,20 +279,32 @@ const Home = () => {
             </p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            {stats.map((stat, index) => (
-              <div 
-                key={index} 
-                className="text-center bg-gradient-to-br from-gray-700 to-gray-800 p-6 sm:p-8 rounded-2xl border border-gray-600 hover:border-amber-400 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-lg group"
-              >
-                <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <stat.icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+            {loading ? (
+              // Skeleton loading cards
+              [1, 2, 3, 4].map((i) => (
+                <div key={i} className="text-center bg-gradient-to-br from-gray-700 to-gray-800 p-6 sm:p-8 rounded-2xl border border-gray-600 animate-pulse">
+                  <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 bg-gray-600 rounded-xl mb-4 sm:mb-6"></div>
+                  <div className="h-10 bg-gray-600 rounded mb-2 sm:mb-3"></div>
+                  <div className="h-6 bg-gray-600 rounded w-3/4 mx-auto"></div>
                 </div>
-                <div className="text-3xl sm:text-4xl md:text-5xl font-black text-amber-400 mb-2 sm:mb-3 tracking-tight">
-                  {stat.value}
+              ))
+            ) : (
+              // Actual stats with count-up animation
+              stats.map((stat, index) => (
+                <div 
+                  key={index} 
+                  className="text-center bg-gradient-to-br from-gray-700 to-gray-800 p-6 sm:p-8 rounded-2xl border border-gray-600 hover:border-amber-400 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-lg group"
+                >
+                  <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <stat.icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+                  </div>
+                  <div className="text-3xl sm:text-4xl md:text-5xl font-black text-amber-400 mb-2 sm:mb-3 tracking-tight">
+                    {stat.value}
+                  </div>
+                  <div className="text-sm sm:text-base md:text-lg text-gray-300 font-semibold leading-snug tracking-wide">{stat.label}</div>
                 </div>
-                <div className="text-sm sm:text-base md:text-lg text-gray-300 font-semibold leading-snug tracking-wide">{stat.label}</div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
