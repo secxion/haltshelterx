@@ -32,17 +32,17 @@ function useCountUp(target, duration = 600) {
 
 // Bold Urgent Needs/Alert Banner
 const UrgentAlertBanner = () => (
-  <div className="bg-red-700 text-white text-center py-4 px-2 font-bold text-lg shadow-lg mb-6 animate-pulse" role="alert" aria-live="assertive">
-    🚨 URGENT: Several animals need immediate foster or medical support! <Link to="/donate" className="underline font-bold hover:text-yellow-200 ml-2">Help Now</Link>
+  <div className="bg-gradient-to-r from-red-800 via-red-700 to-red-600 text-white text-center py-5 px-4 font-bold text-lg shadow-xl mb-8 border-b-3 border-amber-400" role="alert" aria-live="assertive">
+    🚨 URGENT: Several animals need immediate foster or medical support! <Link to="/donate" className="underline font-bold hover:text-amber-300 ml-2 transition-colors duration-200">Help Now</Link>
   </div>
 );
 
 // Sticky Take Action Now Button (bottom right)
 const StickyActionButton = () => (
-  <div className="fixed bottom-6 right-6 z-50">
+  <div className="fixed bottom-8 right-8 z-50">
     <Link
       to="/donate"
-      className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full shadow-lg text-lg transition-colors focus:outline-none focus:ring-4 focus:ring-red-300 animate-bounce"
+      className="flex items-center gap-2 bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-500 hover:to-amber-400 text-red-900 font-black py-4 px-7 rounded-full shadow-xl text-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-amber-200 hover:scale-105 tracking-tight"
       aria-label="Take Action Now - Urgent Needs"
     >
       <span role="img" aria-label="alert">🚨</span> Take Action Now
@@ -51,29 +51,29 @@ const StickyActionButton = () => (
 );
 
         
-        <section className="bg-gray-100 py-12 border-t border-gray-200">
+        <section className="bg-gradient-to-r from-gray-900 to-gray-800 py-16 border-t-4 border-amber-400">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">Frequently Asked Questions</h2>
-            <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold text-red-700 mb-2">💕 How do I adopt an animal?</h3>
-                <p className="text-gray-700">Browse our available animals, click "I'm Interested" on a pet who captures your heart, and fill out the adoption inquiry form. Our compassionate team will contact you to begin your journey toward giving a deserving animal their forever home.</p>
+            <h2 className="text-4xl sm:text-5xl font-black text-white mb-10 text-center tracking-tight">Frequently Asked Questions</h2>
+            <div className="space-y-5">
+              <div className="bg-gradient-to-r from-gray-800 to-gray-750 rounded-xl shadow-lg p-6 border-l-4 border-amber-400 hover:shadow-xl transition-shadow duration-200">
+                <h3 className="text-xl font-black text-amber-400 mb-3 tracking-tight">💕 How do I adopt an animal?</h3>
+                <p className="text-gray-200 font-medium leading-relaxed">Browse our available animals, click "I'm Interested" on a pet who captures your heart, and fill out the adoption inquiry form. Our compassionate team will contact you to begin your journey toward giving a deserving animal their forever home.</p>
               </div>
-              <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold text-red-700 mb-2">🏡 What is the adoption process like?</h3>
-                <p className="text-gray-700">After submitting your inquiry, we carefully review your application, schedule a personal call or visit, and help you find the perfect match. We provide ongoing support, resources, and guidance to ensure a smooth, joyful transition for both you and your new companion.</p>
+              <div className="bg-gradient-to-r from-gray-800 to-gray-750 rounded-xl shadow-lg p-6 border-l-4 border-amber-400 hover:shadow-xl transition-shadow duration-200">
+                <h3 className="text-xl font-black text-amber-400 mb-3 tracking-tight">🏡 What is the adoption process like?</h3>
+                <p className="text-gray-200 font-medium leading-relaxed">After submitting your inquiry, we carefully review your application, schedule a personal call or visit, and help you find the perfect match. We provide ongoing support, resources, and guidance to ensure a smooth, joyful transition for both you and your new companion.</p>
               </div>
-              <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold text-red-700 mb-2">🤝 Can I foster or volunteer?</h3>
-                <p className="text-gray-700">Absolutely! Fosters and volunteers are the heartbeat of our mission. Visit our Foster or Volunteer pages to learn more and sign up. You'll receive comprehensive training, ongoing support, and the profound reward of transforming lives.</p>
+              <div className="bg-gradient-to-r from-gray-800 to-gray-750 rounded-xl shadow-lg p-6 border-l-4 border-amber-400 hover:shadow-xl transition-shadow duration-200">
+                <h3 className="text-xl font-black text-amber-400 mb-3 tracking-tight">🤝 Can I foster or volunteer?</h3>
+                <p className="text-gray-200 font-medium leading-relaxed">Absolutely! Fosters and volunteers are the heartbeat of our mission. Visit our Foster or Volunteer pages to learn more and sign up. You'll receive comprehensive training, ongoing support, and the profound reward of transforming lives.</p>
               </div>
-              <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold text-red-700 mb-2">❤️ How can I donate or help?</h3>
-                <p className="text-gray-700">You can donate online, become a monthly hero, share our mission on social media, or sponsor a specific animal's care. Every contribution—no matter the size—creates miracles for the animals who depend on us.</p>
+              <div className="bg-gradient-to-r from-gray-800 to-gray-750 rounded-xl shadow-lg p-6 border-l-4 border-amber-400 hover:shadow-xl transition-shadow duration-200">
+                <h3 className="text-xl font-black text-amber-400 mb-3 tracking-tight">❤️ How can I donate or help?</h3>
+                <p className="text-gray-200 font-medium leading-relaxed">You can donate online, become a monthly hero, share our mission on social media, or sponsor a specific animal's care. Every contribution—no matter the size—creates miracles for the animals who depend on us.</p>
               </div>
-              <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold text-red-700 mb-2">📞 Where can I get more information?</h3>
-                <p className="text-gray-700">If you have more questions, please contact us through our website or email. We're here to help you every step of the way—because helping animals live and thrive is what we do together.</p>
+              <div className="bg-gradient-to-r from-gray-800 to-gray-750 rounded-xl shadow-lg p-6 border-l-4 border-amber-400 hover:shadow-xl transition-shadow duration-200">
+                <h3 className="text-xl font-black text-amber-400 mb-3 tracking-tight">📞 Where can I get more information?</h3>
+                <p className="text-gray-200 font-medium leading-relaxed">If you have more questions, please contact us through our website or email. We're here to help you every step of the way—because helping animals live and thrive is what we do together.</p>
               </div>
             </div>
           </div>
@@ -338,94 +338,94 @@ const Animals = () => {
     };
 
     return (
-      <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div className="relative top-20 mx-auto p-5 border w-11/12 max-w-2xl shadow-lg rounded-md bg-white">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold">Adoption Inquiry - {animal.name}</h3>
+      <div className="fixed inset-0 bg-black bg-opacity-60 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+        <div className="relative mx-auto p-0 border-0 w-11/12 max-w-2xl shadow-2xl rounded-2xl bg-gradient-to-br from-white to-gray-50">
+          <div className="flex justify-between items-center p-8 border-b-4 border-amber-400">
+            <h3 className="text-2xl font-black text-gray-900 tracking-tight">Adoption Inquiry - {animal.name}</h3>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-gray-400 hover:text-red-700 text-3xl font-black transition-colors duration-200"
             >
               ✕
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form onSubmit={handleSubmit} className="space-y-5 p-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <label className="block text-sm font-black text-gray-900 mb-2 uppercase tracking-tight">Full Name</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-4 py-3 border-2 border-amber-300 rounded-lg focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block text-sm font-black text-gray-900 mb-2 uppercase tracking-tight">Email</label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-4 py-3 border-2 border-amber-300 rounded-lg focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all"
                   required
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                <label className="block text-sm font-black text-gray-900 mb-2 uppercase tracking-tight">Phone</label>
                 <input
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-4 py-3 border-2 border-amber-300 rounded-lg focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1"><span>City/State</span> <FaMapMarkerAlt className="inline-block text-red-500" /></label>
+                <label className="block text-sm font-black text-gray-900 mb-2 uppercase tracking-tight flex items-center gap-2"><span>City/State</span> <FaMapMarkerAlt className="inline-block text-red-600" /></label>
                 <input
                   type="text"
                   value={formData.address}
                   onChange={(e) => setFormData({...formData, address: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  className="w-full px-4 py-3 border-2 border-amber-300 rounded-lg focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all"
                   required
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-black text-gray-900 mb-2 uppercase tracking-tight">
                 Previous Pet Experience
               </label>
               <textarea
                 value={formData.experience}
                 onChange={(e) => setFormData({...formData, experience: e.target.value})}
                 rows="2"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full px-4 py-3 border-2 border-amber-300 rounded-lg focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all"
                 placeholder="Tell us about your experience with pets..."
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-black text-gray-900 mb-2 uppercase tracking-tight">
                 Why do you want to adopt {animal.name}?
               </label>
               <textarea
                 value={formData.message}
                 onChange={(e) => setFormData({...formData, message: e.target.value})}
                 rows="3"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full px-4 py-3 border-2 border-amber-300 rounded-lg focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-200 transition-all"
                 placeholder="Tell us why you're interested in this particular animal..."
                 required
               />
             </div>
 
             {submitError && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+              <div className="bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-400 text-red-700 px-4 py-3 rounded-lg font-medium">
                 {submitError}
               </div>
             )}
@@ -434,19 +434,19 @@ const Animals = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className={`font-bold py-2 px-4 rounded ${
+                className={`flex-1 font-black py-3 px-6 rounded-lg transition-all duration-200 text-lg tracking-tight ${
                   submitting 
                     ? 'bg-gray-400 cursor-not-allowed text-white' 
-                    : 'bg-blue-500 hover:bg-blue-700 text-white'
+                    : 'bg-gradient-to-r from-red-700 to-red-600 hover:from-red-800 hover:to-red-700 text-white hover:shadow-lg hover:scale-105'
                 }`}
               >
-                {submitting ? 'Submitting...' : 'Submit Inquiry'}
+                {submitting ? '⏳ Submitting...' : '✓ Submit Inquiry'}
               </button>
               <button
                 type="button"
                 onClick={onClose}
                 disabled={submitting}
-                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+                className="flex-1 bg-gray-700 hover:bg-gray-800 text-white font-black py-3 px-6 rounded-lg disabled:opacity-50 transition-all duration-200 hover:shadow-lg"
               >
                 Cancel
               </button>
@@ -475,50 +475,50 @@ const Animals = () => {
     };
 
     return (
-      <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div className="relative top-10 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-gray-900">Meet {animal.name}</h2>
+      <div className="fixed inset-0 bg-black bg-opacity-60 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+        <div className="relative mx-auto p-0 border-0 w-11/12 max-w-4xl shadow-2xl rounded-2xl bg-gradient-to-br from-white to-gray-50">
+          <div className="flex justify-between items-center p-8 border-b-4 border-amber-400">
+            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Meet {animal.name}</h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 text-xl"
+              className="text-gray-400 hover:text-red-700 text-3xl font-black transition-colors duration-200"
             >
               ✕
             </button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-8">
             {/* Image Gallery */}
             <div>
-              <div className="relative">
+              <div className="relative rounded-2xl overflow-hidden shadow-lg">
                 {animal.images && animal.images.length > 0 ? (
                   <>
                     <img
                       src={animal.images[currentImageIndex].url}
                       alt={animal.images[currentImageIndex].altText || animal.name}
-                      className="w-full h-80 object-cover rounded-lg"
+                      className="w-full h-96 object-cover"
                     />
                     {animal.images.length > 1 && (
                       <>
                         <button
                           onClick={prevImage}
-                          className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70"
+                          className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-70 hover:bg-opacity-90 text-white p-3 rounded-full transition-all duration-200 font-bold text-lg"
                         >
                           ←
                         </button>
                         <button
                           onClick={nextImage}
-                          className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70"
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-70 hover:bg-opacity-90 text-white p-3 rounded-full transition-all duration-200 font-bold text-lg"
                         >
                           →
                         </button>
-                        <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
+                        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
                           {animal.images.map((_, index) => (
                             <button
                               key={index}
                               onClick={() => setCurrentImageIndex(index)}
-                              className={`w-2 h-2 rounded-full ${
-                                index === currentImageIndex ? 'bg-white' : 'bg-white bg-opacity-50'
+                              className={`rounded-full transition-all duration-200 ${
+                                index === currentImageIndex ? 'w-3 h-3 bg-amber-400' : 'w-2 h-2 bg-white bg-opacity-70 hover:bg-opacity-100'
                               }`}
                             />
                           ))}
@@ -527,7 +527,7 @@ const Animals = () => {
                     )}
                   </>
                 ) : (
-                  <div className="w-full h-80 bg-gray-200 rounded-lg flex items-center justify-center text-6xl">
+                  <div className="w-full h-96 bg-gradient-to-br from-gray-200 to-gray-300 rounded-2xl flex items-center justify-center text-8xl">
                     🐾
                   </div>
                 )}
@@ -535,66 +535,66 @@ const Animals = () => {
             </div>
 
             {/* Animal Details */}
-            <div className="space-y-4">
+            <div className="space-y-5">
               {/* Basic Info */}
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="font-semibold text-gray-900 mb-2">Basic Information</h3>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div><span className="font-medium">Species:</span> {animal.species}</div>
-                  <div><span className="font-medium">Breed:</span> {animal.breed || 'Mixed'}</div>
-                  <div><span className="font-medium">Age:</span> {animal.age || 'Unknown'}</div>
-                  <div><span className="font-medium">Gender:</span> {animal.gender || 'Unknown'}</div>
-                  <div><span className="font-medium">Size:</span> {animal.size || 'Unknown'}</div>
-                  {animal.color && <div><span className="font-medium">Color:</span> {animal.color}</div>}
+              <div className="bg-gradient-to-br from-amber-50 to-amber-100 p-6 rounded-xl border-l-4 border-amber-400">
+                <h3 className="font-black text-amber-900 mb-3 text-lg tracking-tight">Basic Information</h3>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div><span className="font-black text-amber-800">Species:</span> <span className="text-gray-700">{animal.species}</span></div>
+                  <div><span className="font-black text-amber-800">Breed:</span> <span className="text-gray-700">{animal.breed || 'Mixed'}</span></div>
+                  <div><span className="font-black text-amber-800">Age:</span> <span className="text-gray-700">{animal.age || 'Unknown'}</span></div>
+                  <div><span className="font-black text-amber-800">Gender:</span> <span className="text-gray-700">{animal.gender || 'Unknown'}</span></div>
+                  <div><span className="font-black text-amber-800">Size:</span> <span className="text-gray-700">{animal.size || 'Unknown'}</span></div>
+                  {animal.color && <div><span className="font-black text-amber-800">Color:</span> <span className="text-gray-700">{animal.color}</span></div>}
                 </div>
               </div>
 
               {/* Medical Info */}
-              <div className="bg-green-50 p-4 rounded-lg">
-                <h3 className="font-semibold text-gray-900 mb-2">Medical Status</h3>
+              <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border-l-4 border-green-500">
+                <h3 className="font-black text-green-900 mb-3 text-lg tracking-tight">Medical Status</h3>
                 <div className="flex flex-wrap gap-2">
-                  <span className={`px-2 py-1 rounded-full text-xs ${
+                  <span className={`px-3 py-2 rounded-full text-xs font-black transition-all ${
                     animal.isSpayedNeutered 
-                      ? 'bg-green-200 text-green-800' 
-                      : 'bg-yellow-200 text-yellow-800'
+                      ? 'bg-green-300 text-green-900' 
+                      : 'bg-amber-300 text-amber-900'
                   }`}>
                     {animal.isSpayedNeutered ? '✓ Spayed/Neutered' : '○ Not Spayed/Neutered'}
                   </span>
-                  <span className={`px-2 py-1 rounded-full text-xs ${
+                  <span className={`px-3 py-2 rounded-full text-xs font-black transition-all ${
                     animal.isVaccinated 
-                      ? 'bg-green-200 text-green-800' 
-                      : 'bg-yellow-200 text-yellow-800'
+                      ? 'bg-green-300 text-green-900' 
+                      : 'bg-amber-300 text-amber-900'
                   }`}>
                     {animal.isVaccinated ? '✓ Vaccinated' : '○ Needs Vaccination'}
                   </span>
-                  <span className={`px-2 py-1 rounded-full text-xs ${
+                  <span className={`px-3 py-2 rounded-full text-xs font-black transition-all ${
                     animal.isMicrochipped 
-                      ? 'bg-green-200 text-green-800' 
-                      : 'bg-yellow-200 text-yellow-800'
+                      ? 'bg-green-300 text-green-900' 
+                      : 'bg-amber-300 text-amber-900'
                   }`}>
                     {animal.isMicrochipped ? '✓ Microchipped' : '○ Not Microchipped'}
                   </span>
                 </div>
                 {animal.specialNeeds && (
-                  <div className="mt-2 p-2 bg-blue-100 rounded text-sm">
-                    <span className="font-medium text-blue-800">Special Needs:</span>
-                    <p className="text-blue-700">{animal.specialNeedsDescription}</p>
+                  <div className="mt-3 p-3 bg-orange-100 rounded-lg text-sm border-l-4 border-orange-400">
+                    <span className="font-black text-orange-900">Special Needs:</span>
+                    <p className="text-orange-900 mt-1">{animal.specialNeedsDescription}</p>
                   </div>
                 )}
               </div>
 
               {/* Description */}
               {animal.description && (
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-gray-900 mb-2">About {animal.name}</h3>
-                  <p className="text-gray-700">{animal.description}</p>
+                <div className="bg-gradient-to-br from-gray-100 to-gray-200 p-6 rounded-xl border-l-4 border-gray-400">
+                  <h3 className="font-black text-gray-900 mb-3 text-lg tracking-tight">About {animal.name}</h3>
+                  <p className="text-gray-800 text-base leading-relaxed">{animal.description}</p>
                 </div>
               )}
 
               {/* Adoption Button */}
               <button
                 onClick={() => onAdopt(animal)}
-                className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors text-lg"
+                className="w-full bg-gradient-to-r from-red-700 to-red-600 hover:from-red-800 hover:to-red-700 text-white font-black py-4 px-6 rounded-lg transition-all duration-200 text-lg shadow-lg hover:shadow-xl hover:scale-105 tracking-tight"
               >
                 Start Adoption Process for {animal.name}
               </button>
@@ -619,124 +619,126 @@ const Animals = () => {
   {/* Enhanced Hero Section */}
   <StickyActionButton />
       {/* Adoption Stats Section - LIVE DATA */}
-      <section className="bg-gradient-to-r from-blue-50 to-indigo-50 py-12 border-b-2 border-blue-300">
+      <section className="bg-gradient-to-r from-gray-900 to-gray-800 py-16 border-b-4 border-amber-400">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex-1 text-center md:text-left mb-6">
-            <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
-              <h2 className="text-2xl font-bold text-blue-800">Our Impact</h2>
+          <div className="flex-1 text-center md:text-left mb-8">
+            <div className="flex items-center justify-center md:justify-start gap-3 mb-3">
+              <h2 className="text-4xl font-black text-white tracking-tight">Our Impact</h2>
               {/* Live indicator badge */}
               <div className="flex items-center gap-2 bg-green-100 border border-green-400 px-3 py-1 rounded-full">
                 <span className="relative flex h-3 w-3">
                   <span className={`${isUpdating ? 'animate-ping' : ''} absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75`}></span>
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
                 </span>
-                <span className="text-xs font-semibold text-green-800 uppercase tracking-wide">Live</span>
+                <span className="text-xs font-black text-green-800 uppercase tracking-wide">Live</span>
               </div>
               {statsJustUpdated && (
-                <span className="text-xs text-green-600 font-medium animate-pulse">
+                <span className="text-xs text-green-500 font-black uppercase tracking-wider">
                   ✓ Updated
                 </span>
               )}
             </div>
-            <p className="text-gray-700 mb-1">Transparency matters. Here's how your support changes lives:</p>
+            <p className="text-gray-300 mb-2 font-medium tracking-wide">Transparency matters. Here's how your support changes lives:</p>
           </div>
-          <div className="flex flex-wrap gap-6 justify-center md:justify-end" aria-live="polite">
+          <div className="flex flex-wrap gap-6 justify-center md:justify-start" aria-live="polite">
             {statusBreakdown ? (
               <>
-                <div className={`bg-blue-50 rounded-lg p-4 shadow text-center min-w-[110px] transition-all duration-300 ${statsJustUpdated ? 'ring-2 ring-blue-400 shadow-lg' : ''}`}>
-                  <div className="text-3xl font-bold text-blue-700 mb-1">{availableCount}</div>
-                  <div className="text-sm text-blue-900">Available</div>
+                <div className={`bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-6 shadow-lg text-center min-w-[120px] transition-all duration-300 border-l-4 border-amber-400 ${statsJustUpdated ? 'ring-2 ring-amber-400 shadow-xl scale-105' : 'hover:scale-105'}`}>
+                  <div className="text-5xl font-black text-amber-700 mb-2">{availableCount}</div>
+                  <div className="text-sm font-black text-amber-900 tracking-tight uppercase">Available</div>
                 </div>
-                <div className={`bg-green-50 rounded-lg p-4 shadow text-center min-w-[110px] transition-all duration-300 ${statsJustUpdated ? 'ring-2 ring-green-400 shadow-lg' : ''}`}>
-                  <div className="text-3xl font-bold text-green-700 mb-1">{fosterCount}</div>
-                  <div className="text-sm text-green-900">Foster</div>
+                <div className={`bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 shadow-lg text-center min-w-[120px] transition-all duration-300 border-l-4 border-green-500 ${statsJustUpdated ? 'ring-2 ring-green-400 shadow-xl scale-105' : 'hover:scale-105'}`}>
+                  <div className="text-5xl font-black text-green-700 mb-2">{fosterCount}</div>
+                  <div className="text-sm font-black text-green-900 tracking-tight uppercase">Foster</div>
                 </div>
-                <div className={`bg-orange-50 rounded-lg p-4 shadow text-center min-w-[110px] transition-all duration-300 ${statsJustUpdated ? 'ring-2 ring-orange-400 shadow-lg' : ''}`}>
-                  <div className="text-3xl font-bold text-orange-700 mb-1">{medicalHoldCount}</div>
-                  <div className="text-sm text-orange-900">Medical<br />Hold</div>
+                <div className={`bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6 shadow-lg text-center min-w-[120px] transition-all duration-300 border-l-4 border-orange-500 ${statsJustUpdated ? 'ring-2 ring-orange-400 shadow-xl scale-105' : 'hover:scale-105'}`}>
+                  <div className="text-5xl font-black text-orange-700 mb-2">{medicalHoldCount}</div>
+                  <div className="text-sm font-black text-orange-900 tracking-tight uppercase">Medical<br />Hold</div>
                 </div>
-                <div className={`bg-purple-50 rounded-lg p-4 shadow text-center min-w-[110px] transition-all duration-300 ${statsJustUpdated ? 'ring-2 ring-purple-400 shadow-lg' : ''}`}>
-                  <div className="text-3xl font-bold text-purple-700 mb-1">{adoptedCount}</div>
-                  <div className="text-sm text-purple-900">Adopted</div>
+                <div className={`bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 shadow-lg text-center min-w-[120px] transition-all duration-300 border-l-4 border-purple-500 ${statsJustUpdated ? 'ring-2 ring-purple-400 shadow-xl scale-105' : 'hover:scale-105'}`}>
+                  <div className="text-5xl font-black text-purple-700 mb-2">{adoptedCount}</div>
+                  <div className="text-sm font-black text-purple-900 tracking-tight uppercase">Adopted</div>
                 </div>
               </>
             ) : (
-              <div className="text-center text-gray-500 py-4">
+              <div className="text-center text-gray-400 py-8 w-full">
                 <div className="inline-flex items-center gap-2">
-                  <svg className="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin h-6 w-6 text-amber-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Loading live data...
+                  <span className="font-medium">Loading live data...</span>
                 </div>
               </div>
             )}
           </div>
         </div>
       </section>
-        <div className="bg-gradient-to-br from-blue-600 to-blue-800 text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="bg-gradient-to-br from-red-800 via-red-700 to-red-600 text-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
             <div className="text-center">
-              <div className="flex justify-center mb-4">
-                <img src="/haltfav.png" alt="" className="w-20 h-20 animate-pulse" />
+              <div className="flex justify-center mb-6">
+                <img src="/haltfav.png" alt="" className="w-24 h-24 hover:scale-105 transition-transform duration-300" />
               </div>
-              <h1 className="text-5xl font-bold mb-6">💕 Adopt a Pet. Transform Two Lives.</h1>
-              <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+              <h1 className="text-6xl sm:text-7xl font-black mb-8 tracking-tight">💕 Adopt a Pet.<br />Transform Two Lives.</h1>
+              <p className="text-xl sm:text-2xl text-red-100 mb-10 max-w-3xl mx-auto font-medium tracking-wide leading-relaxed">
                 Each animal here has a story, a dream, and endless love to give. When you adopt, you don't just change their world—you change yours. Are you ready for the commitment? Our animals are waiting for loving forever homes where they can truly thrive.
               </p>
 
       {/* Animal of the Week Feature */}
       {animalOfWeek && (
-        <section className="bg-yellow-50 py-12 border-t-4 border-yellow-400 mb-8">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-yellow-800 mb-6 text-center flex items-center justify-center gap-2">
+        <section className="bg-gradient-to-r from-amber-50 to-gray-50 py-16 border-t-4 border-amber-400 mb-10">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-4xl font-black text-amber-900 mb-8 text-center flex items-center justify-center gap-3 tracking-tight">
               <span role="img" aria-label="star">🌟</span> Animal of the Week
             </h2>
-            <div className="bg-white rounded-lg shadow-xl overflow-hidden flex flex-col md:flex-row items-center">
-              <div className="md:w-1/2 w-full h-96 bg-gray-200 flex items-center justify-center">
+            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row items-stretch border-l-4 border-amber-400">
+              <div className="md:w-1/2 w-full h-96 md:h-auto bg-gray-200 flex items-center justify-center">
                 {animalOfWeek.images && animalOfWeek.images.length > 0 ? (
                   <img
                     src={animalOfWeek.images[0].url}
                     alt={animalOfWeek.images[0].altText || `${animalOfWeek.name} the ${animalOfWeek.species}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-8xl" aria-label="No animal photo available">
+                  <div className="w-full h-full flex items-center justify-center text-8xl bg-gray-100" aria-label="No animal photo available">
                     🐾
                   </div>
                 )}
               </div>
-              <div className="md:w-1/2 w-full p-8 flex flex-col justify-between">
-                <h3 className="text-2xl font-bold text-yellow-700 mb-2">{animalOfWeek.name}</h3>
-                <p className="text-sm text-gray-600 mb-2">{animalOfWeek.species} • {animalOfWeek.breed} • {animalOfWeek.age} • {animalOfWeek.size}</p>
-                {animalOfWeek.featuredStory ? (
-                  <blockquote className="italic text-yellow-700 mb-2">{animalOfWeek.featuredStory}</blockquote>
-                ) : (
-                  <p className="text-gray-700 mb-2">{animalOfWeek.description}</p>
-                )}
-                {animalOfWeek.specialNeeds && (
-                  <div className="bg-blue-100 text-blue-800 px-3 py-2 rounded mb-2 text-sm">
-                    <span className="font-semibold">Special Needs:</span> {animalOfWeek.specialNeedsDescription}
-                  </div>
-                )}
-                <div className="mt-4 flex flex-col gap-2">
+              <div className="md:w-1/2 w-full p-8 sm:p-10 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-3xl font-black text-amber-700 mb-2 tracking-tight">{animalOfWeek.name}</h3>
+                  <p className="text-sm font-medium text-gray-600 mb-4 tracking-wide uppercase">{animalOfWeek.species} • {animalOfWeek.breed} • {animalOfWeek.age} • {animalOfWeek.size}</p>
+                  {animalOfWeek.featuredStory ? (
+                    <blockquote className="italic text-gray-700 mb-4 text-lg font-medium leading-relaxed border-l-4 border-amber-400 pl-4">{animalOfWeek.featuredStory}</blockquote>
+                  ) : (
+                    <p className="text-gray-700 mb-4 text-base leading-relaxed">{animalOfWeek.description}</p>
+                  )}
+                  {animalOfWeek.specialNeeds && (
+                    <div className="bg-gradient-to-r from-amber-50 to-amber-100 text-amber-900 px-4 py-3 rounded-lg mb-4 text-sm border-l-4 border-amber-400">
+                      <span className="font-black">Special Needs:</span> {animalOfWeek.specialNeedsDescription}
+                    </div>
+                  )}
+                </div>
+                <div className="mt-6 flex flex-col gap-3">
                   <button
                     onClick={() => setViewingAnimal(animalOfWeek)}
-                    className="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition-colors"
+                    className="w-full bg-gray-700 hover:bg-gray-800 text-white font-black py-3 px-4 rounded-lg transition-all duration-200 hover:shadow-lg"
                     aria-label={`View details for ${animalOfWeek.name}`}
                   >
                     View Details
                   </button>
                   <button
                     onClick={() => setSelectedAnimal(animalOfWeek)}
-                    className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded transition-colors"
+                    className="w-full bg-gradient-to-r from-red-700 to-red-600 hover:from-red-800 hover:to-red-700 text-white font-black py-3 px-4 rounded-lg transition-all duration-200 hover:shadow-lg"
                     aria-label={`Express interest in adopting ${animalOfWeek.name}`}
                   >
                     I'm Interested in {animalOfWeek.name}
                   </button>
                   <Link
                     to="/donate"
-                    className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-2 px-4 rounded transition-colors text-center"
+                    className="w-full bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-500 hover:to-amber-400 text-red-900 font-black py-3 px-4 rounded-lg transition-all duration-200 hover:shadow-lg text-center"
                   >
                     Sponsor {animalOfWeek.name}
                   </Link>
@@ -749,70 +751,70 @@ const Animals = () => {
 
       {/* Urgent Needs Spotlight Section */}
       {urgentAnimals.length > 0 && (
-        <section className="bg-red-50 py-12 border-t-4 border-red-400 mb-8">
+        <section className="bg-gradient-to-r from-red-50 to-orange-50 py-16 border-t-4 border-red-700 mb-10">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-red-800 mb-6 text-center flex items-center justify-center gap-2">
+            <h2 className="text-4xl font-black text-red-800 mb-8 text-center flex items-center justify-center gap-3 tracking-tight">
               <span role="img" aria-label="urgent">🚨</span> Urgent Needs Spotlight
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {urgentAnimals.map(animal => (
-                <div key={animal._id} className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
-                  <div className="h-80 bg-gray-200 relative">
+                <div key={animal._id} className="bg-white rounded-2xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition-all duration-300 border-l-4 border-red-600 hover:scale-105">
+                  <div className="h-80 bg-gray-200 relative overflow-hidden">
                     {animal.images && animal.images.length > 0 ? (
                       <img
                         src={animal.images[0].url}
                         alt={animal.images[0].altText || `${animal.name} the ${animal.species}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-7xl" aria-label="No animal photo available">
+                      <div className="w-full h-full flex items-center justify-center text-8xl bg-gray-100" aria-label="No animal photo available">
                         🐾
                       </div>
                     )}
                   </div>
                   <div className="p-6 flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="text-2xl font-bold text-red-700 mb-2">{animal.name}</h3>
-                      <p className="text-sm text-gray-600 mb-2">{animal.species} • {animal.breed} • {animal.age} • {animal.size}</p>
+                      <h3 className="text-2xl font-black text-red-700 mb-2 tracking-tight">{animal.name}</h3>
+                      <p className="text-sm font-medium text-gray-600 mb-3 tracking-wide uppercase">{animal.species} • {animal.breed} • {animal.age} • {animal.size}</p>
                       {animal.urgentStory ? (
-                        <blockquote className="italic text-red-700 mb-2">{animal.urgentStory}</blockquote>
+                        <blockquote className="italic text-gray-700 mb-3 text-base font-medium leading-relaxed border-l-4 border-red-400 pl-3">{animal.urgentStory}</blockquote>
                       ) : (
-                        <p className="text-gray-700 mb-2">{animal.description}</p>
+                        <p className="text-gray-700 mb-3 text-base leading-relaxed">{animal.description}</p>
                       )}
                       {animal.specialNeeds && (
-                        <div className="bg-blue-100 text-blue-800 px-3 py-2 rounded mb-2 text-sm">
-                          <span className="font-semibold">Special Needs:</span> {animal.specialNeedsDescription}
+                        <div className="bg-gradient-to-r from-orange-50 to-orange-100 text-orange-900 px-3 py-2 rounded-lg mb-3 text-sm border-l-4 border-orange-400">
+                          <span className="font-black">Special Needs:</span> {animal.specialNeedsDescription}
                         </div>
                       )}
                     </div>
-                    <div className="mt-4 flex flex-col gap-2">
+                    <div className="mt-4 flex flex-col gap-3">
                       <button
                         onClick={() => setViewingAnimal(animal)}
-                        className="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition-colors"
+                        className="w-full bg-gray-700 hover:bg-gray-800 text-white font-black py-3 px-4 rounded-lg transition-all duration-200 hover:shadow-lg"
                         aria-label={`View details for ${animal.name}`}
                       >
                         View Details
                       </button>
                       <button
                         onClick={() => setSelectedAnimal(animal)}
-                        className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors"
+                        className="w-full bg-gradient-to-r from-red-700 to-red-600 hover:from-red-800 hover:to-red-700 text-white font-black py-3 px-4 rounded-lg transition-all duration-200 hover:shadow-lg"
                         aria-label={`Express interest in adopting or fostering ${animal.name}`}
                       >
-                        I'm Interested in {animal.name}
+                        I'm Interested
                       </button>
                       <Link
                         to="/donate"
-                        className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-2 px-4 rounded transition-colors text-center"
+                        className="w-full bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-500 hover:to-amber-400 text-red-900 font-black py-3 px-4 rounded-lg transition-all duration-200 hover:shadow-lg text-center"
                       >
-                        Donate for {animal.name}
+                        Sponsor {animal.name}
                       </Link>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-            <div className="text-center mt-8">
-              <Link to="/foster" className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg text-lg inline-block">
+            <div className="text-center mt-10">
+              <Link to="/foster" className="inline-block bg-gradient-to-r from-red-700 to-red-600 hover:from-red-800 hover:to-red-700 text-white font-black py-4 px-10 rounded-xl shadow-xl text-lg transition-all duration-200 hover:shadow-2xl tracking-tight">
                 🏡 Become a Foster for Urgent Animals
               </Link>
             </div>
@@ -821,10 +823,10 @@ const Animals = () => {
       )}
 
               {/* Call-to-Action Buttons */}
-              <div className="flex flex-col sm:flex-row flex-wrap gap-4 justify-center items-center mb-4">
+              <div className="flex flex-col sm:flex-row flex-wrap gap-5 justify-center items-center mb-8">
                 <button
                   onClick={() => setShowQuiz(true)}
-                  className="bg-white text-blue-600 hover:bg-blue-50 font-bold py-4 px-8 rounded-lg text-lg transition-colors shadow-lg"
+                  className="bg-white text-red-700 hover:bg-amber-50 font-black py-4 px-8 rounded-lg text-lg transition-all duration-200 shadow-lg hover:shadow-xl border-2 border-amber-400 hover:scale-105"
                 >
                   🧠 Find Your Perfect Pet Match
                 </button>
@@ -832,34 +834,34 @@ const Animals = () => {
                   onClick={() => {
                     document.getElementById('animals-section').scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-4 px-8 rounded-lg text-lg transition-colors border-2 border-blue-400"
+                  className="bg-gradient-to-r from-red-700 to-red-600 hover:from-red-800 hover:to-red-700 text-white font-black py-4 px-8 rounded-lg text-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
                 >
                   Browse Available Animals
                 </button>
                 <Link
                   to="/donate"
-                  className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 px-8 rounded-lg text-lg transition-colors shadow-lg border-2 border-yellow-300"
+                  className="bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-500 hover:to-amber-400 text-red-900 font-black py-4 px-8 rounded-lg text-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
                   style={{ minWidth: '200px' }}
                 >
                   💝 Donate Now
                 </Link>
                 <Link
                   to="/foster"
-                  className="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition-colors shadow-lg border-2 border-green-400"
+                  className="bg-gradient-to-r from-red-700 to-red-600 hover:from-red-800 hover:to-red-700 text-white font-black py-4 px-8 rounded-lg text-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
                   style={{ minWidth: '200px' }}
                 >
                   🏡 Become a Foster
                 </Link>
                 <Link
                   to="/volunteer"
-                  className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-8 rounded-lg text-lg transition-colors shadow-lg border-2 border-purple-400"
+                  className="bg-gradient-to-r from-red-700 to-red-600 hover:from-red-800 hover:to-red-700 text-white font-black py-4 px-8 rounded-lg text-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
                   style={{ minWidth: '200px' }}
                 >
                   🤝 Volunteer With Us
                 </Link>
                 <button
                   onClick={() => document.getElementById('newsletter-signup')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="bg-red-500 hover:bg-red-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition-colors shadow-lg border-2 border-red-400"
+                  className="bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-500 hover:to-amber-400 text-red-900 font-black py-4 px-8 rounded-lg text-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
                   style={{ minWidth: '200px' }}
                 >
                   📧 Sign Up for Updates
@@ -868,7 +870,7 @@ const Animals = () => {
 
               {/* Success Stories Link */}
               <div className="mt-8">
-                <p className="text-blue-200 text-sm">
+                <p className="text-red-100 text-base font-medium tracking-wide">
                   📚 Learn about pet preparation and our adoption process below
                 </p>
               </div>
@@ -877,18 +879,18 @@ const Animals = () => {
         </div>
 
         {/* Urgent Needs / Featured Animals Banner */}
-        <div className="bg-red-100 border-t-4 border-red-400 py-6 px-4 sm:px-0">
-          <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <span className="text-3xl md:text-4xl">🚨</span>
+        <div className="bg-gradient-to-r from-red-700 to-red-600 border-t-4 border-amber-400 py-8 px-4 sm:px-0">
+          <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-4 flex-1">
+              <span className="text-4xl md:text-5xl flex-shrink-0">🚨</span>
               <div>
-                <h2 className="text-xl md:text-2xl font-bold text-red-800 mb-1">Urgent: Animals Needing Immediate Homes</h2>
-                <p className="text-red-700 text-sm md:text-base">Some of our animals need extra help finding a home due to medical needs, age, or long shelter stays. Adopting or fostering one of these pets saves lives!</p>
+                <h2 className="text-2xl md:text-3xl font-black text-white mb-2 tracking-tight">Urgent: Animals Needing Immediate Homes</h2>
+                <p className="text-red-100 text-sm md:text-base font-medium leading-relaxed">Some of our animals need extra help finding a home due to medical needs, age, or long shelter stays. Adopting or fostering one of these pets saves lives!</p>
               </div>
             </div>
               <button
                 onClick={() => document.getElementById('animals-section')?.scrollIntoView({ behavior: 'smooth' })}
-                className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-lg border-2 border-red-400 text-lg"
+                className="bg-amber-400 hover:bg-amber-300 text-red-900 font-black py-4 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-lg flex-shrink-0 hover:scale-105"
               >
                 View Urgent Animals
               </button>

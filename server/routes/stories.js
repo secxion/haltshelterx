@@ -153,7 +153,7 @@ router.get('/featured', async (req, res) => {
 });
 
 // Get single story by slug
-router.get('/:slug', optionalAuth, async (req, res) => {
+router.get('/by-slug/:slug', optionalAuth, async (req, res) => {
   try {
     const story = await Story.findOne({ 
       slug: req.params.slug,
@@ -176,7 +176,42 @@ router.get('/:slug', optionalAuth, async (req, res) => {
       story: transformedStory
     });
   } catch (error) {
-    console.error('Get story error:', error);
+    console.error('Get story by slug error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get single story by ID (public endpoint)
+router.get('/:id', optionalAuth, async (req, res) => {
+  try {
+    // Check if it's a valid MongoDB ID
+    const mongoose = require('mongoose');
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ error: 'Story not found' });
+    }
+
+    const story = await Story.findOne({ 
+      _id: req.params.id,
+      isPublished: true
+    }).populate('author', 'firstName lastName email');
+
+    if (!story) {
+      return res.status(404).json({ error: 'Story not found' });
+    }
+
+    // Increment view count
+    story.views = (story.views || 0) + 1;
+    await story.save();
+
+    // Transform image URLs
+    const transformedStory = transformImageUrls(story, req);
+
+    res.json({
+      success: true,
+      story: transformedStory
+    });
+  } catch (error) {
+    console.error('Get story by ID error:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });

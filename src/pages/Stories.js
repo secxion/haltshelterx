@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { BookOpenIcon, HeartIcon, ClockIcon, TagIcon } from '@heroicons/react/24/outline';
 import { apiService, handleApiError } from '../services/api';
 
 export default function Stories() {
+  const navigate = useNavigate();
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -147,42 +148,41 @@ export default function Stories() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-red-600 text-white relative overflow-hidden">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-br from-red-800 via-red-700 to-red-900 text-white relative overflow-hidden py-20">
         <img 
           src="/haltfav.png" 
           alt="" 
-          className="absolute top-10 right-10 w-16 h-16 opacity-10 animate-pulse hidden lg:block"
+          className="absolute top-10 right-10 w-20 h-20 opacity-5 hidden lg:block"
         />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              📚 Tales of Resilience & Redemption
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-8">
+          <div className="text-center space-y-4">
+            <h1 className="text-6xl md:text-7xl font-black tracking-tight mb-6">
+              Tales of <span className="text-amber-300">Resilience</span>
             </h1>
-            <p className="text-xl md:text-2xl text-red-100 max-w-3xl mx-auto">
-              <span className="block mb-2">From despair to joy, from abandonment to belonging...</span>
-              <span className="text-yellow-200 font-semibold">These are the stories of courage, compassion, and the transformative power of love.</span>
+            <p className="text-xl md:text-2xl text-red-50 max-w-3xl mx-auto font-medium tracking-wide">
+              From despair to joy, from abandonment to belonging—witness the transformative power of compassion and courage
             </p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-8 py-16">
         {/* Filters and Search */}
-        <div className="mb-8">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+        <div className="mb-12 space-y-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
             {/* Category Filters */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-3">
               {categories.map((category) => {
                 const Icon = category.icon;
                 return (
                   <button
                     key={category.id}
                     onClick={() => setSelectedCategory(category.id)}
-                    className={`flex items-center px-4 py-2 rounded-full font-semibold transition-colors ${
+                    className={`flex items-center px-5 py-2.5 rounded-full font-semibold transition-all duration-200 ${
                       selectedCategory === category.id
-                        ? 'bg-red-600 text-white'
-                        : 'bg-white text-gray-700 hover:bg-gray-100'
+                        ? 'bg-red-700 text-white shadow-lg scale-105 border-b-3 border-amber-400'
+                        : 'bg-gray-800 text-gray-100 hover:bg-gray-700 hover:text-white'
                     }`}
                   >
                     <Icon className="w-4 h-4 mr-2" />
@@ -193,13 +193,13 @@ export default function Stories() {
             </div>
 
             {/* Search */}
-            <div className="lg:w-64">
+            <div className="lg:w-80">
               <input
                 type="text"
-                placeholder="Search stories..."
+                placeholder="Search stories by title, excerpt, or tags..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="w-full px-5 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-red-700 focus:border-amber-400 focus:shadow-lg transition-all duration-200 font-medium"
               />
             </div>
           </div>
@@ -207,17 +207,17 @@ export default function Stories() {
 
         {/* Loading State */}
         {loading && (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
-            <p className="mt-2 text-gray-600">Loading inspiring stories...</p>
+          <div className="text-center py-20">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-red-700"></div>
+            <p className="mt-4 text-gray-700 font-semibold text-lg">Loading inspiring stories...</p>
           </div>
         )}
 
         {/* Error State */}
         {error && !loading && (
           <div className="text-center py-12">
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 max-w-md mx-auto">
-              <p className="text-yellow-800">
+            <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-8 max-w-2xl mx-auto shadow-lg">
+              <p className="text-yellow-800 font-semibold text-lg">
                 📶 Having trouble loading stories from our database. Showing some of our favorite rescue stories instead!
               </p>
             </div>
@@ -228,16 +228,16 @@ export default function Stories() {
         {!loading && (
           <>
             {filteredStories.length === 0 ? (
-              <div className="text-center py-12">
-                <BookOpenIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">No Stories Found</h3>
-                <p className="text-gray-600">
+              <div className="text-center py-20">
+                <BookOpenIcon className="w-20 h-20 text-gray-400 mx-auto mb-6" />
+                <h3 className="text-2xl font-black text-gray-900 mb-3 tracking-tight">No Stories Found</h3>
+                <p className="text-gray-600 text-lg">
                   {searchTerm ? `No stories match "${searchTerm}"` : 'No stories in this category yet.'}
                 </p>
                 {searchTerm && (
                   <button
                     onClick={() => setSearchTerm('')}
-                    className="mt-4 text-red-600 hover:text-red-800 font-semibold"
+                    className="mt-6 bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-6 rounded-lg transition-colors duration-200"
                   >
                     Clear search
                   </button>
@@ -245,20 +245,24 @@ export default function Stories() {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                   {filteredStories.map((story) => (
-                    <article key={story._id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                      <div className="aspect-w-16 aspect-h-10 relative">
+                    <article key={story._id} className="bg-white rounded-2xl shadow-2xl overflow-hidden hover:shadow-2xl hover:border-red-400 border border-gray-200 transition-all duration-300 transform hover:scale-105">
+                      <div className="aspect-w-16 aspect-h-10 relative group overflow-hidden">
                         <img 
                           src={story.featuredImage?.url || story.featuredImage || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlJlc2N1ZSBTdG9yeTwvdGV4dD48L3N2Zz4='} 
                           alt={story.featuredImage?.altText || story.title}
-                          className="w-full h-48 object-cover"
+                          className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
                           onError={(e) => {
                             e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlJlc2N1ZSBTdG9yeTwvdGV4dD48L3N2Zz4=';
                           }}
                         />
+                        {/* Hover Overlay */}
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                          <span className="text-white font-black text-lg tracking-wide">Read Story →</span>
+                        </div>
                         {story.images && story.images.length > 0 && (
-                          <div className="absolute bottom-0 right-0 bg-black bg-opacity-70 text-white px-2 py-1 text-xs rounded-tl-lg">
+                          <div className="absolute bottom-3 right-3 bg-black/70 text-white px-2.5 py-1 text-xs font-semibold rounded-lg border border-amber-400/50">
                             +{story.images.length} photos
                           </div>
                         )}
@@ -266,14 +270,14 @@ export default function Stories() {
                       
                       {/* Gallery Thumbnails */}
                       {story.images && story.images.length > 0 && (
-                        <div className="px-6 pt-4 pb-2 bg-gray-50 border-t">
+                        <div className="px-6 pt-4 pb-2 bg-gray-50 border-t border-gray-200">
                           <div className="grid grid-cols-4 gap-2">
                             {story.images.slice(0, 4).map((img, idx) => (
                               <img
                                 key={idx}
                                 src={img.url}
                                 alt={`Gallery ${idx + 1}`}
-                                className="w-full h-12 object-cover rounded-lg border border-gray-200"
+                                className="w-full h-12 object-cover rounded-lg border border-gray-200 hover:border-red-400 transition-colors"
                                 onError={(e) => {
                                   e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PC9zdmc+';
                                 }}
@@ -283,33 +287,33 @@ export default function Stories() {
                         </div>
                       )}
                       
-                      <div className="p-6">
-                        <div className="flex items-center justify-between mb-3">
-                          <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getCategoryColor(story.category)}`}>
+                      <div className="p-7 space-y-4">
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="inline-block px-4 py-1.5 rounded-full text-xs font-black bg-amber-300 text-amber-900 tracking-wide">
                             {story.category.charAt(0).toUpperCase() + story.category.slice(1)}
                           </span>
                           {story.readTime && (
-                            <span className="text-xs text-gray-500 flex items-center">
+                            <span className="text-xs text-gray-600 font-semibold flex items-center">
                               <ClockIcon className="w-3 h-3 mr-1" />
-                              {story.readTime} min read
+                              {story.readTime} min
                             </span>
                           )}
                         </div>
                         
-                        <h2 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
+                        <h2 className="text-lg font-bold text-gray-900 line-clamp-2 leading-snug">
                           {story.title}
                         </h2>
                         
-                        <p className="text-gray-600 mb-4 line-clamp-3">
+                        <p className="text-gray-600 text-sm line-clamp-3 leading-relaxed font-medium">
                           {story.excerpt}
                         </p>
                         
                         {story.tags && story.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mb-4">
+                          <div className="flex flex-wrap gap-2 pt-2">
                             {story.tags.slice(0, 3).map((tag, index) => (
                               <span 
                                 key={index}
-                                className="inline-block bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded"
+                                className="inline-block bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full font-medium"
                               >
                                 #{tag}
                               </span>
@@ -317,16 +321,16 @@ export default function Stories() {
                           </div>
                         )}
                         
-                        <div className="flex items-center justify-between">
-                          <Link 
-                            to={`/stories/${story.slug || story._id}`}
-                            className="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+                        <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+                          <button 
+                            onClick={() => navigate(`/stories/${story._id}`, { state: { story } })}
+                            className="inline-block bg-red-700 hover:bg-red-800 text-white font-black py-2.5 px-5 rounded-lg transition-all duration-200 hover:shadow-lg cursor-pointer tracking-wide"
                           >
                             Read Story →
-                          </Link>
+                          </button>
                           
                           {story.publishedAt && (
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-gray-500 font-semibold">
                               {formatDate(story.publishedAt)}
                             </span>
                           )}
@@ -337,8 +341,8 @@ export default function Stories() {
                 </div>
 
                 {/* Results Count */}
-                <div className="mt-8 text-center text-gray-600">
-                  Showing {filteredStories.length} of {stories.length} stories
+                <div className="mt-12 text-center text-gray-600 font-semibold">
+                  Showing <span className="text-red-700 font-black">{filteredStories.length}</span> of <span className="text-red-700 font-black">{stories.length}</span> stories
                   {selectedCategory !== 'all' && ` in ${categories.find(c => c.id === selectedCategory)?.name}`}
                   {searchTerm && ` matching "${searchTerm}"`}
                 </div>
@@ -348,9 +352,9 @@ export default function Stories() {
         )}
 
         {/* Call to Action */}
-        <div className="mt-16 bg-red-600 text-white rounded-lg p-8 text-center">
-          <h3 className="text-2xl font-bold mb-4">Help Us Write More Happy Endings</h3>
-          <p className="text-red-100 mb-6 text-lg">
+        <div className="mt-20 bg-gradient-to-r from-red-800 to-red-700 text-white rounded-2xl p-10 text-center shadow-2xl">
+          <h3 className="text-3xl font-black mb-4 tracking-tight">Help Us Write More <span className="text-amber-300">Happy Endings</span></h3>
+          <p className="text-red-50 mb-8 text-lg font-medium max-w-2xl mx-auto">
             Every donation helps us rescue more animals and create more success stories like these.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

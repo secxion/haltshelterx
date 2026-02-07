@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon, CalendarIcon, ClockIcon, TagIcon, HeartIcon, ShareIcon } from '@heroicons/react/24/outline';
 import DOMPurify from 'dompurify';
 import { apiService, handleApiError } from '../services/api';
@@ -7,13 +7,35 @@ import { buildAbsoluteUrl } from '../utils/navigationUtils';
 
 export default function StoryDetail() {
   const { id } = useParams();
-  const [story, setStory] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const passedStory = location.state?.story;
+  
+  const [story, setStory] = useState(passedStory || null);
+  const [loading, setLoading] = useState(!passedStory);
   const [error, setError] = useState(null);
   const [relatedStories, setRelatedStories] = useState([]);
 
   useEffect(() => {
     const fetchStory = async () => {
+      // If we have the story from navigation state, skip API call
+      if (passedStory) {
+        setLoading(false);
+        setStory(passedStory);
+        // Still fetch related stories
+        try {
+          const relatedResponse = await apiService.stories.getAll();
+          const allStories = relatedResponse.data.data || relatedResponse.data || [];
+          const related = allStories
+            .filter(s => s._id !== id)
+            .slice(0, 3);
+          setRelatedStories(related);
+        } catch (err) {
+          console.error('Error fetching related stories:', err);
+        }
+        return;
+      }
+
       try {
         setLoading(true);
         const response = await apiService.stories.getById(id);
@@ -347,42 +369,46 @@ After 8 months at HALT, Bella found her forever family. The Johnson family fell 
         {/* Related Stories */}
         {relatedStories.length > 0 && (
           <section>
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">More Inspiring Stories</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <h2 className="text-4xl font-black text-gray-900 mb-10 tracking-tight">More <span className="text-red-700">Inspiring</span> Stories</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
               {relatedStories.map((relatedStory) => (
-                <Link
+                <button
                   key={relatedStory._id}
-                  to={`/stories/${relatedStory.slug || relatedStory._id}`}
-                  className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                  onClick={() => navigate(`/stories/${relatedStory._id}`, { state: { story: relatedStory } })}
+                  className="group bg-white rounded-2xl shadow-2xl overflow-hidden hover:shadow-2xl hover:border-red-400 border border-gray-200 transition-all duration-300 transform hover:scale-105 cursor-pointer text-left"
                 >
-                  <div className="aspect-video bg-gray-200 overflow-hidden">
+                  <div className="aspect-video bg-gray-200 overflow-hidden relative">
                     <img
                       src={relatedStory.featuredImage?.url || relatedStory.featuredImage || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlJlc2N1ZSBTdG9yeTwvdGV4dD48L3N2Zz4='}
                       alt={relatedStory.featuredImage?.altText || relatedStory.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       onError={(e) => {
                         e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlJlc2N1ZSBTdG9yeTwvdGV4dD48L3N2Zz4=';
                       }}
                     />
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <span className="text-white font-black text-lg tracking-wide">Read Story →</span>
+                    </div>
                   </div>
-                  <div className="p-6">
-                    <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                      <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
+                  <div className="p-6 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <span className="px-3 py-1.5 bg-amber-300 text-amber-900 rounded-full text-xs font-black tracking-wide">
                         {relatedStory.category}
                       </span>
-                      <span className="flex items-center">
+                      <span className="flex items-center text-xs text-gray-600 font-semibold">
                         <ClockIcon className="h-3 w-3 mr-1" />
                         {relatedStory.readTime} min
                       </span>
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-200">
+                    <h3 className="text-lg font-bold text-gray-900 group-hover:text-red-700 transition-colors duration-200 line-clamp-2">
                       {relatedStory.title}
                     </h3>
-                    <p className="text-gray-600 text-sm line-clamp-2">
+                    <p className="text-gray-600 text-sm line-clamp-2 font-medium">
                       {relatedStory.excerpt}
                     </p>
                   </div>
-                </Link>
+                </button>
               ))}
             </div>
           </section>

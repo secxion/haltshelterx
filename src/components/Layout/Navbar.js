@@ -18,25 +18,29 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-white shadow-lg sticky top-0 z-50 transition-all duration-300 ease-out">
+    <nav className="bg-white shadow-xl sticky top-0 z-50 transition-all duration-300 ease-out border-b-2 border-red-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0 flex items-center">
-              <img src="/halt.png" alt="HALT Shelter" className="h-32 w-auto" />
+        <div className="flex justify-between items-center h-20">
+          <div className="flex items-center gap-3">
+            <Link to="/" className="flex-shrink-0 flex items-center gap-3 group">
+              <img src="/halt.png" alt="HALT Shelter" className="h-16 w-auto transition-transform duration-300 group-hover:scale-105" />
+              <div className="hidden sm:block">
+                <div className="text-sm font-black text-red-700 tracking-tight leading-none">HALT</div>
+                <div className="text-xs font-semibold text-gray-600 tracking-wide">SHELTER</div>
+              </div>
             </Link>
           </div>
 
           {/* Desktop navigation - show at xl (1280px+) to prevent crowding */}
-          <div className="hidden xl:flex items-center space-x-4 2xl:space-x-6">
+          <div className="hidden xl:flex items-center gap-1 2xl:gap-2">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
-                className={`px-2 2xl:px-3 py-2 text-sm font-semibold transition-all duration-300 ease-out transform hover:scale-110 hover:-translate-y-0.5 whitespace-nowrap ${
+                className={`px-3 2xl:px-4 py-2 text-sm font-black transition-all duration-200 ease-out transform hover:scale-105 tracking-tight whitespace-nowrap ${
                   item.current
-                    ? 'text-red-600 border-b-2 border-red-600'
-                    : 'text-gray-700 hover:text-red-600'
+                    ? 'text-red-700 border-b-3 border-red-700 bg-red-50'
+                    : 'text-gray-700 hover:text-red-700 hover:bg-red-50'
                 }`}
               >
                 {item.name}
@@ -45,7 +49,7 @@ const Navbar = () => {
             <a
               href="#"
               onClick={(e) => { e.preventDefault(); navigateTo('/donate', { recurrence: 'monthly' }); }}
-              className="bg-red-600 text-white px-3 2xl:px-4 py-2 rounded-md text-sm font-semibold hover:bg-red-700 transition-all duration-300 ease-out transform hover:scale-105 hover:shadow-lg cursor-pointer whitespace-nowrap"
+              className="ml-2 bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-200 text-red-900 px-4 2xl:px-5 py-2 rounded-lg text-sm font-black hover:shadow-lg transition-all duration-200 ease-out transform hover:scale-105 cursor-pointer whitespace-nowrap tracking-wide"
             >
               Donate Monthly
             </a>
@@ -55,12 +59,12 @@ const Navbar = () => {
           <div className="xl:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-red-600 focus:outline-none focus:text-red-600 transition-all duration-300 transform hover:scale-110"
+              className="text-gray-700 hover:text-red-700 focus:outline-none focus:text-red-700 transition-all duration-200 transform hover:scale-110"
             >
               {isMenuOpen ? (
-                <XMarkIcon className="h-6 w-6 animate-spin-slow" />
+                <XMarkIcon className="h-7 w-7 animate-spin-slow" />
               ) : (
-                <Bars3Icon className="h-6 w-6 transition-transform duration-300" />
+                <Bars3Icon className="h-7 w-7 transition-transform duration-300" />
               )}
             </button>
           </div>
@@ -69,16 +73,16 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="xl:hidden animate-slideDown">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white shadow-lg max-h-[calc(100vh-4rem)] overflow-y-auto">
+        <div className="xl:hidden bg-gradient-to-b from-white to-red-50 shadow-lg border-t-2 border-red-100 animate-slideDown">
+          <div className="px-3 pt-3 pb-4 space-y-2 sm:px-4 max-h-[calc(100vh-5rem)] overflow-y-auto">
             {navigation.map((item, index) => (
               <Link
                 key={item.name}
                 to={item.href}
-                className={`block px-3 py-3 min-h-[44px] text-base font-semibold transition-all duration-300 ease-out transform hover:translate-x-1 hover:scale-105 ${
+                className={`block px-4 py-3 min-h-[48px] text-base font-black tracking-tight transition-all duration-200 ease-out transform hover:translate-x-1 hover:scale-105 rounded-lg ${
                   item.current
-                    ? 'text-red-600 bg-red-50'
-                    : 'text-gray-700 hover:text-red-600 hover:bg-red-50'
+                    ? 'text-red-700 bg-red-100 border-l-4 border-red-700'
+                    : 'text-gray-700 hover:text-red-700 hover:bg-red-50'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
                 style={{
@@ -91,7 +95,7 @@ const Navbar = () => {
             <a
               href="#"
               onClick={(e) => { e.preventDefault(); setIsMenuOpen(false); navigateTo('/donate', { recurrence: 'monthly' }); }}
-              className="block mx-3 mt-4 bg-red-600 text-white px-4 py-3 min-h-[44px] rounded-md text-base font-semibold hover:bg-red-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg text-center cursor-pointer"
+              className="block mx-2 mt-5 bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-200 text-red-900 px-5 py-3 min-h-[48px] rounded-lg text-base font-black tracking-wide hover:shadow-lg transition-all duration-200 transform hover:scale-105 text-center cursor-pointer"
               style={{
                 animation: `slideInLeft 0.3s ease-out ${navigation.length * 0.05 + 0.05}s both`
               }}

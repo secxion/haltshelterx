@@ -23,6 +23,7 @@ function NewsletterConfirmedModal({ isOpen, onClose }) {
 }
 
 const Home = () => {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [newsletterModalOpen, setNewsletterModalOpen] = useState(false);
   const [featuredStories, setFeaturedStories] = useState([]);
@@ -172,76 +173,94 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-red-600 to-red-800 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-black opacity-20"></div>
+      <section className="relative bg-gradient-to-br from-red-800 via-red-700 to-red-600 text-white overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full -mr-40 -mt-40"></div>
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-white opacity-5 rounded-full -ml-36 -mb-36"></div>
+        <div className="absolute inset-0 bg-black opacity-15"></div>
         
-        {/* Decorative Heart Icons */}
+        {/* Decorative Logo Icons */}
         <img 
           src="/haltfav.png" 
           alt="" 
-          className="absolute top-10 right-10 w-16 h-16 opacity-20 animate-pulse hidden lg:block"
+          className="absolute top-10 right-10 w-16 h-16 opacity-15 hidden lg:block"
         />
         <img 
           src="/haltfav.png" 
           alt="" 
-          className="absolute bottom-10 left-10 w-20 h-20 opacity-20 animate-pulse delay-300 hidden lg:block"
+          className="absolute bottom-10 left-10 w-20 h-20 opacity-15 hidden lg:block"
         />
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-          <div className="text-center">
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32 lg:py-40">
+          <div className="text-center space-y-10">
+            {/* Logo Icon with Animation */}
+            <div className="flex justify-center mb-8 sm:mb-10">
+              <img 
+                src="/haltfav.png" 
+                alt="HALT Logo" 
+                className="w-20 h-20 sm:w-24 sm:h-24 drop-shadow-2xl animate-bounce"
+              />
+            </div>
+            
             {/* HALT Brand Identity */}
-            <div className="mb-8">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 tracking-tight">
-                <span className="text-yellow-300">H</span>ALT
-                <span className="text-yellow-300">SHELTER</span>
+            <div>
+              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-10 sm:mb-12 tracking-tighter leading-none">
+                <span className="text-amber-200">H</span>ALT<br/>
+                <span className="text-amber-200">SHELTER</span>
               </h1>
               
-              {/* HALT Meaning - Mobile Optimized */}
-              <div className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-yellow-100 mb-8 space-y-2">
-                <div className="bg-yellow-400/20 backdrop-blur-sm rounded-lg p-4 sm:p-6 max-w-2xl mx-auto">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                    <div className="flex items-center justify-center gap-3">
-                      <span className="bg-yellow-400 text-gray-900 px-3 py-2 rounded-full font-bold text-lg">H</span>
-                      <span className="font-bold">elping</span>
+              {/* HALT Meaning - Enhanced Styling */}
+              <div className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold text-white mb-12 sm:mb-14 space-y-3 tracking-wide">
+                <div className="bg-black/25 backdrop-blur-sm rounded-xl p-6 sm:p-8 max-w-3xl mx-auto border border-white/15">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                    <div className="flex items-center justify-center gap-4 group">
+                      <span className="bg-gradient-to-br from-amber-300 to-amber-400 text-red-900 px-4 py-3 rounded-lg font-black text-xl group-hover:scale-110 transition-transform duration-200 shadow-md">H</span>
+                      <span>elping</span>
                     </div>
-                    <div className="flex items-center justify-center gap-3">
-                      <span className="bg-yellow-400 text-gray-900 px-3 py-2 rounded-full font-bold text-lg">A</span>
-                      <span className="font-bold">nimals</span>
+                    <div className="flex items-center justify-center gap-4 group">
+                      <span className="bg-gradient-to-br from-amber-300 to-amber-400 text-red-900 px-4 py-3 rounded-lg font-black text-xl group-hover:scale-110 transition-transform duration-200 shadow-md">A</span>
+                      <span>nimals</span>
                     </div>
-                    <div className="flex items-center justify-center gap-3">
-                      <span className="bg-yellow-400 text-gray-900 px-3 py-2 rounded-full font-bold text-lg">L</span>
-                      <span className="font-bold">ive &</span>
+                    <div className="flex items-center justify-center gap-4 group">
+                      <span className="bg-gradient-to-br from-amber-300 to-amber-400 text-red-900 px-4 py-3 rounded-lg font-black text-xl group-hover:scale-110 transition-transform duration-200 shadow-md">L</span>
+                      <span>ive &</span>
                     </div>
-                    <div className="flex items-center justify-center gap-3">
-                      <span className="bg-yellow-400 text-gray-900 px-3 py-2 rounded-full font-bold text-lg">T</span>
-                      <span className="font-bold">hrive</span>
+                    <div className="flex items-center justify-center gap-4 group">
+                      <span className="bg-gradient-to-br from-amber-300 to-amber-400 text-red-900 px-4 py-3 rounded-lg font-black text-xl group-hover:scale-110 transition-transform duration-200 shadow-md">T</span>
+                      <span>hrive</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
             
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-6">
-              Every Animal Deserves
-              <span className="block text-yellow-300">Love, Care & A Forever Home</span>
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 max-w-4xl mx-auto leading-relaxed">
-              From rescue to rehabilitation, from healing to happiness - we're here for animals who need us most. 
-              <span className="block mt-2 text-yellow-200">Together, we transform lives and create loving families where every animal can truly thrive.</span>
-            </p>
+            {/* Main Tagline */}
+            <div className="space-y-8">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight">
+                Every Animal Deserves
+                <span className="block text-amber-200 mt-3">Love, Care & A Forever Home</span>
+              </h2>
+              <p className="text-lg sm:text-xl md:text-2xl lg:text-2xl text-red-50 max-w-3xl mx-auto leading-relaxed font-medium tracking-wide">
+                From rescue to rehabilitation, from healing to happiness. We're here for animals who need us most. Together, we transform lives and create loving families.
+              </p>
+            </div>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-lg mx-auto">
+            {/* CTA Buttons - Enhanced */}
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-stretch sm:items-center max-w-2xl mx-auto pt-8 sm:pt-10">
               <Link 
                 to="/donate?recurrence=monthly" 
-                className="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 px-6 sm:px-8 rounded-lg text-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                className="group relative bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-200 text-red-900 font-black py-4 px-8 sm:px-10 rounded-xl text-lg transition-all duration-200 transform hover:scale-105 hover:shadow-2xl shadow-xl flex items-center justify-center gap-3 overflow-hidden"
               >
-                💝 Donate Now - Save a Life
+                <span className="text-2xl">💝</span>
+                <span>Donate Now - Save a Life</span>
+                <span className="absolute -right-8 top-1/2 -translate-y-1/2 text-4xl group-hover:right-0 transition-all duration-300 opacity-0 group-hover:opacity-100">→</span>
               </Link>
               <Link 
                 to="/stories" 
-                className="w-full sm:w-auto border-2 border-white hover:bg-white hover:text-red-600 font-bold py-4 px-6 sm:px-8 rounded-lg text-lg transition-all shadow-lg"
+                className="group border-2 border-white hover:bg-white hover:text-red-700 text-white font-black py-4 px-8 sm:px-10 rounded-xl text-lg transition-all duration-200 transform hover:scale-105 hover:shadow-2xl shadow-lg flex items-center justify-center gap-3 tracking-wide"
               >
-                📖 See Success Stories
+                <span className="text-2xl">📖</span>
+                <span>Success Stories</span>
               </Link>
             </div>
           </div>
@@ -249,24 +268,29 @@ const Home = () => {
       </section>
 
       {/* Impact Stats */}
-      <section className="py-12 sm:py-16 bg-gray-50">
+      <section className="py-20 sm:py-28 bg-gradient-to-b from-gray-900 to-gray-800 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-14 sm:mb-18">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight tracking-tight">
               🏆 Our Impact This Year
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed tracking-wide">
               Every number represents a life saved, a family made whole, and hope restored through community support
             </p>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center bg-white p-4 sm:p-6 rounded-xl shadow-md hover-lift">
-                <div className="mx-auto w-12 h-12 sm:w-16 sm:h-16 bg-red-100 rounded-full flex items-center justify-center mb-3 sm:mb-4">
-                  <stat.icon className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" />
+              <div 
+                key={index} 
+                className="text-center bg-gradient-to-br from-gray-700 to-gray-800 p-6 sm:p-8 rounded-2xl border border-gray-600 hover:border-amber-400 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-lg group"
+              >
+                <div className="mx-auto w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <stat.icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                 </div>
-                <div className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">{stat.value}</div>
-                <div className="text-xs sm:text-sm md:text-base text-gray-600 leading-tight">{stat.label}</div>
+                <div className="text-3xl sm:text-4xl md:text-5xl font-black text-amber-400 mb-2 sm:mb-3 tracking-tight">
+                  {stat.value}
+                </div>
+                <div className="text-sm sm:text-base md:text-lg text-gray-300 font-semibold leading-snug tracking-wide">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -274,33 +298,37 @@ const Home = () => {
       </section>
 
       {/* Emergency Banner */}
-      <section className="bg-red-600 text-white py-6 sm:py-8">
+      <section className="bg-gradient-to-r from-red-800 via-red-700 to-red-600 text-white py-10 sm:py-14 border-b-4 border-amber-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-10">
             <div className="text-center md:text-left">
-              <h3 className="text-xl sm:text-2xl font-bold mb-2">🚨 Emergency Rescue Fund</h3>
-              <p className="text-red-100 text-sm sm:text-base">
+              <h3 className="text-2xl sm:text-3xl md:text-4xl font-black mb-4 sm:mb-5 flex items-center justify-center md:justify-start gap-3 tracking-tight">
+                <span className="text-3xl sm:text-4xl animate-pulse">🚨</span>
+                Emergency Rescue Fund
+              </h3>
+              <p className="text-lg sm:text-xl text-red-50 font-medium tracking-wide">
                 Critical cases need immediate medical attention. Your emergency donation can save a life today.
               </p>
             </div>
             <Link 
               to="/donate?emergency=true" 
-              className="w-full md:w-auto bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-3 px-6 rounded-lg transition-colors whitespace-nowrap text-center"
+              className="group w-full md:w-auto bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-200 text-red-900 font-black py-4 px-8 sm:px-10 rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-2xl shadow-xl whitespace-nowrap text-center text-lg flex items-center justify-center gap-2 md:gap-3 tracking-wide"
             >
-              Emergency Donate
+              <span>🔴</span>
+              <span>Emergency Donate</span>
             </Link>
           </div>
         </div>
       </section>
 
       {/* In Action / Recent Rescues & Victories */}
-      <section className="py-12 sm:py-16">
+      <section className="py-20 sm:py-28 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              � In Action: Recent Rescues & Victories
+          <div className="text-center mb-14 sm:mb-18">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6 leading-tight tracking-tight">
+              🎯 In Action: Recent Rescues & Victories
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600">
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed tracking-wide">
               See how your support powers real-life rescues, medical miracles, and happy endings every week. These are the moments that define our mission.
             </p>
           </div>
@@ -308,16 +336,16 @@ const Home = () => {
           <>
             {/* Loading State */}
             {loading && (
-              <div className="text-center py-8" aria-live="polite">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-600" role="status"></div>
-                <p className="mt-2 text-gray-600">Loading inspiring stories...</p>
+              <div className="text-center py-12" aria-live="polite">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-red-600 border-t-yellow-400" role="status"></div>
+                <p className="mt-4 text-gray-600 text-lg font-medium">Loading inspiring stories...</p>
               </div>
             )}
             {/* Error State */}
             {error && !loading && (
               <div className="text-center py-8">
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-md mx-auto">
-                  <p className="text-yellow-800">
+                <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-6 max-w-md mx-auto">
+                  <p className="text-yellow-800 font-medium text-lg">
                     📶 Having trouble loading stories. Showing our latest updates instead!
                   </p>
                 </div>
@@ -325,23 +353,40 @@ const Home = () => {
             )}
             {/* Stories Grid */}
             {!loading && (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 sm:gap-8">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
                 {featuredStories.map((story) => (
-                  <div key={story._id || story.id} className="bg-white rounded-lg shadow-md overflow-hidden hover-lift" tabIndex={0} aria-label={`Rescue story: ${story.title}`}>
-                    <img 
-                      src={story.featuredImage?.url || story.featuredImage || story.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlJlc2N1ZSBTdG9yeTwvdGV4dD48L3N2Zz4='}
-                      alt={story.title}
-                      className="w-full h-48 object-cover"
-                      onError={(e) => {
-                        e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlJlc2N1ZSBTdG9yeTwvdGV4dD48L3N2Zz4=';
-                      }}
-                    />
+                  <div key={story._id || story.id} className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-gray-200 hover:border-red-400 cursor-pointer" onClick={() => navigate(`/stories/${story._id || story.id}`, { state: { story } })}>
+                    <div className="relative overflow-hidden h-56 sm:h-64 bg-gray-200">
+                      <img 
+                        src={story.featuredImage?.url || story.featuredImage || story.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlJlc2N1ZSBTdG9yeTwvdGV4dD48L3N2Zz4='} 
+                        alt={story.title} 
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                        onError={(e) => {
+                          e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlJlc2N1ZSBTdG9yeTwvdGV4dD48L3N2Zz4=';
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <span className="text-white font-black text-lg tracking-wide">Read Story →</span>
+                      </div>
+                    </div>
+                    <div className="p-6 sm:p-7">
+                      <h3 className="text-lg sm:text-xl font-black text-gray-900 group-hover:text-red-600 transition-colors line-clamp-2 mb-3 leading-snug tracking-tight">
+                        {story.title}
+                      </h3>
+                      <p className="text-sm sm:text-base text-gray-600 line-clamp-2 group-hover:text-gray-700 leading-relaxed">
+                        {story.excerpt || story.content?.substring(0, 100)}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
             )}
-            <div className="flex-1 flex justify-center md:justify-end">
-              <img src="https://www.peta.org/wp-content/uploads/2025/08/Charli-August-2025-Group.jpg" alt="Volunteers in action" className="w-40 h-40 rounded-full object-cover shadow-lg border-4 border-yellow-200" />
+            <div className="flex justify-center mt-14 sm:mt-16">
+              <Link to="/stories" className="bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-black py-4 px-8 sm:px-10 rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-2xl shadow-lg text-lg flex items-center gap-3 tracking-wide">
+                <span>📖</span>
+                <span>View All Stories</span>
+                <span>→</span>
+              </Link>
             </div>
           </>
         </div>
