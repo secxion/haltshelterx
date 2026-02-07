@@ -367,7 +367,12 @@ const Home = () => {
             {!loading && (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
                 {featuredStories.map((story) => (
-                  <div key={story._id || story.id} className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-gray-200 hover:border-red-400 cursor-pointer" onClick={() => navigate(`/stories/${story._id || story.id}`, { state: { story } })}>
+                  <div key={story._id || story.id} className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-gray-200 hover:border-red-400 cursor-pointer" onClick={() => navigate(`/stories/${story._id || story.id}`, { state: { story: {
+                    ...story,
+                    publishedAt: story.publishedAt || story.createdAt || new Date().toISOString(),
+                    readTime: story.readTime || 5,
+                    author: story.author || 'HALT Team'
+                  } } })}>
                     <div className="relative overflow-hidden h-56 sm:h-64 bg-gray-200">
                       <img 
                         src={story.featuredImage?.url || story.featuredImage || story.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlJlc2N1ZSBTdG9yeTwvdGV4dD48L3N2Zz4='} 

@@ -137,7 +137,16 @@ After 8 months at HALT, Bella found her forever family. The Johnson family fell 
   }, [id]);
 
   const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('en-US', {
+    if (!date) return 'Date not available';
+    
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    
+    // Check if it's a valid date
+    if (isNaN(dateObj.getTime())) {
+      return 'Date not available';
+    }
+    
+    return dateObj.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
