@@ -18,8 +18,8 @@ export default function StoryDetail() {
 
   useEffect(() => {
     const fetchStory = async () => {
-      // If we have the story from navigation state, skip API call
-      if (passedStory) {
+      // If we have the story from navigation state but it's missing content, fetch the full story
+      if (passedStory && passedStory.content) {
         setLoading(false);
         setStory(passedStory);
         // Still fetch related stories
@@ -36,10 +36,14 @@ export default function StoryDetail() {
         return;
       }
 
+      // If we have a passed story but no content, or no passed story, fetch from API
       try {
         setLoading(true);
         const response = await apiService.stories.getById(id);
-        setStory(response.data.story);
+        const fullStory = response.data.story;
+        
+        // Merge with passedStory data if available
+        setStory(passedStory && !passedStory.content ? { ...passedStory, ...fullStory } : fullStory);
         
         // Fetch related stories
         const relatedResponse = await apiService.stories.getAll();
